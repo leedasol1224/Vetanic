@@ -52,8 +52,8 @@ export interface PricingSummary {
   deliveryFee: number;
   estimatedTotal: number;
   savingsAmount: number;
-  tierACount: number;
-  tierBCount: number;
+  everydayCareCount: number;
+  wellnessSupportCount: number;
   treatsCount: number;
   upsellMessages: string[];
   freeDeliveryMessage: string;

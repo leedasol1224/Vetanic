@@ -6,13 +6,13 @@ import { BRAND_CONTENT } from '../../data/content';
 export const IntroSection: React.FC = () => {
   return (
     <section className="py-16 md:py-20 bg-white border-b border-brand-100">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-50 text-brand-800 text-xs font-bold uppercase tracking-wider mb-4 border border-brand-100">
           <Sparkles className="w-3.5 h-3.5 text-brand-600" />
           <span>Brand Introduction</span>
         </div>
 
-        <h2 className="text-3xl sm:text-4xl font-serif font-bold text-charcoal tracking-tight mb-6">
+        <h2 className="text-3xl sm:text-4xl font-serif font-bold text-charcoal tracking-tight mb-5">
           {BRAND_CONTENT.intro.title}
         </h2>
 

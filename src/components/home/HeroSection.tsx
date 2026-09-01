@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, ShoppingBag, Sparkles, ShieldCheck } from 'lucide-react';
+import { ArrowRight, ShoppingBag, Sparkles, ShieldCheck, Truck } from 'lucide-react';
 import { BRAND_CONTENT } from '../../data/content';
 
 export const HeroSection: React.FC = () => {
@@ -10,20 +10,20 @@ export const HeroSection: React.FC = () => {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
           {/* Left Column: Headlines & CTAs */}
           <div className="lg:col-span-7 space-y-6 text-center lg:text-left">
-            {/* Origin & Trust pill */}
+            {/* Small Brand Relationship Pill */}
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-100/80 border border-brand-200 text-brand-900 text-xs font-semibold tracking-wide">
               <Sparkles className="w-3.5 h-3.5 text-brand-600" />
-              <span>Korean Pet Wellness • Now Available in Singapore</span>
+              <span>{BRAND_CONTENT.smallBrandRelationship}</span>
             </div>
 
             {/* Main Headline */}
             <h1 className="text-4xl sm:text-5xl lg:text-6xl font-serif font-bold text-charcoal tracking-tight leading-[1.15]">
-              Wellness Made for Their Everyday.
+              {BRAND_CONTENT.heroHeadline}
             </h1>
 
             {/* Supporting Copy */}
-            <p className="text-base sm:text-lg text-charcoal-muted max-w-xl mx-auto lg:mx-0 leading-relaxed">
-              {BRAND_CONTENT.subheadline}
+            <p className="text-base sm:text-lg text-charcoal-muted max-w-xl mx-auto lg:mx-0 leading-relaxed font-normal">
+              {BRAND_CONTENT.heroSubheadline}
             </p>
 
             {/* CTAs */}
@@ -44,19 +44,19 @@ export const HeroSection: React.FC = () => {
               </Link>
             </div>
 
-            {/* Value mini tags */}
-            <div className="pt-6 grid grid-cols-2 sm:grid-cols-3 gap-3 border-t border-brand-200/60 max-w-lg mx-auto lg:mx-0 text-left">
+            {/* Value mini tags & Free Delivery Highlight */}
+            <div className="pt-6 grid grid-cols-1 sm:grid-cols-3 gap-3 border-t border-brand-200/60 max-w-xl mx-auto lg:mx-0 text-left">
+              <div className="flex items-center gap-2 text-xs font-medium text-charcoal">
+                <Truck className="w-4 h-4 text-brand-700 flex-shrink-0" />
+                <span>Free local delivery on SGD 50+</span>
+              </div>
               <div className="flex items-center gap-2 text-xs font-medium text-charcoal">
                 <ShieldCheck className="w-4 h-4 text-brand-600 flex-shrink-0" />
                 <span>Made in Korea</span>
               </div>
               <div className="flex items-center gap-2 text-xs font-medium text-charcoal">
                 <ShieldCheck className="w-4 h-4 text-brand-600 flex-shrink-0" />
-                <span>Dogs & Cats</span>
-              </div>
-              <div className="flex items-center gap-2 text-xs font-medium text-charcoal col-span-2 sm:col-span-1">
-                <ShieldCheck className="w-4 h-4 text-brand-600 flex-shrink-0" />
-                <span>Direct Local Delivery</span>
+                <span>Gentle Everyday Care</span>
               </div>
             </div>
           </div>
@@ -64,13 +64,12 @@ export const HeroSection: React.FC = () => {
           {/* Right Column: Hero Visual */}
           <div className="lg:col-span-5">
             <div className="relative mx-auto max-w-md lg:max-w-none">
-              {/* Decorative background blob */}
               <div className="absolute -inset-4 bg-gradient-to-tr from-brand-200 to-amber-100/60 rounded-3xl transform rotate-2 blur-sm -z-10 opacity-70" />
               
               <div className="relative rounded-3xl overflow-hidden shadow-soft-lg border-4 border-white aspect-[4/5] bg-white">
                 <img
                   src="https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&w=1000&q=80"
-                  alt="Happy companion pet"
+                  alt="Companion dog and cat wellness"
                   className="w-full h-full object-cover object-center"
                 />
 
@@ -85,7 +84,7 @@ export const HeroSection: React.FC = () => {
                         VETANIC Singapore
                       </div>
                       <div className="text-xs text-charcoal-muted">
-                        International brand of Nongshim Banryodaum
+                        An international brand of Nongshim Banryodaum
                       </div>
                     </div>
                   </div>

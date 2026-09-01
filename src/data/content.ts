@@ -1,17 +1,38 @@
 export const BRAND_CONTENT = {
   name: 'VETANIC',
-  tagline: 'Wellness Made for Their Everyday.',
-  subheadline: 'Thoughtfully developed pet wellness products from Korea, now available in Singapore.',
+  heroHeadline: 'Everyday wellness for the ones who stay by your side.',
+  heroSubheadline: 'Thoughtfully developed pet wellness products from Korea, now available in Singapore.',
   parentBrand: 'Nongshim Banryodaum',
+  smallBrandRelationship: 'An international brand of Nongshim Banryodaum',
   brandRelationText: 'VETANIC is the international-facing brand of Nongshim Banryodaum, bringing thoughtfully developed Korean pet wellness products to pet families beyond Korea.',
   footerRelationText: 'VETANIC is the international-facing brand of Nongshim Banryodaum.',
+  freeDeliveryHighlight: 'Free standard local delivery on orders SGD 50+',
   originCountry: 'Korea',
   initialMarket: 'Singapore',
 
   intro: {
     title: 'Meet VETANIC',
-    body: 'VETANIC is the international-facing brand of Nongshim Banryodaum, bringing thoughtfully developed Korean pet wellness products to pet families beyond Korea. Our products are formulated to support the everyday health, comfort, and vitality of dogs and cats.',
+    body: 'VETANIC brings the pet wellness products of Nongshim Banryodaum beyond Korea, starting with Singapore. From everyday nutritional support to treats your companion can enjoy, we want to make thoughtful pet care a little simpler for every household.',
     buttonText: 'Our Story',
+  },
+
+  launch: {
+    label: 'HELLO, SINGAPORE',
+    title: 'Celebrate our Singapore launch',
+    body: 'VETANIC is now available in Singapore. Enjoy special launch prices throughout September, with extra savings when you mix and match selected products.',
+    cta: 'Shop Launch Offers',
+  },
+
+  mixMatch: {
+    title: 'Mix, match & save',
+    subtitle: 'Choose your companion’s favorites and unlock bundled savings automatically across our Everyday Care and Wellness Support collections.',
+    cta: 'Build Your Bundle',
+  },
+
+  catRoutine: {
+    title: 'Build Your Cat Wellness Routine',
+    subtitle: 'Pick from everyday wellness favourites for your cat.',
+    cta: 'Build Your Bundle',
   },
 
   values: [

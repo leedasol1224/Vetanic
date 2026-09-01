@@ -10,7 +10,7 @@ export type ProductCategory =
   | 'treats'
   | 'joint-care';
 
-export type PricingTier = 'tier-a' | 'tier-b' | 'treats' | 'standard';
+export type MerchandisingCollection = 'everyday-care' | 'wellness-support' | 'treats' | 'standard';
 
 export interface Product {
   id: string;
@@ -20,13 +20,14 @@ export interface Product {
   petTypeLabel: 'DOG + CAT' | 'DOG ONLY' | 'CATS ONLY';
   category: ProductCategory;
   categoryName: string;
+  collection: MerchandisingCollection;
+  collectionName: 'Everyday Care' | 'Wellness Support' | 'Treats';
   shortDescription: string;
   packageSize: string;
   imageUrl: string;
   isAvailable: boolean;
   displayOrder: number;
   featured?: boolean;
-  tier: PricingTier;
   regularPrice: number;
   launchPrice: number;
   bundleOfferText?: string;

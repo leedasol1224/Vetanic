@@ -29,11 +29,11 @@ export function getProductPricing(product: Product, date: Date = new Date()): Pr
 }
 
 /**
- * Calculates the optimal bundle cost for a given quantity in Tier A
+ * Calculates the optimal bundle cost for Everyday Care items (pricing_group_1)
  */
-function calculateTierACost(count: number, isPromo: boolean): number {
+function calculateEverydayCareCost(count: number, isPromo: boolean): number {
   if (count <= 0) return 0;
-  const { regularPrice, launchPrice, bundle2Price, bundle3Price } = SEPTEMBER_2026_LAUNCH_PROMOTION.tierA;
+  const { regularPrice, launchPrice, bundle2Price, bundle3Price } = SEPTEMBER_2026_LAUNCH_PROMOTION.everydayCare;
 
   if (!isPromo) {
     return count * regularPrice;
@@ -53,11 +53,11 @@ function calculateTierACost(count: number, isPromo: boolean): number {
 }
 
 /**
- * Calculates the optimal bundle cost for a given quantity in Tier B
+ * Calculates the optimal bundle cost for Wellness Support items (pricing_group_2)
  */
-function calculateTierBCost(count: number, isPromo: boolean): number {
+function calculateWellnessSupportCost(count: number, isPromo: boolean): number {
   if (count <= 0) return 0;
-  const { regularPrice, launchPrice, bundle2Price, bundle3Price } = SEPTEMBER_2026_LAUNCH_PROMOTION.tierB;
+  const { regularPrice, launchPrice, bundle2Price, bundle3Price } = SEPTEMBER_2026_LAUNCH_PROMOTION.wellnessSupport;
 
   if (!isPromo) {
     return count * regularPrice;
@@ -118,8 +118,8 @@ export function calculateOrderPricing(
 
   let regularSubtotal = 0;
   let productSubtotal = 0;
-  let tierACount = 0;
-  let tierBCount = 0;
+  let everydayCareCount = 0;
+  let wellnessSupportCount = 0;
   let treatsCount = 0;
 
   // Track treat counts by product id/slug
@@ -130,26 +130,26 @@ export function calculateOrderPricing(
     regularSubtotal += item.product.regularPrice * qty;
     productSubtotal += (isPromo ? item.product.launchPrice : item.product.regularPrice) * qty;
 
-    if (item.product.tier === 'tier-a') {
-      tierACount += qty;
-    } else if (item.product.tier === 'tier-b') {
-      tierBCount += qty;
-    } else if (item.product.tier === 'treats') {
+    if (item.product.collection === 'everyday-care') {
+      everydayCareCount += qty;
+    } else if (item.product.collection === 'wellness-support') {
+      wellnessSupportCount += qty;
+    } else if (item.product.collection === 'treats') {
       treatsCount += qty;
       treatCounts[item.product.id] = (treatCounts[item.product.id] || 0) + qty;
     }
   });
 
   // Calculate optimized product totals
-  const tierACost = calculateTierACost(tierACount, isPromo);
-  const tierBCost = calculateTierBCost(tierBCount, isPromo);
+  const everydayCareCost = calculateEverydayCareCost(everydayCareCount, isPromo);
+  const wellnessSupportCost = calculateWellnessSupportCost(wellnessSupportCount, isPromo);
 
   let treatsCost = 0;
   Object.entries(treatCounts).forEach(([slug, count]) => {
     treatsCost += calculateTreatCost(slug, count, isPromo);
   });
 
-  const productTotal = Number((tierACost + tierBCost + treatsCost).toFixed(2));
+  const productTotal = Number((everydayCareCost + wellnessSupportCost + treatsCost).toFixed(2));
   const bundleDiscount = Number(Math.max(0, productSubtotal - productTotal).toFixed(2));
   const savingsAmount = Number(Math.max(0, regularSubtotal - productTotal).toFixed(2));
 
@@ -170,19 +170,19 @@ export function calculateOrderPricing(
 
   const estimatedTotal = Number((productTotal + deliveryFee).toFixed(2));
 
-  // Dynamic Upsell Messages
+  // Dynamic Upsell Messages (Clean merchandising names)
   const upsellMessages: string[] = [];
 
   if (isPromo) {
-    if (tierACount === 1) {
-      upsellMessages.push('Add one more eligible Tier A product to unlock our Mix & Match offer (Any 2 for SGD 43.90).');
-    } else if (tierACount === 2) {
-      upsellMessages.push('Mix & Match applied! Add one more Tier A product and get any 3 for SGD 62.90.');
+    if (everydayCareCount === 1) {
+      upsellMessages.push('Add one more eligible Everyday Care product to unlock our Mix & Match offer (Any 2 for SGD 43.90).');
+    } else if (everydayCareCount === 2) {
+      upsellMessages.push('Mix & Match applied! Add one more Everyday Care product and get any 3 for SGD 62.90.');
     }
 
-    if (tierBCount === 1) {
+    if (wellnessSupportCount === 1) {
       upsellMessages.push('Add one more eligible product to unlock our Mix & Match offer (Any 2 for SGD 62.90).');
-    } else if (tierBCount === 2) {
+    } else if (wellnessSupportCount === 2) {
       upsellMessages.push('Mix & Match applied! Add one more and get any 3 for SGD 89.90.');
     }
   }
@@ -205,8 +205,8 @@ export function calculateOrderPricing(
     deliveryFee,
     estimatedTotal,
     savingsAmount,
-    tierACount,
-    tierBCount,
+    everydayCareCount,
+    wellnessSupportCount,
     treatsCount,
     upsellMessages,
     freeDeliveryMessage,
