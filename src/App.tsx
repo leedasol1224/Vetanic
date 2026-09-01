@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import { OrderProvider } from './context/OrderContext';
+import { AnnouncementBar } from './components/layout/AnnouncementBar';
 import { Navbar } from './components/layout/Navbar';
 import { Footer } from './components/layout/Footer';
 import { StickyOrderBar } from './components/layout/StickyOrderBar';
@@ -30,6 +31,7 @@ function App() {
       <Router>
         <ScrollToTop />
         <div className="min-h-screen flex flex-col bg-[#FAF8F5] text-[#212529]">
+          <AnnouncementBar />
           <Navbar />
           
           <Routes>

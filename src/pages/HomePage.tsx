@@ -1,5 +1,6 @@
 import React from 'react';
 import { HeroSection } from '../components/home/HeroSection';
+import { LaunchPromoSection } from '../components/home/LaunchPromoSection';
 import { IntroSection } from '../components/home/IntroSection';
 import { NeedCategories } from '../components/home/NeedCategories';
 import { FeaturedProducts } from '../components/home/FeaturedProducts';
@@ -10,6 +11,7 @@ export const HomePage: React.FC = () => {
   return (
     <main className="flex-1">
       <HeroSection />
+      <LaunchPromoSection />
       <IntroSection />
       <NeedCategories />
       <FeaturedProducts />

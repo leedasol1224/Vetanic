@@ -27,7 +27,7 @@ export const FeaturedProducts: React.FC = () => {
             to="/products"
             className="inline-flex items-center gap-1.5 text-sm font-bold text-brand-800 hover:text-brand-950 mt-4 sm:mt-0 transition-colors group"
           >
-            <span>View All 9 Products</span>
+            <span>View All Products</span>
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
           </Link>
         </div>

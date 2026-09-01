@@ -1,4 +1,5 @@
 import { Product, CategoryInfo } from '../types/product';
+import { SEPTEMBER_2026_LAUNCH_PROMOTION } from '../config/promotions';
 
 export const CATEGORIES: CategoryInfo[] = [
   {
@@ -8,6 +9,14 @@ export const CATEGORIES: CategoryInfo[] = [
     iconName: 'Sparkles',
     relevantProductIds: ['fresh-omega-3-mini', 'fresh-omega-3-premium'],
     description: 'Nourishing essential fatty acids for healthy skin barriers and shiny coats.'
+  },
+  {
+    id: 'joint-care',
+    name: 'Joint Support',
+    tagline: 'Daily mobility & cartilage comfort',
+    iconName: 'Activity',
+    relevantProductIds: ['joint-support'],
+    description: 'Targeted companion care for smooth mobility and active daily lifestyle.'
   },
   {
     id: 'digestion',
@@ -60,6 +69,7 @@ export const CATEGORIES: CategoryInfo[] = [
 ];
 
 export const PRODUCTS: Product[] = [
+  // --- TIER A PRODUCTS ---
   {
     id: 'fresh-omega-3-mini',
     slug: 'fresh-omega-3-mini',
@@ -74,6 +84,10 @@ export const PRODUCTS: Product[] = [
     isAvailable: true,
     displayOrder: 1,
     featured: true,
+    tier: 'tier-a',
+    regularPrice: SEPTEMBER_2026_LAUNCH_PROMOTION.tierA.regularPrice,
+    launchPrice: SEPTEMBER_2026_LAUNCH_PROMOTION.tierA.launchPrice,
+    bundleOfferText: SEPTEMBER_2026_LAUNCH_PROMOTION.tierA.bundleDescription,
     details: {
       keyFeatures: [
         'Pure, fresh Omega-3 tailored for small dogs and cats',
@@ -89,58 +103,34 @@ export const PRODUCTS: Product[] = [
     }
   },
   {
-    id: 'fresh-omega-3-premium',
-    slug: 'fresh-omega-3-premium',
-    name: 'Fresh Omega-3 Premium',
+    id: 'joint-support',
+    slug: 'joint-support',
+    name: 'Joint Support',
     petType: 'both',
     petTypeLabel: 'DOG + CAT',
-    category: 'skin-coat',
-    categoryName: 'Skin & Coat',
-    shortDescription: 'Suitable for larger or older pets',
-    packageSize: '410 mg × 60 capsules',
-    imageUrl: 'https://images.unsplash.com/photo-1548767797-d8c844163c4c?auto=format&fit=crop&w=800&q=80',
+    category: 'joint-care',
+    categoryName: 'Joint Support',
+    shortDescription: 'Joint comfort & daily mobility support',
+    packageSize: 'Product information to be provided by VETANIC.',
+    imageUrl: 'https://images.unsplash.com/photo-1576201836106-db1758fd1c97?auto=format&fit=crop&w=800&q=80',
     isAvailable: true,
     displayOrder: 2,
-    featured: false,
+    featured: true,
+    tier: 'tier-a',
+    regularPrice: SEPTEMBER_2026_LAUNCH_PROMOTION.tierA.regularPrice,
+    launchPrice: SEPTEMBER_2026_LAUNCH_PROMOTION.tierA.launchPrice,
+    bundleOfferText: SEPTEMBER_2026_LAUNCH_PROMOTION.tierA.bundleDescription,
     details: {
       keyFeatures: [
-        'Higher concentration formula for medium-to-large breeds and senior pets',
-        'Promotes joint mobility, cardiovascular health, and skin barrier resilience',
-        'Rich in pure EPA and DHA fatty acids'
+        'Daily joint nourishment formulated for dogs and cats',
+        'Helps maintain active lifestyle and mobility comfort',
+        'Product details to be provided by VETANIC'
       ],
       ingredientsPlaceholder: 'Product information to be provided by VETANIC.',
       recommendedUsage: 'Product information to be provided by VETANIC.',
-      packageSize: '410 mg × 60 capsules',
+      packageSize: 'Product information to be provided by VETANIC.',
       countryOfOrigin: 'Made in Korea',
       storageInstructions: 'Store in a cool, dry place away from direct sunlight.',
-      precautions: 'Product information to be provided by VETANIC.'
-    }
-  },
-  {
-    id: 'probiotics',
-    slug: 'probiotics',
-    name: 'Probiotics',
-    petType: 'both',
-    petTypeLabel: 'DOG + CAT',
-    category: 'digestion',
-    categoryName: 'Digestion',
-    shortDescription: 'Digestion, weight & coat',
-    packageSize: '2 g × 30 sticks',
-    imageUrl: 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=800&q=80',
-    isAvailable: true,
-    displayOrder: 3,
-    featured: true,
-    details: {
-      keyFeatures: [
-        'Multi-strain live probiotics specially formulated for companion animals',
-        'Supports stool consistency, gut microbiome balance, and nutrient absorption',
-        'Single-serve stick packaging preserves freshness and potency'
-      ],
-      ingredientsPlaceholder: 'Product information to be provided by VETANIC.',
-      recommendedUsage: 'Product information to be provided by VETANIC.',
-      packageSize: '2 g × 30 sticks',
-      countryOfOrigin: 'Made in Korea',
-      storageInstructions: 'Store in a cool, dry place away from moisture.',
       precautions: 'Product information to be provided by VETANIC.'
     }
   },
@@ -156,8 +146,12 @@ export const PRODUCTS: Product[] = [
     packageSize: '10 g × 15 sticks',
     imageUrl: 'https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?auto=format&fit=crop&w=800&q=80',
     isAvailable: true,
-    displayOrder: 4,
+    displayOrder: 3,
     featured: false,
+    tier: 'tier-a',
+    regularPrice: SEPTEMBER_2026_LAUNCH_PROMOTION.tierA.regularPrice,
+    launchPrice: SEPTEMBER_2026_LAUNCH_PROMOTION.tierA.launchPrice,
+    bundleOfferText: SEPTEMBER_2026_LAUNCH_PROMOTION.tierA.bundleDescription,
     details: {
       keyFeatures: [
         'Formulated specifically for canine eye tear stain management and ocular support',
@@ -167,6 +161,72 @@ export const PRODUCTS: Product[] = [
       ingredientsPlaceholder: 'Product information to be provided by VETANIC.',
       recommendedUsage: 'Product information to be provided by VETANIC.',
       packageSize: '10 g × 15 sticks',
+      countryOfOrigin: 'Made in Korea',
+      storageInstructions: 'Store in a cool, dry place.',
+      precautions: 'Product information to be provided by VETANIC.'
+    }
+  },
+
+  // --- TIER B PRODUCTS ---
+  {
+    id: 'probiotics',
+    slug: 'probiotics',
+    name: 'Probiotics',
+    petType: 'both',
+    petTypeLabel: 'DOG + CAT',
+    category: 'digestion',
+    categoryName: 'Digestion',
+    shortDescription: 'Digestion, weight & coat',
+    packageSize: '2 g × 30 sticks',
+    imageUrl: 'https://images.unsplash.com/photo-1543466835-00a7907e9de1?auto=format&fit=crop&w=800&q=80',
+    isAvailable: true,
+    displayOrder: 4,
+    featured: true,
+    tier: 'tier-b',
+    regularPrice: SEPTEMBER_2026_LAUNCH_PROMOTION.tierB.regularPrice,
+    launchPrice: SEPTEMBER_2026_LAUNCH_PROMOTION.tierB.launchPrice,
+    bundleOfferText: SEPTEMBER_2026_LAUNCH_PROMOTION.tierB.bundleDescription,
+    details: {
+      keyFeatures: [
+        'Multi-strain live probiotics specially formulated for companion animals',
+        'Supports stool consistency, gut microbiome balance, and nutrient absorption',
+        'Single-serve stick packaging preserves freshness and potency'
+      ],
+      ingredientsPlaceholder: 'Product information to be provided by VETANIC.',
+      recommendedUsage: 'Product information to be provided by VETANIC.',
+      packageSize: '2 g × 30 sticks',
+      countryOfOrigin: 'Made in Korea',
+      storageInstructions: 'Store in a cool, dry place away from moisture.',
+      precautions: 'Product information to be provided by VETANIC.'
+    }
+  },
+  {
+    id: 'hairball-care',
+    slug: 'hairball-care',
+    name: 'Hairball Care',
+    petType: 'cat',
+    petTypeLabel: 'CATS ONLY',
+    category: 'hairball',
+    categoryName: 'Hairball Care',
+    shortDescription: 'Hairball care',
+    packageSize: '12 g × 15 sticks',
+    imageUrl: 'https://images.unsplash.com/photo-1573865526739-10659fec78a5?auto=format&fit=crop&w=800&q=80',
+    isAvailable: true,
+    displayOrder: 5,
+    featured: false,
+    tier: 'tier-b',
+    regularPrice: SEPTEMBER_2026_LAUNCH_PROMOTION.tierB.regularPrice,
+    launchPrice: SEPTEMBER_2026_LAUNCH_PROMOTION.tierB.launchPrice,
+    bundleOfferText: SEPTEMBER_2026_LAUNCH_PROMOTION.tierB.bundleDescription,
+    details: {
+      keyFeatures: [
+        'Natural dietary fibers to gently facilitate ingested hair through the digestive tract',
+        'Helps reduce frequent hairball regurgitation',
+        'Soft creamy stick texture for easy daily reward'
+      ],
+      ingredientsPlaceholder: 'Product information to be provided by VETANIC.',
+      recommendedUsage: 'Product information to be provided by VETANIC.',
+      packageSize: '12 g × 15 sticks',
       countryOfOrigin: 'Made in Korea',
       storageInstructions: 'Store in a cool, dry place.',
       precautions: 'Product information to be provided by VETANIC.'
@@ -184,8 +244,12 @@ export const PRODUCTS: Product[] = [
     packageSize: '12 g × 15 sticks',
     imageUrl: 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?auto=format&fit=crop&w=800&q=80',
     isAvailable: true,
-    displayOrder: 5,
+    displayOrder: 6,
     featured: true,
+    tier: 'tier-b',
+    regularPrice: SEPTEMBER_2026_LAUNCH_PROMOTION.tierB.regularPrice,
+    launchPrice: SEPTEMBER_2026_LAUNCH_PROMOTION.tierB.launchPrice,
+    bundleOfferText: SEPTEMBER_2026_LAUNCH_PROMOTION.tierB.bundleDescription,
     details: {
       keyFeatures: [
         'Tailored renal and urinary tract support designed for cats of all ages',
@@ -201,30 +265,34 @@ export const PRODUCTS: Product[] = [
     }
   },
   {
-    id: 'hairball-care',
-    slug: 'hairball-care',
-    name: 'Hairball Care',
-    petType: 'cat',
-    petTypeLabel: 'CATS ONLY',
-    category: 'hairball',
-    categoryName: 'Hairball Care',
-    shortDescription: 'Hairball care',
-    packageSize: '12 g × 15 sticks',
-    imageUrl: 'https://images.unsplash.com/photo-1573865526739-10659fec78a5?auto=format&fit=crop&w=800&q=80',
+    id: 'fresh-omega-3-premium',
+    slug: 'fresh-omega-3-premium',
+    name: 'Fresh Omega-3 Premium',
+    petType: 'both',
+    petTypeLabel: 'DOG + CAT',
+    category: 'skin-coat',
+    categoryName: 'Skin & Coat',
+    shortDescription: 'Suitable for larger or older pets',
+    packageSize: '410 mg × 60 capsules',
+    imageUrl: 'https://images.unsplash.com/photo-1548767797-d8c844163c4c?auto=format&fit=crop&w=800&q=80',
     isAvailable: true,
-    displayOrder: 6,
+    displayOrder: 7,
     featured: false,
+    tier: 'tier-b',
+    regularPrice: SEPTEMBER_2026_LAUNCH_PROMOTION.tierB.regularPrice,
+    launchPrice: SEPTEMBER_2026_LAUNCH_PROMOTION.tierB.launchPrice,
+    bundleOfferText: SEPTEMBER_2026_LAUNCH_PROMOTION.tierB.bundleDescription,
     details: {
       keyFeatures: [
-        'Natural dietary fibers to gently facilitate ingested hair through the digestive tract',
-        'Helps reduce frequent hairball regurgitation',
-        'Soft creamy stick texture for easy daily reward'
+        'Higher concentration formula for medium-to-large breeds and senior pets',
+        'Promotes joint mobility, cardiovascular health, and skin barrier resilience',
+        'Rich in pure EPA and DHA fatty acids'
       ],
       ingredientsPlaceholder: 'Product information to be provided by VETANIC.',
       recommendedUsage: 'Product information to be provided by VETANIC.',
-      packageSize: '12 g × 15 sticks',
+      packageSize: '410 mg × 60 capsules',
       countryOfOrigin: 'Made in Korea',
-      storageInstructions: 'Store in a cool, dry place.',
+      storageInstructions: 'Store in a cool, dry place away from direct sunlight.',
       precautions: 'Product information to be provided by VETANIC.'
     }
   },
@@ -240,8 +308,12 @@ export const PRODUCTS: Product[] = [
     packageSize: '10 g × 30 sticks',
     imageUrl: 'https://images.unsplash.com/photo-1587300003388-59208cc962cb?auto=format&fit=crop&w=800&q=80',
     isAvailable: true,
-    displayOrder: 7,
+    displayOrder: 8,
     featured: true,
+    tier: 'tier-b',
+    regularPrice: SEPTEMBER_2026_LAUNCH_PROMOTION.tierB.regularPrice,
+    launchPrice: SEPTEMBER_2026_LAUNCH_PROMOTION.tierB.launchPrice,
+    bundleOfferText: SEPTEMBER_2026_LAUNCH_PROMOTION.tierB.bundleDescription,
     details: {
       keyFeatures: [
         'Specially shaped texture to gently brush teeth during chewing',
@@ -256,6 +328,8 @@ export const PRODUCTS: Product[] = [
       precautions: 'Product information to be provided by VETANIC.'
     }
   },
+
+  // --- TREATS ---
   {
     id: 'sweet-potato-pumpkin-treats',
     slug: 'sweet-potato-pumpkin-treats',
@@ -268,8 +342,12 @@ export const PRODUCTS: Product[] = [
     packageSize: '3 g × 30 pieces',
     imageUrl: 'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?auto=format&fit=crop&w=800&q=80',
     isAvailable: true,
-    displayOrder: 8,
+    displayOrder: 9,
     featured: false,
+    tier: 'treats',
+    regularPrice: SEPTEMBER_2026_LAUNCH_PROMOTION.treats['sweet-potato-pumpkin-treats'].regularPrice,
+    launchPrice: SEPTEMBER_2026_LAUNCH_PROMOTION.treats['sweet-potato-pumpkin-treats'].launchPrice,
+    bundleOfferText: 'Bundle Offer: 2 for SGD 22.00 · 3 for SGD 31.50',
     details: {
       keyFeatures: [
         'Wholesome meat-free recipe ideal for dogs with common protein allergies',
@@ -296,8 +374,12 @@ export const PRODUCTS: Product[] = [
     packageSize: '60 g',
     imageUrl: 'https://images.unsplash.com/photo-1535930891776-0c2dfb7fda1a?auto=format&fit=crop&w=800&q=80',
     isAvailable: true,
-    displayOrder: 9,
+    displayOrder: 10,
     featured: false,
+    tier: 'treats',
+    regularPrice: SEPTEMBER_2026_LAUNCH_PROMOTION.treats['freeze-dried-vegetables'].regularPrice,
+    launchPrice: SEPTEMBER_2026_LAUNCH_PROMOTION.treats['freeze-dried-vegetables'].launchPrice,
+    bundleOfferText: 'Bundle Offer: 2 for SGD 32.00 · 3 for SGD 45.00',
     details: {
       keyFeatures: [
         '100% natural vegetables gently freeze-dried to lock in nutrients and aroma',

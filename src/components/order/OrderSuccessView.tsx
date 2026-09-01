@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { CheckCircle2, Clock, MessageSquare, AlertCircle, ArrowRight, Home } from 'lucide-react';
+import { CheckCircle2, Clock, MessageSquare, AlertCircle, ArrowRight, Home, Tag } from 'lucide-react';
 import { OrderRecord } from '../../types/order';
 
 interface OrderSuccessViewProps {
@@ -39,33 +39,45 @@ export const OrderSuccessView: React.FC<OrderSuccessViewProps> = ({ order, onRes
             Thank you! 🐾
           </h1>
           <p className="text-base text-brand-800 font-semibold mt-1">
-            We've received your VETANIC order request.
+            Your VETANIC order request has been received.
           </p>
         </div>
 
-        {/* Order Reference Badge */}
-        <div className="bg-[#FAF8F5] p-4 rounded-2xl border border-brand-100 max-w-sm mx-auto">
-          <span className="text-[11px] font-bold text-charcoal-muted uppercase tracking-wider block mb-1">
-            Order Request Reference
-          </span>
-          <span className="font-mono text-xl font-bold text-brand-900 tracking-wider">
-            {order.orderReference}
-          </span>
+        {/* Order Reference Badge & Estimated Total */}
+        <div className="bg-[#FAF8F5] p-5 rounded-2xl border border-brand-100 max-w-md mx-auto space-y-2">
+          <div>
+            <span className="text-[11px] font-bold text-charcoal-muted uppercase tracking-wider block mb-1">
+              Order Request Reference
+            </span>
+            <span className="font-mono text-xl font-bold text-brand-900 tracking-wider">
+              {order.orderReference}
+            </span>
+          </div>
+
+          {order.pricing && (
+            <div className="pt-2 border-t border-brand-200/60 flex items-center justify-between px-2">
+              <span className="text-xs text-charcoal-muted font-medium">Estimated Total:</span>
+              <span className="text-lg font-serif font-bold text-brand-900">
+                SGD {order.pricing.estimatedTotal.toFixed(2)}
+              </span>
+            </div>
+          )}
         </div>
 
-        {/* Important notice reminder */}
+        {/* Important Confirmation Notice */}
         <div className="p-5 rounded-2xl bg-amber-50/80 border border-amber-200/80 text-left space-y-2">
           <div className="flex items-center gap-2 text-amber-900 font-bold text-sm">
             <AlertCircle className="w-4 h-4 text-amber-700 flex-shrink-0" />
             <span>Next Step: Order Confirmation</span>
           </div>
           <p className="text-xs text-amber-950 leading-relaxed">
-            Our team will check product availability and contact you via{' '}
-            <strong className="font-bold underline">{order.customer.preferredContact}</strong> ({order.customer.contactNumber}) to confirm your order, final amount, and delivery arrangements.
+            We will confirm product availability, your final total and delivery arrangements before payment. Please do not make payment until you receive our confirmation.
           </p>
-          <div className="pt-2 border-t border-amber-200/60 flex items-center gap-2 text-xs font-bold text-amber-900">
-            <Clock className="w-3.5 h-3.5" />
-            <span>Please do not make payment until you receive our confirmation.</span>
+          <div className="pt-2 border-t border-amber-200/60 flex items-center gap-2 text-xs text-amber-900">
+            <Clock className="w-3.5 h-3.5 flex-shrink-0" />
+            <span>
+              Our team will reach out via <strong className="underline">{order.customer.preferredContact}</strong> ({order.customer.contactNumber}).
+            </span>
           </div>
         </div>
 
@@ -79,14 +91,42 @@ export const OrderSuccessView: React.FC<OrderSuccessViewProps> = ({ order, onRes
             {order.items.map((item, idx) => (
               <div key={idx} className="flex justify-between items-center text-xs">
                 <span className="font-medium text-charcoal">
-                  {item.productName} ({item.packageSize})
+                  {item.productName} ({item.packageSize}) × {item.quantity}
                 </span>
-                <span className="font-bold text-brand-800 bg-brand-50 px-2 py-0.5 rounded-md border border-brand-100">
-                  Qty: {item.quantity}
+                <span className="font-bold text-brand-900">
+                  SGD {(item.unitPrice * item.quantity).toFixed(2)}
                 </span>
               </div>
             ))}
           </div>
+
+          {order.pricing && (
+            <div className="pt-3 border-t border-gray-200 space-y-1.5 text-xs text-charcoal">
+              <div className="flex justify-between">
+                <span className="text-charcoal-muted">Subtotal:</span>
+                <span>SGD {order.pricing.subtotal.toFixed(2)}</span>
+              </div>
+              {order.pricing.bundleDiscount > 0 && (
+                <div className="flex justify-between text-brand-700 font-semibold">
+                  <span className="flex items-center gap-1">
+                    <Tag className="w-3 h-3" />
+                    <span>Mix & Match Discount:</span>
+                  </span>
+                  <span>- SGD {order.pricing.bundleDiscount.toFixed(2)}</span>
+                </div>
+              )}
+              <div className="flex justify-between">
+                <span className="text-charcoal-muted">Delivery ({getDeliveryLabel(order.delivery.deliveryMethod)}):</span>
+                <span>
+                  {order.pricing.deliveryFee === 0 ? 'FREE' : `SGD ${order.pricing.deliveryFee.toFixed(2)}`}
+                </span>
+              </div>
+              <div className="flex justify-between font-bold text-sm pt-1 border-t border-gray-200 text-brand-950">
+                <span>Estimated Total:</span>
+                <span className="font-serif">SGD {order.pricing.estimatedTotal.toFixed(2)}</span>
+              </div>
+            </div>
+          )}
 
           <div className="pt-3 border-t border-gray-200 grid grid-cols-2 gap-2 text-xs text-charcoal-muted">
             <div>
@@ -98,7 +138,7 @@ export const OrderSuccessView: React.FC<OrderSuccessViewProps> = ({ order, onRes
               <span>{order.customer.preferredContact}</span>
             </div>
             <div className="col-span-2 pt-1">
-              <span className="font-semibold block text-charcoal">Delivery Method:</span>
+              <span className="font-semibold block text-charcoal">Delivery Arrangement:</span>
               <span>{getDeliveryLabel(order.delivery.deliveryMethod)}</span>
               {order.delivery.deliveryAddress && (
                 <div className="text-[11px] text-gray-500 mt-0.5">
@@ -107,7 +147,7 @@ export const OrderSuccessView: React.FC<OrderSuccessViewProps> = ({ order, onRes
               )}
             </div>
             <div className="col-span-2 pt-1">
-              <span className="font-semibold block text-charcoal">Payment Preference:</span>
+              <span className="font-semibold block text-charcoal">Payment Method:</span>
               <span>{getPaymentLabel(order.paymentPreference)}</span>
             </div>
           </div>

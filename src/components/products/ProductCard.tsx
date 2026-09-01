@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
-import { Plus, Eye, Check } from 'lucide-react';
+import { Plus, Eye, Check, Sparkles } from 'lucide-react';
 import { Product } from '../../types/product';
 import { PetBadge } from '../common/Badge';
 import { useOrder } from '../../context/OrderContext';
+import { getProductPricing } from '../../lib/pricing';
 
 interface ProductCardProps {
   product: Product;
@@ -14,6 +15,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
   const inOrder = isItemInOrder(product.id);
   const qtyInOrder = getItemQuantity(product.id);
+  const pricing = getProductPricing(product);
 
   const handleQuickAdd = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -61,16 +63,47 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           </span>
         </div>
 
-        <h3 className="text-lg font-bold text-charcoal group-hover:text-brand-800 transition-colors line-clamp-1">
+        <h3 className="text-base sm:text-lg font-bold text-charcoal group-hover:text-brand-800 transition-colors line-clamp-1">
           {product.name}
         </h3>
 
-        <p className="text-xs text-charcoal-muted line-clamp-2 mt-1 mb-4 flex-1">
+        <p className="text-xs text-charcoal-muted line-clamp-2 mt-1 mb-3">
           {product.shortDescription}
         </p>
 
+        {/* Pricing Display */}
+        <div className="mb-3 pt-2 border-t border-gray-100">
+          <div className="flex items-baseline gap-2 flex-wrap">
+            <span className="text-lg font-bold text-brand-900 font-serif">
+              SGD {pricing.activePrice.toFixed(2)}
+            </span>
+
+            {pricing.isPromo && (
+              <span className="text-xs text-charcoal-muted line-through">
+                SGD {pricing.regularPrice.toFixed(2)}
+              </span>
+            )}
+          </div>
+
+          {pricing.isPromo && (
+            <div className="flex items-center gap-1 mt-1">
+              <span className="inline-flex items-center gap-1 text-[10px] font-bold text-amber-900 bg-amber-50 px-2 py-0.5 rounded-md border border-amber-200/80">
+                <Sparkles className="w-2.5 h-2.5 text-amber-600" />
+                <span>Singapore Launch Price</span>
+              </span>
+            </div>
+          )}
+
+          {/* Bundle Offer Summary */}
+          {product.bundleOfferText && (
+            <div className="mt-2 text-[11px] text-brand-800 font-semibold bg-brand-50/70 px-2.5 py-1 rounded-lg border border-brand-100">
+              {product.bundleOfferText}
+            </div>
+          )}
+        </div>
+
         {/* Actions */}
-        <div className="flex items-center gap-2 pt-3 border-t border-gray-100">
+        <div className="flex items-center gap-2 pt-2 mt-auto border-t border-gray-100">
           <button
             type="button"
             onClick={(e) => {

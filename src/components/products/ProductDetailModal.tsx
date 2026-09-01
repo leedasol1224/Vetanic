@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { X, Plus, Minus, Check, Package, MapPin, ShieldAlert, Sparkles, Info } from 'lucide-react';
+import { X, Plus, Minus, Check, Package, MapPin, ShieldAlert, Sparkles, Info, Tag } from 'lucide-react';
 import { useOrder } from '../../context/OrderContext';
 import { PetBadge } from '../common/Badge';
+import { getProductPricing } from '../../lib/pricing';
 
 export const ProductDetailModal: React.FC = () => {
   const { activeProductModal, closeProductModal, addToOrder, isItemInOrder, getItemQuantity } = useOrder();
@@ -10,10 +11,8 @@ export const ProductDetailModal: React.FC = () => {
 
   useEffect(() => {
     if (activeProductModal) {
-      const existingQty = getItemQuantity(activeProductModal.id);
-      setQuantity(existingQty > 0 ? 1 : 1);
+      setQuantity(1);
       setActiveTab('details');
-      // Lock body scroll
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = 'auto';
@@ -28,6 +27,7 @@ export const ProductDetailModal: React.FC = () => {
   const product = activeProductModal;
   const inOrder = isItemInOrder(product.id);
   const currentInOrderQty = getItemQuantity(product.id);
+  const pricing = getProductPricing(product);
 
   const handleIncrement = () => setQuantity((prev) => prev + 1);
   const handleDecrement = () => setQuantity((prev) => (prev > 1 ? prev - 1 : 1));
@@ -36,6 +36,8 @@ export const ProductDetailModal: React.FC = () => {
     addToOrder(product, quantity);
     closeProductModal();
   };
+
+  const estimatedLineSubtotal = (pricing.activePrice * quantity).toFixed(2);
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-3 sm:p-4 bg-black/50 backdrop-blur-sm animate-soft-in">
@@ -92,11 +94,37 @@ export const ProductDetailModal: React.FC = () => {
                 {product.name}
               </h2>
 
-              <p className="text-brand-800 font-medium text-sm mt-1 mb-4">
+              <p className="text-brand-800 font-medium text-sm mt-1 mb-3">
                 {product.shortDescription}
               </p>
 
-              <div className="p-3.5 bg-brand-50/70 rounded-xl border border-brand-100/80 mb-4 space-y-1.5">
+              {/* Pricing Callout */}
+              <div className="p-3.5 bg-[#FAF8F5] rounded-2xl border border-brand-200/80 mb-3 space-y-1.5">
+                <div className="flex items-baseline gap-2 flex-wrap">
+                  <span className="text-2xl font-bold text-brand-900 font-serif">
+                    SGD {pricing.activePrice.toFixed(2)}
+                  </span>
+                  {pricing.isPromo && (
+                    <span className="text-xs text-charcoal-muted line-through">
+                      SGD {pricing.regularPrice.toFixed(2)}
+                    </span>
+                  )}
+                  {pricing.isPromo && (
+                    <span className="text-[10px] font-bold text-amber-900 bg-amber-100 px-2 py-0.5 rounded-md">
+                      Launch Price
+                    </span>
+                  )}
+                </div>
+
+                {product.bundleOfferText && (
+                  <div className="text-xs font-bold text-brand-800 flex items-center gap-1.5 pt-1 border-t border-brand-200/50">
+                    <Tag className="w-3.5 h-3.5 text-brand-600 flex-shrink-0" />
+                    <span>{product.bundleOfferText}</span>
+                  </div>
+                )}
+              </div>
+
+              <div className="p-3 bg-brand-50/60 rounded-xl border border-brand-100/70 mb-4 space-y-1">
                 <div className="flex items-center gap-2 text-xs font-medium text-brand-900">
                   <Package className="w-3.5 h-3.5 text-brand-600" />
                   <span><strong>Package:</strong> {product.packageSize}</span>
@@ -108,16 +136,17 @@ export const ProductDetailModal: React.FC = () => {
                 {inOrder && (
                   <div className="flex items-center gap-1.5 text-xs text-brand-700 font-semibold pt-1 border-t border-brand-200/60">
                     <Check className="w-3.5 h-3.5 text-brand-600" />
-                    <span>Currently in your order: {currentInOrderQty} units</span>
+                    <span>Currently in order: {currentInOrderQty} units</span>
                   </div>
                 )}
               </div>
 
               {/* Quantity Selector & Add Button */}
-              <div className="pt-2">
-                <label className="block text-xs font-semibold text-charcoal-muted uppercase tracking-wider mb-2">
-                  Select Quantity
-                </label>
+              <div className="pt-1">
+                <div className="flex items-center justify-between text-xs font-semibold text-charcoal-muted uppercase tracking-wider mb-2">
+                  <span>Quantity</span>
+                  <span className="text-charcoal font-bold">Line Total: SGD {estimatedLineSubtotal}</span>
+                </div>
                 <div className="flex items-center gap-3">
                   <div className="flex items-center border border-gray-200 rounded-xl bg-white shadow-sm overflow-hidden">
                     <button
@@ -198,7 +227,7 @@ export const ProductDetailModal: React.FC = () => {
                     Product Highlights
                   </h4>
                   {product.details.keyFeatures && (
-                    <ul className="space-y-1.5 pl-4 list-disc text-charcoal-muted">
+                    <ul className="space-y-1.5 pl-4 list-disc text-charcoal-muted text-xs sm:text-sm">
                       {product.details.keyFeatures.map((feat, idx) => (
                         <li key={idx}>{feat}</li>
                       ))}
@@ -266,7 +295,7 @@ export const ProductDetailModal: React.FC = () => {
             className="inline-flex items-center gap-2 bg-brand-800 hover:bg-brand-900 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition-all"
           >
             <Check className="w-3.5 h-3.5" />
-            <span>Add {quantity} to Order</span>
+            <span>Add {quantity} to Order (SGD {estimatedLineSubtotal})</span>
           </button>
         </div>
       </div>

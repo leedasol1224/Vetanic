@@ -1,12 +1,16 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode, useMemo } from 'react';
 import { Product } from '../types/product';
-import { OrderItem, OrderSubmission, OrderRecord } from '../types/order';
+import { OrderItem, OrderSubmission, OrderRecord, DeliveryMethod, PricingSummary } from '../types/order';
 import { getSavedCart, saveCart, clearCart } from '../lib/storage';
 import { submitOrderRequest } from '../lib/supabase';
+import { calculateOrderPricing } from '../lib/pricing';
 
 interface OrderContextType {
   items: OrderItem[];
   totalItemCount: number;
+  deliveryMethod: DeliveryMethod;
+  setDeliveryMethod: (method: DeliveryMethod) => void;
+  pricingSummary: PricingSummary;
   addToOrder: (product: Product, quantity?: number) => void;
   updateQuantity: (productId: string, quantity: number) => void;
   removeFromOrder: (productId: string) => void;
@@ -28,6 +32,7 @@ const OrderContext = createContext<OrderContextType | undefined>(undefined);
 
 export const OrderProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
   const [items, setItems] = useState<OrderItem[]>(() => getSavedCart());
+  const [deliveryMethod, setDeliveryMethod] = useState<DeliveryMethod>('standard');
   const [lastAddedProduct, setLastAddedProduct] = useState<{ product: Product; quantity: number } | null>(null);
   const [showAddedToast, setShowAddedToast] = useState(false);
   const [lastSubmittedOrder, setLastSubmittedOrder] = useState<OrderRecord | null>(null);
@@ -38,7 +43,13 @@ export const OrderProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     saveCart(items);
   }, [items]);
 
-  const totalItemCount = items.reduce((sum, item) => sum + item.quantity, 0);
+  const totalItemCount = useMemo(() => {
+    return items.reduce((sum, item) => sum + item.quantity, 0);
+  }, [items]);
+
+  const pricingSummary = useMemo(() => {
+    return calculateOrderPricing(items, deliveryMethod);
+  }, [items, deliveryMethod]);
 
   const addToOrder = (product: Product, quantity: number = 1) => {
     if (quantity <= 0) return;
@@ -97,7 +108,16 @@ export const OrderProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   };
 
   const submitOrder = async (submission: OrderSubmission): Promise<OrderRecord> => {
-    const orderRecord = await submitOrderRequest(submission);
+    const orderRecord = await submitOrderRequest({
+      ...submission,
+      pricing: {
+        subtotal: pricingSummary.productSubtotal,
+        bundleDiscount: pricingSummary.bundleDiscount,
+        productTotal: pricingSummary.productTotal,
+        deliveryFee: pricingSummary.deliveryFee,
+        estimatedTotal: pricingSummary.estimatedTotal
+      }
+    });
     setLastSubmittedOrder(orderRecord);
     clearOrder();
     return orderRecord;
@@ -116,6 +136,9 @@ export const OrderProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       value={{
         items,
         totalItemCount,
+        deliveryMethod,
+        setDeliveryMethod,
+        pricingSummary,
         addToOrder,
         updateQuantity,
         removeFromOrder,

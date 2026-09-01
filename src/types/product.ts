@@ -7,7 +7,10 @@ export type ProductCategory =
   | 'kidney-urinary'
   | 'hairball'
   | 'dental'
-  | 'treats';
+  | 'treats'
+  | 'joint-care';
+
+export type PricingTier = 'tier-a' | 'tier-b' | 'treats' | 'standard';
 
 export interface Product {
   id: string;
@@ -23,6 +26,10 @@ export interface Product {
   isAvailable: boolean;
   displayOrder: number;
   featured?: boolean;
+  tier: PricingTier;
+  regularPrice: number;
+  launchPrice: number;
+  bundleOfferText?: string;
   details: {
     keyFeatures?: string[];
     ingredientsPlaceholder?: string;

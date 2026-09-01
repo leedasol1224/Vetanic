@@ -44,6 +44,23 @@ export interface OrderAcknowledgements {
   wellnessSupplementAcknowledged: boolean;
 }
 
+export interface PricingSummary {
+  regularSubtotal: number;
+  productSubtotal: number;
+  bundleDiscount: number;
+  productTotal: number;
+  deliveryFee: number;
+  estimatedTotal: number;
+  savingsAmount: number;
+  tierACount: number;
+  tierBCount: number;
+  treatsCount: number;
+  upsellMessages: string[];
+  freeDeliveryMessage: string;
+  isFreeDeliveryUnlocked: boolean;
+  freeDeliveryThresholdDelta: number;
+}
+
 export interface OrderSubmission {
   customer: CustomerDetails;
   delivery: DeliveryDetails;
@@ -56,7 +73,15 @@ export interface OrderSubmission {
     productName: string;
     packageSize: string;
     quantity: number;
+    unitPrice: number;
   }>;
+  pricing?: {
+    subtotal: number;
+    bundleDiscount: number;
+    productTotal: number;
+    deliveryFee: number;
+    estimatedTotal: number;
+  };
 }
 
 export interface OrderRecord extends OrderSubmission {

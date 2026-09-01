@@ -3,10 +3,10 @@ import { Link } from 'react-router-dom';
 import { useOrder } from '../context/OrderContext';
 import { OrderItemRow } from '../components/order/OrderItemRow';
 import { OrderSuccessView } from '../components/order/OrderSuccessView';
+import { DeliveryProgressBar } from '../components/order/DeliveryProgressBar';
 import { 
   ContactMethod, 
   CustomerType, 
-  DeliveryMethod, 
   PaymentMethod, 
   ReferralSource, 
   OrderSubmission 
@@ -22,14 +22,19 @@ import {
   AlertCircle, 
   Send, 
   Sparkles,
-  ArrowRight
+  ArrowRight,
+  Tag
 } from 'lucide-react';
+import { getProductPricing } from '../lib/pricing';
 
 export const OrderPage: React.FC = () => {
   const { 
     items, 
     updateQuantity, 
     removeFromOrder, 
+    deliveryMethod,
+    setDeliveryMethod,
+    pricingSummary,
     submitOrder, 
     lastSubmittedOrder, 
     setLastSubmittedOrder 
@@ -44,7 +49,6 @@ export const OrderPage: React.FC = () => {
   const [preferredContact, setPreferredContact] = useState<ContactMethod>('WhatsApp');
   const [customerType, setCustomerType] = useState<CustomerType>('new');
 
-  const [deliveryMethod, setDeliveryMethod] = useState<DeliveryMethod>('standard');
   const [deliveryAddress, setDeliveryAddress] = useState('');
   const [postalCode, setPostalCode] = useState('');
 
@@ -167,12 +171,16 @@ export const OrderPage: React.FC = () => {
       },
       referralSource,
       otherReferralSource: referralSource === 'Other' ? otherReferral.trim() : undefined,
-      items: items.map((item) => ({
-        productId: item.product.id,
-        productName: item.product.name,
-        packageSize: item.product.packageSize,
-        quantity: item.quantity
-      }))
+      items: items.map((item) => {
+        const pricing = getProductPricing(item.product);
+        return {
+          productId: item.product.id,
+          productName: item.product.name,
+          packageSize: item.product.packageSize,
+          quantity: item.quantity,
+          unitPrice: pricing.activePrice
+        };
+      })
     };
 
     try {
@@ -193,7 +201,7 @@ export const OrderPage: React.FC = () => {
     <main className="flex-1 bg-[#FAF8F5] py-10 md:py-16">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="text-center mb-10">
+        <div className="text-center mb-8">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-100/80 text-brand-900 text-xs font-bold uppercase tracking-wider mb-2 border border-brand-200">
             <Sparkles className="w-3.5 h-3.5 text-brand-600" />
             <span>Singapore Direct Order Request</span>
@@ -206,6 +214,11 @@ export const OrderPage: React.FC = () => {
           <p className="text-xs sm:text-sm text-charcoal-muted mt-2 max-w-xl mx-auto">
             Submit your product request. Our team will verify stock and contact you directly with final order amount and payment details.
           </p>
+        </div>
+
+        {/* Free Delivery & Mix-and-match progress banner */}
+        <div className="mb-8">
+          <DeliveryProgressBar />
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-8">
@@ -241,11 +254,16 @@ export const OrderPage: React.FC = () => {
               ))}
             </div>
 
-            <div className="mt-4 pt-4 border-t border-gray-100 flex justify-between items-center text-xs font-medium text-charcoal-muted">
-              <span>Total Selected Items:</span>
-              <span className="text-sm font-bold text-brand-900 bg-brand-50 px-3 py-1 rounded-lg border border-brand-200">
-                {totalQuantity} {totalQuantity === 1 ? 'unit' : 'units'}
-              </span>
+            <div className="mt-4 pt-4 border-t border-gray-100 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 text-xs font-medium text-charcoal-muted">
+              <div>
+                Total Selected: <strong className="text-charcoal font-bold">{totalQuantity} {totalQuantity === 1 ? 'unit' : 'units'}</strong>
+              </div>
+              {pricingSummary.savingsAmount > 0 && (
+                <div className="inline-flex items-center gap-1 text-xs font-bold text-amber-900 bg-amber-50 px-3 py-1 rounded-lg border border-amber-200">
+                  <Tag className="w-3.5 h-3.5 text-amber-700" />
+                  <span>You save SGD {pricingSummary.savingsAmount.toFixed(2)} with launch offers!</span>
+                </div>
+              )}
             </div>
           </section>
 
@@ -450,7 +468,11 @@ export const OrderPage: React.FC = () => {
                     <span className="font-bold">Standard Local Delivery</span>
                   </div>
                   <span className="text-[11px] text-charcoal-muted ml-5">
-                    Courier delivery to Singapore addresses
+                    {pricingSummary.isFreeDeliveryUnlocked ? (
+                      <strong className="text-brand-700 font-bold">FREE (Orders ≥ SGD 50)</strong>
+                    ) : (
+                      'SGD 4.50 (Free over SGD 50)'
+                    )}
                   </span>
                 </label>
 
@@ -473,7 +495,7 @@ export const OrderPage: React.FC = () => {
                     <span className="font-bold">Self-collection</span>
                   </div>
                   <span className="text-[11px] text-charcoal-muted ml-5">
-                    @ Novena MRT (Arranged timing)
+                    @ Novena MRT (FREE)
                   </span>
                 </label>
 
@@ -496,7 +518,7 @@ export const OrderPage: React.FC = () => {
                     <span className="font-bold">Same-day Delivery</span>
                   </div>
                   <span className="text-[11px] text-charcoal-muted ml-5">
-                    Express dispatch (Additional charges apply)
+                    Express dispatch (+SGD 15.00)
                   </span>
                 </label>
               </div>
@@ -567,7 +589,7 @@ export const OrderPage: React.FC = () => {
                 <span>Please do not make payment yet.</span>
               </div>
               <p className="text-xs text-amber-900/90 leading-relaxed">
-                We will confirm product availability and your final order amount before sending official payment instructions.
+                We will confirm product availability, your final total and delivery arrangements before sending official payment instructions.
               </p>
             </div>
 
@@ -749,21 +771,49 @@ export const OrderPage: React.FC = () => {
               </h3>
             </div>
 
-            <div className="space-y-2 border-y border-brand-800 py-4 text-xs text-brand-100">
-              <div className="flex justify-between">
-                <span>Selected Items:</span>
-                <span className="font-bold text-white">{totalQuantity} units</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Delivery:</span>
-                <span className="font-bold text-white">
-                  {deliveryMethod === 'self_collection' ? 'Self-collection @ Novena' : 'Local Delivery'}
+            {/* Financial Breakdown */}
+            <div className="space-y-2.5 border-y border-brand-800 py-4 text-xs text-brand-100">
+              <div className="flex justify-between items-center">
+                <span>Product Subtotal ({totalQuantity} items):</span>
+                <span className="font-semibold text-white">
+                  SGD {pricingSummary.productSubtotal.toFixed(2)}
                 </span>
               </div>
-              <div className="flex justify-between">
-                <span>Payment Preference:</span>
+
+              {pricingSummary.bundleDiscount > 0 && (
+                <div className="flex justify-between items-center text-amber-300 font-medium">
+                  <span className="flex items-center gap-1">
+                    <Tag className="w-3.5 h-3.5 text-amber-400" />
+                    <span>Mix & Match Discount:</span>
+                  </span>
+                  <span className="font-bold">
+                    - SGD {pricingSummary.bundleDiscount.toFixed(2)}
+                  </span>
+                </div>
+              )}
+
+              <div className="flex justify-between items-center pt-1 border-t border-brand-800/60">
+                <span className="font-semibold text-white">Product Total:</span>
                 <span className="font-bold text-white">
-                  {paymentPreference === 'paynow' ? 'PayNow' : 'Bank Transfer'}
+                  SGD {pricingSummary.productTotal.toFixed(2)}
+                </span>
+              </div>
+
+              <div className="flex justify-between items-center">
+                <span>Delivery ({deliveryMethod === 'self_collection' ? 'Self-collection' : deliveryMethod === 'same_day' ? 'Same-day' : 'Standard Delivery'}):</span>
+                <span className="font-semibold text-white">
+                  {pricingSummary.deliveryFee === 0 ? (
+                    <span className="text-amber-300 font-bold">FREE</span>
+                  ) : (
+                    `SGD ${pricingSummary.deliveryFee.toFixed(2)}`
+                  )}
+                </span>
+              </div>
+
+              <div className="flex justify-between items-center pt-2 border-t border-brand-700 text-sm">
+                <span className="font-bold text-white">Estimated Total:</span>
+                <span className="font-serif font-bold text-xl text-amber-300">
+                  SGD {pricingSummary.estimatedTotal.toFixed(2)}
                 </span>
               </div>
             </div>
@@ -771,7 +821,7 @@ export const OrderPage: React.FC = () => {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full py-4 px-6 rounded-2xl bg-brand-500 hover:bg-brand-400 text-brand-950 font-black text-sm tracking-wide uppercase transition-all shadow-md active:scale-[0.99] flex items-center justify-center gap-2 disabled:opacity-50"
+              className="w-full py-4 px-6 rounded-2xl bg-amber-400 hover:bg-amber-300 text-brand-950 font-black text-sm tracking-wide uppercase transition-all shadow-md active:scale-[0.99] flex items-center justify-center gap-2 disabled:opacity-50"
             >
               {isSubmitting ? (
                 <span>Submitting Request...</span>
@@ -783,9 +833,14 @@ export const OrderPage: React.FC = () => {
               )}
             </button>
 
-            <p className="text-[11px] text-center text-brand-300 leading-relaxed">
-              * Payment is not collected at this step. We will confirm product stock and reach out via your preferred contact method.
-            </p>
+            <div className="text-[11px] text-center text-brand-300 leading-relaxed space-y-1">
+              <p>
+                * Payment is not collected at this step. We will confirm product availability, your final total and delivery arrangements before sending payment instructions.
+              </p>
+              <p className="text-brand-400 font-medium">
+                Accepted Payment: PayNow (UEN/QR) · Bank Transfer
+              </p>
+            </div>
           </div>
         </form>
       </div>

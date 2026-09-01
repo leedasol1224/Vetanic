@@ -2,6 +2,7 @@ import React from 'react';
 import { Minus, Plus, Trash2 } from 'lucide-react';
 import { OrderItem } from '../../types/order';
 import { PetBadge } from '../common/Badge';
+import { getProductPricing } from '../../lib/pricing';
 
 interface OrderItemRowProps {
   item: OrderItem;
@@ -15,6 +16,8 @@ export const OrderItemRow: React.FC<OrderItemRowProps> = ({
   onRemove,
 }) => {
   const { product, quantity } = item;
+  const pricing = getProductPricing(product);
+  const lineTotal = (pricing.activePrice * quantity).toFixed(2);
 
   return (
     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 bg-white rounded-2xl border border-brand-100 shadow-sm">
@@ -35,13 +38,20 @@ export const OrderItemRow: React.FC<OrderItemRowProps> = ({
           <h4 className="text-sm font-bold text-charcoal truncate">
             {product.name}
           </h4>
-          <p className="text-xs text-charcoal-muted truncate">
-            {product.shortDescription}
-          </p>
+          <div className="flex items-baseline gap-1.5 mt-0.5">
+            <span className="text-xs font-bold text-brand-900">
+              SGD {pricing.activePrice.toFixed(2)}
+            </span>
+            {pricing.isPromo && (
+              <span className="text-[10px] text-charcoal-muted line-through">
+                SGD {pricing.regularPrice.toFixed(2)}
+              </span>
+            )}
+          </div>
         </div>
       </div>
 
-      {/* Quantity & Remove controls */}
+      {/* Quantity, Line Total & Remove controls */}
       <div className="flex items-center justify-between sm:justify-end gap-4 w-full sm:w-auto pt-2 sm:pt-0 border-t sm:border-t-0 border-gray-100">
         <div className="flex items-center border border-gray-200 rounded-xl bg-gray-50/70 p-0.5">
           <button
@@ -64,6 +74,15 @@ export const OrderItemRow: React.FC<OrderItemRowProps> = ({
           >
             <Plus className="w-3.5 h-3.5" />
           </button>
+        </div>
+
+        <div className="text-right min-w-[4.5rem]">
+          <div className="text-xs font-bold text-charcoal">
+            SGD {lineTotal}
+          </div>
+          <div className="text-[10px] text-charcoal-muted">
+            ({quantity} × ${pricing.activePrice.toFixed(2)})
+          </div>
         </div>
 
         <button

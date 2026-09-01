@@ -12,6 +12,7 @@ interface ProductFiltersProps {
 const CATEGORY_OPTIONS: Array<{ id: 'all' | ProductCategory; label: string }> = [
   { id: 'all', label: 'All Needs' },
   { id: 'skin-coat', label: 'Skin & Coat' },
+  { id: 'joint-care', label: 'Joint Support' },
   { id: 'digestion', label: 'Digestion' },
   { id: 'eye-care', label: 'Eye Care' },
   { id: 'kidney-urinary', label: 'Kidney & Urinary' },
