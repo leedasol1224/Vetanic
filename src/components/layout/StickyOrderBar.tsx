@@ -1,0 +1,40 @@
+import React from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import { ShoppingBag, ArrowRight } from 'lucide-react';
+import { useOrder } from '../../context/OrderContext';
+
+export const StickyOrderBar: React.FC = () => {
+  const { totalItemCount } = useOrder();
+  const location = useLocation();
+
+  // Hide on order page itself
+  if (location.pathname === '/order' || totalItemCount === 0) {
+    return null;
+  }
+
+  return (
+    <div className="fixed bottom-0 left-0 right-0 z-30 p-3 bg-white/95 backdrop-blur-md border-t border-brand-200 md:hidden shadow-lg animate-soft-in">
+      <div className="flex items-center justify-between gap-3 max-w-md mx-auto">
+        <div className="flex items-center gap-2.5">
+          <div className="w-10 h-10 rounded-xl bg-brand-100 flex items-center justify-center text-brand-800 font-bold">
+            <ShoppingBag className="w-5 h-5" />
+          </div>
+          <div>
+            <div className="text-xs font-bold text-charcoal">
+              {totalItemCount} {totalItemCount === 1 ? 'item' : 'items'} in order
+            </div>
+            <div className="text-[10px] text-charcoal-muted">Ready to submit details</div>
+          </div>
+        </div>
+
+        <Link
+          to="/order"
+          className="inline-flex items-center gap-1.5 bg-brand-800 text-white font-bold text-xs px-4 py-2.5 rounded-xl shadow-sm hover:bg-brand-900 transition-colors"
+        >
+          <span>Complete Order</span>
+          <ArrowRight className="w-3.5 h-3.5" />
+        </Link>
+      </div>
+    </div>
+  );
+};

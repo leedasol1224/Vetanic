@@ -1,0 +1,133 @@
+export const BRAND_CONTENT = {
+  name: 'VETANIC',
+  tagline: 'Wellness Made for Their Everyday.',
+  subheadline: 'Thoughtfully developed pet wellness products from Korea, now available in Singapore.',
+  parentBrand: 'Nongshim Banryodaum',
+  brandRelationText: 'VETANIC is the international-facing brand of Nongshim Banryodaum, bringing thoughtfully developed Korean pet wellness products to pet families beyond Korea.',
+  footerRelationText: 'VETANIC is the international-facing brand of Nongshim Banryodaum.',
+  originCountry: 'Korea',
+  initialMarket: 'Singapore',
+
+  intro: {
+    title: 'Meet VETANIC',
+    body: 'VETANIC is the international-facing brand of Nongshim Banryodaum, bringing thoughtfully developed Korean pet wellness products to pet families beyond Korea. Our products are formulated to support the everyday health, comfort, and vitality of dogs and cats.',
+    buttonText: 'Our Story',
+  },
+
+  values: [
+    {
+      id: 'pet-focused',
+      title: 'Pet-focused wellness',
+      description: 'Carefully designed routines tailored to the distinct nutritional and physical needs of dogs and cats.',
+      icon: 'HeartHandshake'
+    },
+    {
+      id: 'thoughtful-development',
+      title: 'Thoughtfully developed products',
+      description: 'Formulations crafted with attention to ingredient quality, palatability, and daily ease of use.',
+      icon: 'Sparkles'
+    },
+    {
+      id: 'made-in-korea',
+      title: 'Made in Korea',
+      description: 'Originating from Korea’s established pet care standards and specialized research in companion animal wellness.',
+      icon: 'ShieldCheck'
+    },
+    {
+      id: 'everyday-care',
+      title: 'For everyday pet care',
+      description: 'Gentle, consistent supplements and wholesome treats that fit seamlessly into your companion’s daily life.',
+      icon: 'Sun'
+    }
+  ],
+
+  about: {
+    heroTitle: 'About VETANIC',
+    heroSubtitle: 'Connecting pet families with gentle Korean pet wellness routines.',
+    storyTitle: 'Our Brand Story',
+    storyParagraphs: [
+      'VETANIC was created as the international-facing brand of Nongshim Banryodaum, a trusted Korean pet wellness brand. Originating from Korea, our mission is to bring thoughtfully developed pet care formulations to pet owners and their companions around the world.',
+      'Beginning with Singapore, VETANIC introduces a dedicated range of supplements and wholesome treats designed for everyday care. We believe that true wellness comes from consistent, gentle habits that support our companions through every life stage.'
+    ],
+    relationship: {
+      title: 'VETANIC × Nongshim Banryodaum',
+      subtitle: 'A direct lineage of Korean companion care expertise.',
+      steps: [
+        {
+          label: 'Nongshim Banryodaum',
+          role: 'Korean pet wellness brand',
+          desc: 'Established foundation in Korean companion animal health & formulation research.'
+        },
+        {
+          label: 'VETANIC',
+          role: 'International brand',
+          desc: 'Dedicated global presence tailored to the needs of pet parents overseas.'
+        },
+        {
+          label: 'Singapore',
+          role: 'International customers',
+          desc: 'Bringing premium Korean pet wellness directly to pet families in Singapore.'
+        }
+      ]
+    },
+    philosophyTitle: 'Our Core Philosophy',
+    philosophy: [
+      {
+        title: 'Care',
+        statement: 'Everyday care starts with understanding our companions.',
+        detail: 'We listen closely to the everyday needs and sensitivities of pets to create gentle, reliable products.'
+      },
+      {
+        title: 'Wellness',
+        statement: 'Products designed to support everyday pet wellbeing.',
+        detail: 'Formulations created to provide balanced, practical support across skin, digestion, joints, and vitality.'
+      },
+      {
+        title: 'Companionship',
+        statement: 'Supporting healthier and happier everyday moments together.',
+        detail: 'Enhancing the precious bond between humans and their animal family members through thoughtful care.'
+      }
+    ]
+  },
+
+  contact: {
+    title: "We'd love to hear from you.",
+    subtitle: 'Have a question about our products or your order? Get in touch with us.',
+    channels: [
+      {
+        type: 'Instagram',
+        label: '@vetanic.sg',
+        handle: '@vetanic.sg',
+        action: 'Send Direct Message',
+        href: 'https://instagram.com',
+        icon: 'Instagram',
+        placeholder: 'Follow us and reach out via Instagram DM'
+      },
+      {
+        type: 'WhatsApp',
+        label: '+65 (Singapore Inquiries)',
+        handle: 'WhatsApp Message',
+        action: 'Chat with Us',
+        href: 'https://wa.me',
+        icon: 'MessageCircle',
+        placeholder: 'Quick responses for order & product consultations'
+      },
+      {
+        type: 'Email',
+        label: 'hello@vetanic.com',
+        handle: 'hello@vetanic.com',
+        action: 'Email Us',
+        href: 'mailto:hello@vetanic.com',
+        icon: 'Mail',
+        placeholder: 'For general enquiries, feedback & collaborations'
+      }
+    ]
+  },
+
+  finalCta: {
+    title: 'Find the right care for your companion.',
+    subtitle: 'Explore our full Korean pet wellness catalogue and submit your order request directly online.',
+    exploreButton: 'Explore Products',
+    orderButton: 'Order Now'
+  }
+};

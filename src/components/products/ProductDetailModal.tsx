@@ -1,0 +1,275 @@
+import React, { useState, useEffect } from 'react';
+import { X, Plus, Minus, Check, Package, MapPin, ShieldAlert, Sparkles, Info } from 'lucide-react';
+import { useOrder } from '../../context/OrderContext';
+import { PetBadge } from '../common/Badge';
+
+export const ProductDetailModal: React.FC = () => {
+  const { activeProductModal, closeProductModal, addToOrder, isItemInOrder, getItemQuantity } = useOrder();
+  const [quantity, setQuantity] = useState(1);
+  const [activeTab, setActiveTab] = useState<'details' | 'usage' | 'origin'>('details');
+
+  useEffect(() => {
+    if (activeProductModal) {
+      const existingQty = getItemQuantity(activeProductModal.id);
+      setQuantity(existingQty > 0 ? 1 : 1);
+      setActiveTab('details');
+      // Lock body scroll
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = 'auto';
+    }
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, [activeProductModal]);
+
+  if (!activeProductModal) return null;
+
+  const product = activeProductModal;
+  const inOrder = isItemInOrder(product.id);
+  const currentInOrderQty = getItemQuantity(product.id);
+
+  const handleIncrement = () => setQuantity((prev) => prev + 1);
+  const handleDecrement = () => setQuantity((prev) => (prev > 1 ? prev - 1 : 1));
+
+  const handleAdd = () => {
+    addToOrder(product, quantity);
+    closeProductModal();
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-3 sm:p-4 bg-black/50 backdrop-blur-sm animate-soft-in">
+      <div 
+        className="fixed inset-0" 
+        onClick={closeProductModal} 
+        aria-hidden="true" 
+      />
+
+      <div className="relative w-full max-w-2xl bg-white rounded-3xl shadow-soft-lg overflow-hidden border border-brand-100 z-10 my-8 flex flex-col max-h-[90vh]">
+        {/* Header bar */}
+        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-[#FAF8F5]">
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-bold text-brand-800 tracking-wider uppercase">Product Details</span>
+            <span className="text-gray-300">•</span>
+            <span className="text-xs text-charcoal-muted">{product.categoryName}</span>
+          </div>
+          <button
+            onClick={closeProductModal}
+            className="w-8 h-8 rounded-full bg-white hover:bg-gray-100 flex items-center justify-center text-charcoal-muted hover:text-charcoal transition-colors border border-gray-200"
+            aria-label="Close modal"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+
+        {/* Modal Body */}
+        <div className="p-6 overflow-y-auto space-y-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
+            {/* Product Image */}
+            <div className="relative rounded-2xl overflow-hidden bg-[#F5EFE6]/60 border border-brand-100/50 aspect-square flex items-center justify-center">
+              <img
+                src={product.imageUrl}
+                alt={product.name}
+                className="w-full h-full object-cover object-center"
+              />
+              <div className="absolute top-3 left-3">
+                <PetBadge type={product.petType} size="md" />
+              </div>
+            </div>
+
+            {/* Product Info Summary */}
+            <div className="flex flex-col">
+              <div className="flex items-center gap-2 mb-1">
+                <span className="text-xs font-semibold text-brand-700 bg-brand-50 px-2.5 py-0.5 rounded-full">
+                  {product.categoryName}
+                </span>
+                <span className="text-xs text-charcoal-muted">
+                  {product.packageSize}
+                </span>
+              </div>
+
+              <h2 className="text-2xl font-bold text-charcoal tracking-tight">
+                {product.name}
+              </h2>
+
+              <p className="text-brand-800 font-medium text-sm mt-1 mb-4">
+                {product.shortDescription}
+              </p>
+
+              <div className="p-3.5 bg-brand-50/70 rounded-xl border border-brand-100/80 mb-4 space-y-1.5">
+                <div className="flex items-center gap-2 text-xs font-medium text-brand-900">
+                  <Package className="w-3.5 h-3.5 text-brand-600" />
+                  <span><strong>Package:</strong> {product.packageSize}</span>
+                </div>
+                <div className="flex items-center gap-2 text-xs font-medium text-brand-900">
+                  <MapPin className="w-3.5 h-3.5 text-brand-600" />
+                  <span><strong>Origin:</strong> {product.details.countryOfOrigin}</span>
+                </div>
+                {inOrder && (
+                  <div className="flex items-center gap-1.5 text-xs text-brand-700 font-semibold pt-1 border-t border-brand-200/60">
+                    <Check className="w-3.5 h-3.5 text-brand-600" />
+                    <span>Currently in your order: {currentInOrderQty} units</span>
+                  </div>
+                )}
+              </div>
+
+              {/* Quantity Selector & Add Button */}
+              <div className="pt-2">
+                <label className="block text-xs font-semibold text-charcoal-muted uppercase tracking-wider mb-2">
+                  Select Quantity
+                </label>
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center border border-gray-200 rounded-xl bg-white shadow-sm overflow-hidden">
+                    <button
+                      type="button"
+                      onClick={handleDecrement}
+                      className="p-2.5 text-charcoal hover:bg-gray-100 transition-colors disabled:opacity-40"
+                      disabled={quantity <= 1}
+                      aria-label="Decrease quantity"
+                    >
+                      <Minus className="w-4 h-4" />
+                    </button>
+                    <span className="px-4 font-bold text-sm text-charcoal min-w-[2.5rem] text-center">
+                      {quantity}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={handleIncrement}
+                      className="p-2.5 text-charcoal hover:bg-gray-100 transition-colors"
+                      aria-label="Increase quantity"
+                    >
+                      <Plus className="w-4 h-4" />
+                    </button>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={handleAdd}
+                    className="flex-1 inline-flex items-center justify-center gap-2 bg-brand-800 hover:bg-brand-900 text-white font-semibold px-5 py-3 rounded-xl shadow-sm hover:shadow-md transition-all active:scale-[0.99]"
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>Add to Order</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Tabbed Info Section */}
+          <div className="border-t border-gray-100 pt-6">
+            <div className="flex gap-2 border-b border-gray-100 pb-2">
+              <button
+                onClick={() => setActiveTab('details')}
+                className={`text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors ${
+                  activeTab === 'details'
+                    ? 'bg-brand-700 text-white'
+                    : 'text-charcoal-muted hover:bg-gray-100'
+                }`}
+              >
+                Key Features
+              </button>
+              <button
+                onClick={() => setActiveTab('usage')}
+                className={`text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors ${
+                  activeTab === 'usage'
+                    ? 'bg-brand-700 text-white'
+                    : 'text-charcoal-muted hover:bg-gray-100'
+                }`}
+              >
+                Usage & Ingredients
+              </button>
+              <button
+                onClick={() => setActiveTab('origin')}
+                className={`text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors ${
+                  activeTab === 'origin'
+                    ? 'bg-brand-700 text-white'
+                    : 'text-charcoal-muted hover:bg-gray-100'
+                }`}
+              >
+                Storage & Precautions
+              </button>
+            </div>
+
+            <div className="mt-4 text-sm text-charcoal space-y-3">
+              {activeTab === 'details' && (
+                <div className="space-y-2">
+                  <h4 className="font-semibold text-charcoal flex items-center gap-1.5">
+                    <Sparkles className="w-4 h-4 text-brand-600" />
+                    Product Highlights
+                  </h4>
+                  {product.details.keyFeatures && (
+                    <ul className="space-y-1.5 pl-4 list-disc text-charcoal-muted">
+                      {product.details.keyFeatures.map((feat, idx) => (
+                        <li key={idx}>{feat}</li>
+                      ))}
+                    </ul>
+                  )}
+                  <div className="mt-3 p-3 bg-[#FAF8F5] rounded-xl border border-gray-200/60 text-xs text-charcoal-muted flex items-start gap-2">
+                    <Info className="w-4 h-4 text-brand-600 flex-shrink-0 mt-0.5" />
+                    <span>
+                      VETANIC formulations are made with companion animal wellbeing at the core, adhering to strict Korean pet supplement quality standards.
+                    </span>
+                  </div>
+                </div>
+              )}
+
+              {activeTab === 'usage' && (
+                <div className="space-y-4">
+                  <div>
+                    <h4 className="font-semibold text-charcoal mb-1">Recommended Usage</h4>
+                    <p className="text-xs text-charcoal-muted italic bg-gray-50 p-2.5 rounded-lg border border-gray-100">
+                      {product.details.recommendedUsage || 'Product information to be provided by VETANIC.'}
+                    </p>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-charcoal mb-1">Ingredients</h4>
+                    <p className="text-xs text-charcoal-muted italic bg-gray-50 p-2.5 rounded-lg border border-gray-100">
+                      {product.details.ingredientsPlaceholder || 'Product information to be provided by VETANIC.'}
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {activeTab === 'origin' && (
+                <div className="space-y-4">
+                  <div>
+                    <h4 className="font-semibold text-charcoal mb-1">Storage Instructions</h4>
+                    <p className="text-xs text-charcoal-muted">
+                      {product.details.storageInstructions || 'Store in a cool, dry place away from direct sunlight.'}
+                    </p>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-charcoal flex items-center gap-1.5 mb-1 text-amber-900">
+                      <ShieldAlert className="w-4 h-4 text-amber-600" />
+                      Precautions
+                    </h4>
+                    <p className="text-xs text-charcoal-muted italic bg-amber-50/50 p-2.5 rounded-lg border border-amber-100">
+                      {product.details.precautions || 'Product information to be provided by VETANIC.'}
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+
+        {/* Modal Footer */}
+        <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 flex items-center justify-between">
+          <button
+            onClick={closeProductModal}
+            className="text-xs font-semibold text-charcoal-muted hover:text-charcoal"
+          >
+            Close Window
+          </button>
+          <button
+            onClick={handleAdd}
+            className="inline-flex items-center gap-2 bg-brand-800 hover:bg-brand-900 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition-all"
+          >
+            <Check className="w-3.5 h-3.5" />
+            <span>Add {quantity} to Order</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
