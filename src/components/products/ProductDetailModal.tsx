@@ -143,43 +143,54 @@ export const ProductDetailModal: React.FC = () => {
 
               {/* Quantity Selector & Add Button */}
               <div className="pt-1">
-                <div className="flex items-center justify-between text-xs font-semibold text-charcoal-muted uppercase tracking-wider mb-2">
-                  <span>Quantity</span>
-                  <span className="text-charcoal font-bold">Line Total: SGD {estimatedLineSubtotal}</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center border border-gray-200 rounded-xl bg-white shadow-sm overflow-hidden">
-                    <button
-                      type="button"
-                      onClick={handleDecrement}
-                      className="p-2.5 text-charcoal hover:bg-gray-100 transition-colors disabled:opacity-40"
-                      disabled={quantity <= 1}
-                      aria-label="Decrease quantity"
-                    >
-                      <Minus className="w-4 h-4" />
-                    </button>
-                    <span className="px-4 font-bold text-sm text-charcoal min-w-[2.5rem] text-center">
-                      {quantity}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={handleIncrement}
-                      className="p-2.5 text-charcoal hover:bg-gray-100 transition-colors"
-                      aria-label="Increase quantity"
-                    >
-                      <Plus className="w-4 h-4" />
-                    </button>
+                {!product.isAvailable ? (
+                  <div className="p-3.5 bg-amber-50 rounded-2xl border border-amber-200/80 text-center space-y-1">
+                    <span className="text-xs font-bold text-amber-950 block">Currently Sold Out</span>
+                    <p className="text-[11px] text-amber-900 font-normal">
+                      This item is temporarily unavailable for order requests.
+                    </p>
                   </div>
+                ) : (
+                  <>
+                    <div className="flex items-center justify-between text-xs font-semibold text-charcoal-muted uppercase tracking-wider mb-2">
+                      <span>Quantity</span>
+                      <span className="text-charcoal font-bold">Line Total: SGD {estimatedLineSubtotal}</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <div className="flex items-center border border-gray-200 rounded-xl bg-white shadow-sm overflow-hidden">
+                        <button
+                          type="button"
+                          onClick={handleDecrement}
+                          className="p-2.5 text-charcoal hover:bg-gray-100 transition-colors disabled:opacity-40"
+                          disabled={quantity <= 1}
+                          aria-label="Decrease quantity"
+                        >
+                          <Minus className="w-4 h-4" />
+                        </button>
+                        <span className="px-4 font-bold text-sm text-charcoal min-w-[2.5rem] text-center">
+                          {quantity}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={handleIncrement}
+                          className="p-2.5 text-charcoal hover:bg-gray-100 transition-colors"
+                          aria-label="Increase quantity"
+                        >
+                          <Plus className="w-4 h-4" />
+                        </button>
+                      </div>
 
-                  <button
-                    type="button"
-                    onClick={handleAdd}
-                    className="flex-1 inline-flex items-center justify-center gap-2 bg-brand-800 hover:bg-brand-900 text-white font-semibold px-5 py-3 rounded-xl shadow-sm hover:shadow-md transition-all active:scale-[0.99]"
-                  >
-                    <Plus className="w-4 h-4" />
-                    <span>Add to Order</span>
-                  </button>
-                </div>
+                      <button
+                        type="button"
+                        onClick={handleAdd}
+                        className="flex-1 inline-flex items-center justify-center gap-2 bg-brand-800 hover:bg-brand-900 text-white font-semibold px-5 py-3 rounded-xl shadow-sm hover:shadow-md transition-all active:scale-[0.99]"
+                      >
+                        <Plus className="w-4 h-4" />
+                        <span>Add to Order</span>
+                      </button>
+                    </div>
+                  </>
+                )}
               </div>
             </div>
           </div>
@@ -290,13 +301,22 @@ export const ProductDetailModal: React.FC = () => {
           >
             Close Window
           </button>
-          <button
-            onClick={handleAdd}
-            className="inline-flex items-center gap-2 bg-brand-800 hover:bg-brand-900 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition-all"
-          >
-            <Check className="w-3.5 h-3.5" />
-            <span>Add {quantity} to Order (SGD {estimatedLineSubtotal})</span>
-          </button>
+          {!product.isAvailable ? (
+            <button
+              disabled
+              className="inline-flex items-center gap-2 bg-gray-200 text-gray-400 text-xs font-bold px-4 py-2.5 rounded-xl cursor-not-allowed border border-gray-300"
+            >
+              <span>Sold Out</span>
+            </button>
+          ) : (
+            <button
+              onClick={handleAdd}
+              className="inline-flex items-center gap-2 bg-brand-800 hover:bg-brand-900 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition-all"
+            >
+              <Check className="w-3.5 h-3.5" />
+              <span>Add {quantity} to Order (SGD {estimatedLineSubtotal})</span>
+            </button>
+          )}
         </div>
       </div>
     </div>

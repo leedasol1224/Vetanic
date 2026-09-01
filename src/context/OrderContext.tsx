@@ -52,7 +52,7 @@ export const OrderProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   }, [items, deliveryMethod]);
 
   const addToOrder = (product: Product, quantity: number = 1) => {
-    if (quantity <= 0) return;
+    if (quantity <= 0 || !product.isAvailable) return;
 
     setItems((prevItems) => {
       const existingIndex = prevItems.findIndex((item) => item.product.id === product.id);

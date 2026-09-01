@@ -116,7 +116,7 @@ export const PRODUCTS: Product[] = [
     shortDescription: 'Joint comfort & daily mobility support',
     packageSize: '10 g × 15 sticks',
     imageUrl: '/images/products/joint-support.png',
-    isAvailable: true,
+    isAvailable: false,
     displayOrder: 2,
     featured: true,
     regularPrice: SEPTEMBER_2026_LAUNCH_PROMOTION.everydayCare.regularPrice,
