@@ -8,11 +8,11 @@ export const VisualSingaporeLaunch: React.FC = () => {
     <section className="py-16 sm:py-24 bg-[#E9E0D4]/30 border-y border-[#DED7CE]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-white rounded-3xl sm:rounded-[2.5rem] border border-[#DED7CE] shadow-soft-lg overflow-hidden grid grid-cols-1 lg:grid-cols-12 items-center">
-          {/* Left: Product Group Photography */}
+          {/* Left: Lifestyle Scene */}
           <div className="lg:col-span-7 relative aspect-[4/3] sm:aspect-[16/10] lg:aspect-auto lg:h-[480px] bg-white overflow-hidden">
             <img
-              src={HOMEPAGE_IMAGES.singaporeLaunch.imageUrl}
-              alt={HOMEPAGE_IMAGES.singaporeLaunch.alt}
+              src={HOMEPAGE_IMAGES.singaporeLaunchImage.imageUrl}
+              alt={HOMEPAGE_IMAGES.singaporeLaunchImage.alt}
               className="w-full h-full object-cover object-center"
               loading="lazy"
             />
@@ -25,7 +25,7 @@ export const VisualSingaporeLaunch: React.FC = () => {
               <span>HELLO, SINGAPORE.</span>
             </div>
 
-            <h2 className="text-3xl sm:text-4xl font-serif font-bold text-charcoal tracking-tight leading-tight">
+            <h2 className="text-3xl sm:text-4xl font-heading font-bold text-charcoal tracking-tight leading-tight">
               Launch prices available this September.
             </h2>
 

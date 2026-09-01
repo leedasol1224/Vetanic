@@ -2,10 +2,10 @@ import React from 'react';
 import { VisualHeroSection } from '../components/home/VisualHeroSection';
 import { VisualShopProducts } from '../components/home/VisualShopProducts';
 import { VisualBrandBanner } from '../components/home/VisualBrandBanner';
-import { VisualShopByNeed } from '../components/home/VisualShopByNeed';
 import { VisualSingaporeLaunch } from '../components/home/VisualSingaporeLaunch';
 import { VisualBrandStory } from '../components/home/VisualBrandStory';
 import { VisualSocialGallery } from '../components/home/VisualSocialGallery';
+import { HomeCta } from '../components/home/HomeCta';
 
 export const HomePage: React.FC = () => {
   return (
@@ -13,23 +13,23 @@ export const HomePage: React.FC = () => {
       {/* 1. HERO — Full-width lifestyle photography */}
       <VisualHeroSection />
 
-      {/* 2. SHOP PRODUCTS — 4 large cards with DOG | CAT | ALL filters */}
+      {/* 2. FEATURED / SHOP PRODUCTS — 4 large cards with DOG | CAT | ALL filters */}
       <VisualShopProducts />
 
-      {/* 3. BRAND LIFESTYLE IMAGE — Full-width photo with short overlay */}
+      {/* 3. LARGE LIFESTYLE PHOTOGRAPHY — Full-width photo break ("From Korea, for the companions we love.") */}
       <VisualBrandBanner />
 
-      {/* 4. SHOP BY NEED — Photographic Category Tiles */}
-      <VisualShopByNeed />
-
-      {/* 5. SINGAPORE LAUNCH — Single Focused Promotional Visual */}
+      {/* 4. SINGAPORE LAUNCH — One Singapore Launch section */}
       <VisualSingaporeLaunch />
 
-      {/* 6. BRAND STORY — VETANIC × Nongshim Banryodaum */}
+      {/* 5. BRAND STORY — Short VETANIC × Nongshim Banryodaum brand story */}
       <VisualBrandStory />
 
-      {/* 7. REAL LIFE / SOCIAL GALLERY — 6-photo Editorial Grid */}
+      {/* 6. VISUAL GALLERY — 6-photo editorial grid */}
       <VisualSocialGallery />
+
+      {/* 7. FINAL CTA */}
+      <HomeCta />
     </main>
   );
 };

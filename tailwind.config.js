@@ -55,19 +55,27 @@ export default {
         }
       },
       fontFamily: {
-        sans: [
-          'Pretendard',
+        heading: [
+          'Manrope',
           '-apple-system',
           'BlinkMacSystemFont',
           'Segoe UI',
           'Roboto',
-          'Noto Sans KR',
+          'sans-serif'
+        ],
+        sans: [
+          'Inter',
+          '-apple-system',
+          'BlinkMacSystemFont',
+          'Segoe UI',
+          'Roboto',
           'sans-serif'
         ],
         serif: [
-          'Playfair Display',
-          'Georgia',
-          'serif'
+          'Manrope',
+          '-apple-system',
+          'BlinkMacSystemFont',
+          'sans-serif'
         ],
       },
       boxShadow: {

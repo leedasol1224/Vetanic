@@ -11,9 +11,9 @@ export const VisualSocialGallery: React.FC = () => {
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-10">
           <div>
             <span className="text-xs font-bold text-brand-600 uppercase tracking-wider block mb-1.5">
-              Community & Moments
+              Everyday Companions
             </span>
-            <h2 className="text-3xl sm:text-4xl font-serif font-bold text-charcoal tracking-tight">
+            <h2 className="text-3xl sm:text-4xl font-heading font-bold text-charcoal tracking-tight">
               Life with VETANIC
             </h2>
           </div>
@@ -32,7 +32,7 @@ export const VisualSocialGallery: React.FC = () => {
 
         {/* 6 Editorial Photo Grid */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
-          {HOMEPAGE_IMAGES.socialGallery.map((item) => (
+          {HOMEPAGE_IMAGES.galleryImages.map((item) => (
             <div
               key={item.id}
               className="group relative aspect-square rounded-2xl sm:rounded-3xl overflow-hidden bg-white border border-[#DED7CE] shadow-xs hover:shadow-soft transition-all duration-300"

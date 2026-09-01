@@ -1,33 +1,36 @@
-/**
- * Central image configuration for VETANIC homepage visual slots.
- * Update image paths here to easily swap hero, lifestyle, and category photography.
- */
+// ============================================================================
+// TEMPORARY IMAGERY ARCHITECTURE — replace with official VETANIC photography
+// High-quality, royalty-free pet lifestyle photography curated for warm neutral tones.
+// ============================================================================
 
 export interface HomepageImagesConfig {
-  heroLifestyle: {
+  // Hero lifestyle image (warm, natural light, cream/beige interior)
+  heroImage: {
     imageUrl: string;
     alt: string;
   };
-  koreaBrandLifestyle: {
+  // Primary lifestyle break ("From Korea, for the companions we love.")
+  lifestyleImage01: {
     imageUrl: string;
     alt: string;
   };
-  singaporeLaunch: {
+  // Secondary lifestyle / brand break
+  lifestyleImage02: {
     imageUrl: string;
     alt: string;
   };
-  brandStory: {
+  // Singapore Launch section group photograph
+  singaporeLaunchImage: {
     imageUrl: string;
     alt: string;
   };
-  categoryImages: Array<{
-    id: string;
-    name: string;
-    petType: 'both' | 'dog' | 'cat';
+  // Brand story section visual (VETANIC x Nongshim Banryodaum)
+  brandStoryImage: {
     imageUrl: string;
-    filterQuery: string;
-  }>;
-  socialGallery: Array<{
+    alt: string;
+  };
+  // Editorial gallery grid (4-6 natural, unposed dog and cat moments)
+  galleryImages: Array<{
     id: string;
     caption: string;
     imageUrl: string;
@@ -36,101 +39,72 @@ export interface HomepageImagesConfig {
 }
 
 export const HOMEPAGE_IMAGES: HomepageImagesConfig = {
-  heroLifestyle: {
-    imageUrl: '/images/lifestyle/hero_lifestyle.jpg',
-    alt: 'VETANIC companion animal wellness routine'
+  // TEMPORARY IMAGE — replace with official VETANIC photography
+  heroImage: {
+    imageUrl: 'https://images.unsplash.com/photo-1548767797-d8c844163c4c?q=80&w=2000&auto=format&fit=crop',
+    alt: 'VETANIC companion animal resting in warm sunlight'
   },
-  koreaBrandLifestyle: {
-    imageUrl: '/images/lifestyle/korea_brand_lifestyle.jpg',
+
+  // TEMPORARY IMAGE — replace with official VETANIC photography
+  lifestyleImage01: {
+    imageUrl: 'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?q=80&w=2000&auto=format&fit=crop',
     alt: 'From Korea, for the companions we love'
   },
-  singaporeLaunch: {
-    imageUrl: '/images/lifestyle/singapore_launch.jpg',
-    alt: 'VETANIC Singapore Launch lineup'
+
+  // TEMPORARY IMAGE — replace with official VETANIC photography
+  lifestyleImage02: {
+    imageUrl: 'https://images.unsplash.com/photo-1587300003388-59208cc962cb?q=80&w=2000&auto=format&fit=crop',
+    alt: 'Gentle daily care routines with companions'
   },
-  brandStory: {
-    imageUrl: '/images/brand/brand_story.jpg',
+
+  // TEMPORARY IMAGE — replace with official VETANIC photography
+  singaporeLaunchImage: {
+    imageUrl: 'https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?q=80&w=1800&auto=format&fit=crop',
+    alt: 'VETANIC Singapore Launch Special'
+  },
+
+  // TEMPORARY IMAGE — replace with official VETANIC photography
+  brandStoryImage: {
+    imageUrl: 'https://images.unsplash.com/photo-1548199973-03cce0bbc87b?q=80&w=1800&auto=format&fit=crop',
     alt: 'VETANIC by Nongshim Banryodaum Korean Pet Wellness'
   },
-  categoryImages: [
-    {
-      id: 'eye-care',
-      name: 'Eye Care',
-      petType: 'dog',
-      imageUrl: '/images/categories/eye-care.jpg',
-      filterQuery: 'eye-care'
-    },
-    {
-      id: 'skin-coat',
-      name: 'Skin & Coat',
-      petType: 'both',
-      imageUrl: '/images/categories/skin-coat.jpg',
-      filterQuery: 'skin-coat'
-    },
-    {
-      id: 'digestion',
-      name: 'Digestive Care',
-      petType: 'both',
-      imageUrl: '/images/categories/digestion.jpg',
-      filterQuery: 'digestion'
-    },
-    {
-      id: 'cat-wellness',
-      name: 'Cat Wellness',
-      petType: 'cat',
-      imageUrl: '/images/categories/cat-wellness.jpg',
-      filterQuery: 'hairball'
-    },
-    {
-      id: 'dental',
-      name: 'Dental Care',
-      petType: 'dog',
-      imageUrl: '/images/categories/dental.jpg',
-      filterQuery: 'dental'
-    },
-    {
-      id: 'treats',
-      name: 'Healthy Treats',
-      petType: 'both',
-      imageUrl: '/images/categories/treats.jpg',
-      filterQuery: 'treats'
-    }
-  ],
-  socialGallery: [
+
+  // TEMPORARY IMAGES — replace with official VETANIC photography
+  galleryImages: [
     {
       id: 'gallery-1',
-      caption: 'Soft Dental Chew oral hygiene routine',
-      imageUrl: '/images/gallery/gallery_1.jpg',
+      caption: 'Happy dog smiling in warm morning light',
+      imageUrl: 'https://images.unsplash.com/photo-1537151608828-ea2b11777ee8?q=80&w=800&auto=format&fit=crop',
       petType: 'dog'
     },
     {
       id: 'gallery-2',
-      caption: 'Feline Hairball Care with pure salmon puree',
-      imageUrl: '/images/gallery/gallery_2.jpg',
+      caption: 'Serene cat resting peacefully on soft linen',
+      imageUrl: 'https://images.unsplash.com/photo-1573865526739-10659fec78a5?q=80&w=800&auto=format&fit=crop',
       petType: 'cat'
     },
     {
       id: 'gallery-3',
-      caption: 'Fresh Omega-3 pure golden marine oil',
-      imageUrl: '/images/gallery/gallery_3.jpg',
-      petType: 'both'
+      caption: 'Companion dog in clean neutral lifestyle setting',
+      imageUrl: 'https://images.unsplash.com/photo-1583511655826-05700d52f4d9?q=80&w=800&auto=format&fit=crop',
+      petType: 'dog'
     },
     {
       id: 'gallery-4',
-      caption: 'Joint Support powder stick daily mobility care',
-      imageUrl: '/images/gallery/gallery_4.jpg',
+      caption: 'Gentle golden companion up close',
+      imageUrl: 'https://images.unsplash.com/photo-1561037404-61cd46aa615b?q=80&w=800&auto=format&fit=crop',
       petType: 'dog'
     },
     {
       id: 'gallery-5',
-      caption: 'Scientific ocular balance & liver care',
-      imageUrl: '/images/gallery/gallery_5.jpg',
-      petType: 'dog'
+      caption: 'Calm kitten basking in soft indoor light',
+      imageUrl: 'https://images.unsplash.com/photo-1518791841217-8f162f1e1131?q=80&w=800&auto=format&fit=crop',
+      petType: 'cat'
     },
     {
       id: 'gallery-6',
-      caption: 'Wholesome Korean sweet potato & pumpkin harvest',
-      imageUrl: '/images/gallery/gallery_6.jpg',
+      caption: 'Curious companion with gentle eyes',
+      imageUrl: 'https://images.unsplash.com/photo-1535930891776-0c2dfb7fda1a?q=80&w=800&auto=format&fit=crop',
       petType: 'both'
     }
   ]

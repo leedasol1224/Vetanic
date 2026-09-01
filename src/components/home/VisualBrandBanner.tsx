@@ -8,12 +8,12 @@ export const VisualBrandBanner: React.FC = () => {
         {/* Background Image */}
         <div className="absolute inset-0 w-full h-full">
           <img
-            src={HOMEPAGE_IMAGES.koreaBrandLifestyle.imageUrl}
-            alt={HOMEPAGE_IMAGES.koreaBrandLifestyle.alt}
+            src={HOMEPAGE_IMAGES.lifestyleImage01.imageUrl}
+            alt={HOMEPAGE_IMAGES.lifestyleImage01.alt}
             className="w-full h-full object-cover object-center"
           />
           {/* Subtle Warm Overlay */}
-          <div className="absolute inset-0 bg-charcoal/50 backdrop-brightness-95" />
+          <div className="absolute inset-0 bg-charcoal/45 backdrop-brightness-95" />
         </div>
 
         {/* Text Overlay Only (No paragraph) */}
@@ -21,7 +21,7 @@ export const VisualBrandBanner: React.FC = () => {
           <span className="inline-block text-[11px] uppercase tracking-widest font-bold text-[#FAF7F2] bg-white/20 backdrop-blur-md px-4 py-1 rounded-full border border-white/20 mb-4">
             Korean Companion Care
           </span>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-bold text-white tracking-tight leading-tight">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-heading font-extrabold text-white tracking-tight leading-tight">
             From Korea, for the companions we love.
           </h2>
         </div>

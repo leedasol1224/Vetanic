@@ -16,11 +16,11 @@ export const VisualBrandStory: React.FC = () => {
             </div>
 
             <div className="space-y-2">
-              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-serif font-bold text-charcoal tracking-tight leading-tight">
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-heading font-bold text-charcoal tracking-tight leading-tight">
                 VETANIC × Nongshim Banryodaum
               </h2>
 
-              <p className="text-lg sm:text-xl text-charcoal-muted font-serif">
+              <p className="text-lg sm:text-xl text-charcoal-muted font-heading font-medium">
                 Born in Korea. Now in Singapore.
               </p>
             </div>
@@ -39,8 +39,8 @@ export const VisualBrandStory: React.FC = () => {
           {/* Right: Brand Story Visual */}
           <div className="lg:col-span-7 relative aspect-[4/3] sm:aspect-[16/10] lg:aspect-auto lg:h-[460px] bg-white overflow-hidden order-1 lg:order-2">
             <img
-              src={HOMEPAGE_IMAGES.brandStory.imageUrl}
-              alt={HOMEPAGE_IMAGES.brandStory.alt}
+              src={HOMEPAGE_IMAGES.brandStoryImage.imageUrl}
+              alt={HOMEPAGE_IMAGES.brandStoryImage.alt}
               className="w-full h-full object-cover object-center"
               loading="lazy"
             />
