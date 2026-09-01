@@ -91,4 +91,8 @@ export interface OrderRecord extends OrderSubmission {
   status: OrderStatus;
   totalItemCount: number;
   internalNotes?: string;
+  inventoryDeducted?: boolean;
+  inventoryDeductedAt?: string;
+  inventoryRestored?: boolean;
+  inventoryRestoredAt?: string;
 }

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { 
   ShoppingBag, 
@@ -11,16 +11,22 @@ import {
   Users, 
   ArrowRight,
   Eye,
-  AlertCircle
+  AlertCircle,
+  Boxes,
+  AlertTriangle
 } from 'lucide-react';
 import { getOrders } from '../../lib/storage';
+import { getProductInventoryList } from '../../lib/inventory';
 import { OrderRecord, OrderStatus } from '../../types/order';
+import { ProductInventory } from '../../types/inventory';
 
 export const AdminDashboard: React.FC = () => {
   const [orders, setOrders] = useState<OrderRecord[]>([]);
+  const [inventory, setInventory] = useState<ProductInventory[]>([]);
 
   useEffect(() => {
     setOrders(getOrders());
+    setInventory(getProductInventoryList());
   }, []);
 
   // Compute metrics
@@ -37,6 +43,19 @@ export const AdminDashboard: React.FC = () => {
   const totalOrdersCount = orders.length;
   const estimatedTotalSales = orders.reduce((sum, o) => sum + (o.pricing?.estimatedTotal || 0), 0);
   const averageOrderValue = totalOrdersCount > 0 ? estimatedTotalSales / totalOrdersCount : 0;
+
+  // Inventory Low Stock alerts
+  const lowStockItems = useMemo(() => {
+    return inventory.filter((item) => item.stockStatus === 'Low Stock');
+  }, [inventory]);
+
+  const outOfStockItems = useMemo(() => {
+    return inventory.filter((item) => item.stockStatus === 'Out of Stock');
+  }, [inventory]);
+
+  const totalStockUnits = useMemo(() => {
+    return inventory.reduce((sum, i) => sum + i.currentStock, 0);
+  }, [inventory]);
 
   const getStatusBadge = (status: OrderStatus) => {
     switch (status) {
@@ -72,19 +91,66 @@ export const AdminDashboard: React.FC = () => {
             Business Overview
           </h1>
           <p className="text-xs sm:text-sm text-charcoal-muted mt-1">
-            Real-time summary of Singapore order requests and fulfillment operations.
+            Real-time summary of Singapore order requests, fulfillment operations and inventory.
           </p>
         </div>
 
-        <Link
-          to="/admin/orders"
-          className="inline-flex items-center justify-center gap-2 bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs px-5 py-2.5 rounded-xl shadow-sm transition-all"
-        >
-          <ShoppingBag className="w-4 h-4" />
-          <span>Manage All Orders ({totalOrdersCount})</span>
-          <ArrowRight className="w-3.5 h-3.5" />
-        </Link>
+        <div className="flex items-center gap-2">
+          <Link
+            to="/admin/inventory"
+            className="inline-flex items-center justify-center gap-2 bg-white hover:bg-[#FAF7F2] text-charcoal font-bold text-xs px-4 py-2.5 rounded-xl border border-[#DED7CE] shadow-xs transition-all"
+          >
+            <Boxes className="w-4 h-4 text-brand-600" />
+            <span>Inventory ({totalStockUnits} in stock)</span>
+          </Link>
+
+          <Link
+            to="/admin/orders"
+            className="inline-flex items-center justify-center gap-2 bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs px-5 py-2.5 rounded-xl shadow-sm transition-all"
+          >
+            <ShoppingBag className="w-4 h-4" />
+            <span>Manage Orders ({totalOrdersCount})</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
+        </div>
       </div>
+
+      {/* Low Stock Prominent Alerts (if any) */}
+      {(lowStockItems.length > 0 || outOfStockItems.length > 0) && (
+        <div className="p-4 sm:p-5 bg-amber-50/80 rounded-3xl border border-amber-200 shadow-xs flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <div className="flex items-start gap-3">
+            <div className="w-8 h-8 rounded-xl bg-amber-100 border border-amber-300 flex items-center justify-center text-amber-700 flex-shrink-0 mt-0.5">
+              <AlertTriangle className="w-4 h-4" />
+            </div>
+            <div>
+              <h3 className="text-xs font-bold text-amber-900 uppercase tracking-wider">
+                Stock Attention Needed
+              </h3>
+              <p className="text-xs text-amber-800 mt-0.5">
+                {lowStockItems.length > 0 && (
+                  <span>
+                    Low Stock: {lowStockItems.map((i) => `${i.productName} (${i.currentStock} left)`).join(', ')}
+                  </span>
+                )}
+                {lowStockItems.length > 0 && outOfStockItems.length > 0 && ' • '}
+                {outOfStockItems.length > 0 && (
+                  <span>
+                    Out of Stock: {outOfStockItems.map((i) => i.productName).join(', ')}
+                  </span>
+                )}
+              </p>
+            </div>
+          </div>
+
+          <Link
+            to="/admin/inventory"
+            className="inline-flex items-center gap-1.5 bg-amber-900 text-white font-bold text-xs px-4 py-2 rounded-xl hover:bg-amber-950 transition-colors whitespace-nowrap self-start sm:self-auto"
+          >
+            <span>View Inventory</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
+        </div>
+      )}
 
       {/* KPI Highlights: 3 Major Business Metrics */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">

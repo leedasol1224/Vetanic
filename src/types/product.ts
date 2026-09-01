@@ -33,6 +33,7 @@ export interface ProductDetails {
 
 export interface Product {
   id: string;
+  sku: string;
   slug: string;
   name: string;
   petType: PetType;
@@ -51,6 +52,9 @@ export interface Product {
   regularPrice: number;
   launchPrice: number;
   bundleOfferText?: string;
+  initialStock?: number;
+  lowStockThreshold?: number;
+  trackInventory?: boolean;
   details: ProductDetails;
 }
 

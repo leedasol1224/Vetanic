@@ -20,6 +20,10 @@ import { AdminLayout } from './pages/admin/AdminLayout';
 import { AdminDashboard } from './pages/admin/AdminDashboard';
 import { AdminOrdersPage } from './pages/admin/AdminOrdersPage';
 import { AdminOrderDetailPage } from './pages/admin/AdminOrderDetailPage';
+import { AdminInventoryPage } from './pages/admin/AdminInventoryPage';
+import { AdminInventorySalesPage } from './pages/admin/AdminInventorySalesPage';
+import { AdminInventoryMovementsPage } from './pages/admin/AdminInventoryMovementsPage';
+import { AdminInventoryProductDetailPage } from './pages/admin/AdminInventoryProductDetailPage';
 
 // Scroll to top on route change
 function ScrollToTop() {
@@ -74,6 +78,10 @@ function App() {
             <Route index element={<AdminDashboard />} />
             <Route path="orders" element={<AdminOrdersPage />} />
             <Route path="orders/:id" element={<AdminOrderDetailPage />} />
+            <Route path="inventory" element={<AdminInventoryPage />} />
+            <Route path="inventory/sales" element={<AdminInventorySalesPage />} />
+            <Route path="inventory/movements" element={<AdminInventoryMovementsPage />} />
+            <Route path="inventory/:productId" element={<AdminInventoryProductDetailPage />} />
           </Route>
         </Routes>
       </Router>

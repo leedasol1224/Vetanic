@@ -1,19 +1,32 @@
 import React from 'react';
 import { Link, useLocation, Outlet } from 'react-router-dom';
-import { LayoutDashboard, ShoppingBag, ArrowLeft, ShieldCheck } from 'lucide-react';
+import { LayoutDashboard, ShoppingBag, Boxes, ArrowLeft, ShieldCheck, TrendingUp, History } from 'lucide-react';
 
 export const AdminLayout: React.FC = () => {
   const location = useLocation();
 
-  const navItems = [
-    { name: 'Dashboard', path: '/admin', icon: LayoutDashboard },
-    { name: 'Orders Management', path: '/admin/orders', icon: ShoppingBag },
+  const mainNavItems = [
+    { name: 'Dashboard', path: '/admin', icon: LayoutDashboard, exact: true },
+    { name: 'Orders', path: '/admin/orders', icon: ShoppingBag, exact: false },
+    { name: 'Inventory', path: '/admin/inventory', icon: Boxes, exact: false },
   ];
 
-  const isCurrent = (path: string) => {
-    if (path === '/admin') return location.pathname === '/admin';
+  const inventorySubNav = [
+    { name: 'Overview', path: '/admin/inventory', icon: Boxes, exact: true },
+    { name: 'Sales by Product', path: '/admin/inventory/sales', icon: TrendingUp, exact: true },
+    { name: 'Stock Movements', path: '/admin/inventory/movements', icon: History, exact: true },
+  ];
+
+  const isMainActive = (path: string, exact: boolean) => {
+    if (exact) return location.pathname === path;
     return location.pathname.startsWith(path);
   };
+
+  const isSubActive = (path: string) => {
+    return location.pathname === path;
+  };
+
+  const isInventorySection = location.pathname.startsWith('/admin/inventory');
 
   return (
     <div className="min-h-screen bg-[#FAF7F2] flex flex-col text-charcoal font-sans">
@@ -34,11 +47,11 @@ export const AdminLayout: React.FC = () => {
               </Link>
             </div>
 
-            {/* Middle: Navigation Links */}
-            <nav className="flex items-center gap-2 sm:gap-4">
-              {navItems.map((item) => {
+            {/* Middle: Main Navigation Links */}
+            <nav className="flex items-center gap-1.5 sm:gap-3">
+              {mainNavItems.map((item) => {
                 const Icon = item.icon;
-                const active = isCurrent(item.path);
+                const active = isMainActive(item.path, item.exact);
                 return (
                   <Link
                     key={item.name}
@@ -63,11 +76,40 @@ export const AdminLayout: React.FC = () => {
                 className="inline-flex items-center gap-1.5 text-xs font-semibold text-charcoal-muted hover:text-brand-600 px-3 py-1.5 rounded-xl border border-[#DED7CE] bg-[#FAF7F2] hover:bg-[#F4EFE7] transition-colors"
               >
                 <ArrowLeft className="w-3.5 h-3.5" />
-                <span className="hidden sm:inline">Back to Customer Website</span>
+                <span className="hidden sm:inline">Back to Website</span>
                 <span className="sm:hidden">Store</span>
               </Link>
             </div>
           </div>
+
+          {/* Sub Navigation Bar for Inventory Section */}
+          {isInventorySection && (
+            <div className="border-t border-[#DED7CE]/70 py-2 flex items-center gap-2 overflow-x-auto scrollbar-none">
+              <span className="text-[10px] uppercase font-bold text-charcoal-muted tracking-wider mr-2 flex-shrink-0">
+                Inventory Hub:
+              </span>
+              <div className="flex items-center gap-1.5">
+                {inventorySubNav.map((sub) => {
+                  const Icon = sub.icon;
+                  const active = isSubActive(sub.path);
+                  return (
+                    <Link
+                      key={sub.name}
+                      to={sub.path}
+                      className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold whitespace-nowrap transition-all ${
+                        active
+                          ? 'bg-brand-50 text-brand-600 border border-brand-200 font-bold'
+                          : 'text-charcoal-muted hover:text-charcoal hover:bg-[#FAF7F2]'
+                      }`}
+                    >
+                      <Icon className="w-3.5 h-3.5" />
+                      <span>{sub.name}</span>
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+          )}
         </div>
       </header>
 
@@ -78,7 +120,7 @@ export const AdminLayout: React.FC = () => {
 
       {/* Admin Footer */}
       <footer className="bg-white border-t border-[#DED7CE] py-4 text-center text-xs text-charcoal-muted">
-        <span>VETANIC Singapore Internal Business Console • Confidential</span>
+        <span>VETANIC Singapore Internal Business Console • Inventory Ledger Integrated</span>
       </footer>
     </div>
   );

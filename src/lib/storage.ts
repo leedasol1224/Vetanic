@@ -1,5 +1,6 @@
 import { OrderItem, OrderRecord, OrderSubmission, OrderStatus } from '../types/order';
 import { ContactEnquiry } from '../types/enquiry';
+import { deductOrderStockOnPayment, restoreOrderStockOnCancellation } from './inventory';
 
 const CART_STORAGE_KEY = 'vetanic_cart_items_v1';
 const ORDERS_STORAGE_KEY = 'vetanic_submitted_orders_v1';
@@ -61,7 +62,23 @@ export function updateOrderStatus(id: string, status: OrderStatus): void {
     const orders = getOrders();
     const index = orders.findIndex((o) => o.id === id || o.orderReference === id);
     if (index > -1) {
-      orders[index].status = status;
+      const order = orders[index];
+      order.status = status;
+
+      // 1. Order transitioned to Paid (or preparing/completed if unpaid previously) -> deduct stock
+      if (status === 'Paid' && !order.inventoryDeducted) {
+        deductOrderStockOnPayment(order);
+        order.inventoryDeducted = true;
+        order.inventoryDeductedAt = new Date().toISOString();
+      }
+
+      // 2. Order transitioned to Cancelled after stock was already deducted -> restore stock
+      if (status === 'Cancelled' && order.inventoryDeducted && !order.inventoryRestored) {
+        restoreOrderStockOnCancellation(order);
+        order.inventoryRestored = true;
+        order.inventoryRestoredAt = new Date().toISOString();
+      }
+
       localStorage.setItem(ORDERS_STORAGE_KEY, JSON.stringify(orders));
     }
   } catch (e) {

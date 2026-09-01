@@ -74,6 +74,7 @@ export const PRODUCTS: Product[] = [
   // =========================================================================
   {
     id: 'fresh-omega-3-mini',
+    sku: 'VET-OMG-MINI',
     slug: 'fresh-omega-3-mini',
     name: 'Fresh Omega-3 Mini',
     petType: 'both',
@@ -91,6 +92,9 @@ export const PRODUCTS: Product[] = [
     isAvailable: true,
     displayOrder: 1,
     featured: true,
+    initialStock: 40,
+    lowStockThreshold: 5,
+    trackInventory: true,
     regularPrice: SEPTEMBER_2026_LAUNCH_PROMOTION.everydayCare.regularPrice,
     launchPrice: SEPTEMBER_2026_LAUNCH_PROMOTION.everydayCare.launchPrice,
     bundleOfferText: 'Mix & Match available',
@@ -115,6 +119,7 @@ export const PRODUCTS: Product[] = [
   },
   {
     id: 'joint-support',
+    sku: 'VET-JNT-SUPP',
     slug: 'joint-support',
     name: 'Joint Support',
     petType: 'dog',
@@ -129,9 +134,12 @@ export const PRODUCTS: Product[] = [
     galleryImages: [
       '/images/products/joint-support.png'
     ],
-    isAvailable: false, // Marked as Sold Out until changed
+    isAvailable: false, // Marked as Sold Out
     displayOrder: 2,
     featured: true,
+    initialStock: 0,
+    lowStockThreshold: 5,
+    trackInventory: true,
     regularPrice: SEPTEMBER_2026_LAUNCH_PROMOTION.everydayCare.regularPrice,
     launchPrice: SEPTEMBER_2026_LAUNCH_PROMOTION.everydayCare.launchPrice,
     bundleOfferText: 'Mix & Match available',
@@ -156,6 +164,7 @@ export const PRODUCTS: Product[] = [
   },
   {
     id: 'clear-eyes',
+    sku: 'VET-EYE-CLR',
     slug: 'clear-eyes',
     name: 'Clear Eyes',
     petType: 'dog',
@@ -173,6 +182,9 @@ export const PRODUCTS: Product[] = [
     isAvailable: true,
     displayOrder: 3,
     featured: true,
+    initialStock: 28,
+    lowStockThreshold: 5,
+    trackInventory: true,
     regularPrice: SEPTEMBER_2026_LAUNCH_PROMOTION.everydayCare.regularPrice,
     launchPrice: SEPTEMBER_2026_LAUNCH_PROMOTION.everydayCare.launchPrice,
     bundleOfferText: 'Mix & Match available',
@@ -201,6 +213,7 @@ export const PRODUCTS: Product[] = [
   // =========================================================================
   {
     id: 'probiotics',
+    sku: 'VET-PRO-GUT',
     slug: 'probiotics',
     name: 'Probiotics',
     petType: 'both',
@@ -218,6 +231,9 @@ export const PRODUCTS: Product[] = [
     isAvailable: true,
     displayOrder: 4,
     featured: true,
+    initialStock: 45,
+    lowStockThreshold: 5,
+    trackInventory: true,
     regularPrice: SEPTEMBER_2026_LAUNCH_PROMOTION.wellnessSupport.regularPrice,
     launchPrice: SEPTEMBER_2026_LAUNCH_PROMOTION.wellnessSupport.launchPrice,
     bundleOfferText: 'Mix & Match available',
@@ -242,6 +258,7 @@ export const PRODUCTS: Product[] = [
   },
   {
     id: 'hairball-care',
+    sku: 'VET-CAT-HAIR',
     slug: 'hairball-care',
     name: 'Hairball Care',
     petType: 'cat',
@@ -259,6 +276,9 @@ export const PRODUCTS: Product[] = [
     isAvailable: true,
     displayOrder: 5,
     featured: false,
+    initialStock: 25,
+    lowStockThreshold: 5,
+    trackInventory: true,
     regularPrice: SEPTEMBER_2026_LAUNCH_PROMOTION.wellnessSupport.regularPrice,
     launchPrice: SEPTEMBER_2026_LAUNCH_PROMOTION.wellnessSupport.launchPrice,
     bundleOfferText: 'Mix & Match available',
@@ -283,6 +303,7 @@ export const PRODUCTS: Product[] = [
   },
   {
     id: 'urena-clear',
+    sku: 'VET-CAT-UREN',
     slug: 'urena-clear',
     name: 'Urena Clear',
     petType: 'cat',
@@ -300,6 +321,9 @@ export const PRODUCTS: Product[] = [
     isAvailable: true,
     displayOrder: 6,
     featured: false,
+    initialStock: 20,
+    lowStockThreshold: 5,
+    trackInventory: true,
     regularPrice: SEPTEMBER_2026_LAUNCH_PROMOTION.wellnessSupport.regularPrice,
     launchPrice: SEPTEMBER_2026_LAUNCH_PROMOTION.wellnessSupport.launchPrice,
     bundleOfferText: 'Mix & Match available',
@@ -324,6 +348,7 @@ export const PRODUCTS: Product[] = [
   },
   {
     id: 'fresh-omega-3-premium',
+    sku: 'VET-OMG-PREM',
     slug: 'fresh-omega-3-premium',
     name: 'Fresh Omega-3 Premium',
     petType: 'both',
@@ -341,6 +366,9 @@ export const PRODUCTS: Product[] = [
     isAvailable: true,
     displayOrder: 7,
     featured: false,
+    initialStock: 30,
+    lowStockThreshold: 5,
+    trackInventory: true,
     regularPrice: SEPTEMBER_2026_LAUNCH_PROMOTION.wellnessSupport.regularPrice,
     launchPrice: SEPTEMBER_2026_LAUNCH_PROMOTION.wellnessSupport.launchPrice,
     bundleOfferText: 'Mix & Match available',
@@ -365,6 +393,7 @@ export const PRODUCTS: Product[] = [
   },
   {
     id: 'soft-dental-chew',
+    sku: 'VET-DNT-CHEW',
     slug: 'soft-dental-chew',
     name: 'Soft Dental Chew',
     petType: 'dog',
@@ -382,6 +411,9 @@ export const PRODUCTS: Product[] = [
     isAvailable: true,
     displayOrder: 8,
     featured: false,
+    initialStock: 35,
+    lowStockThreshold: 5,
+    trackInventory: true,
     regularPrice: SEPTEMBER_2026_LAUNCH_PROMOTION.wellnessSupport.regularPrice,
     launchPrice: SEPTEMBER_2026_LAUNCH_PROMOTION.wellnessSupport.launchPrice,
     bundleOfferText: 'Mix & Match available',
@@ -410,6 +442,7 @@ export const PRODUCTS: Product[] = [
   // =========================================================================
   {
     id: 'sweet-potato-pumpkin-treats',
+    sku: 'VET-TRT-PUMP',
     slug: 'sweet-potato-pumpkin-treats',
     name: 'Sweet Potato & Pumpkin Treats',
     petType: 'dog',
@@ -427,6 +460,9 @@ export const PRODUCTS: Product[] = [
     isAvailable: true,
     displayOrder: 9,
     featured: false,
+    initialStock: 50,
+    lowStockThreshold: 5,
+    trackInventory: true,
     regularPrice: SEPTEMBER_2026_LAUNCH_PROMOTION.treats['sweet-potato-pumpkin-treats'].regularPrice,
     launchPrice: SEPTEMBER_2026_LAUNCH_PROMOTION.treats['sweet-potato-pumpkin-treats'].launchPrice,
     bundleOfferText: 'Bundle discount: 2 for SGD 22.00 · 3 for SGD 31.50',
@@ -451,6 +487,7 @@ export const PRODUCTS: Product[] = [
   },
   {
     id: 'freeze-dried-vegetables',
+    sku: 'VET-TRT-VEG',
     slug: 'freeze-dried-vegetables',
     name: 'Freeze-Dried Vegetables',
     petType: 'both',
@@ -468,6 +505,9 @@ export const PRODUCTS: Product[] = [
     isAvailable: true,
     displayOrder: 10,
     featured: false,
+    initialStock: 40,
+    lowStockThreshold: 5,
+    trackInventory: true,
     regularPrice: SEPTEMBER_2026_LAUNCH_PROMOTION.treats['freeze-dried-vegetables'].regularPrice,
     launchPrice: SEPTEMBER_2026_LAUNCH_PROMOTION.treats['freeze-dried-vegetables'].launchPrice,
     bundleOfferText: 'Bundle discount: 2 for SGD 32.00 · 3 for SGD 45.00',
