@@ -26,7 +26,7 @@ export const OrderItemRow: React.FC<OrderItemRowProps> = ({
         <img
           src={product.imageUrl}
           alt={product.name}
-          className="w-16 h-16 rounded-xl object-cover border border-brand-100 bg-[#F5EFE6]/50 flex-shrink-0"
+          className="w-16 h-16 rounded-xl object-contain p-1 border border-brand-100 bg-white flex-shrink-0"
         />
         <div className="min-w-0">
           <div className="flex items-center gap-2 mb-0.5">

@@ -3,6 +3,19 @@
 @tailwind utilities;
 
 :root {
+  /* ==========================================================================
+     VETANIC GLOBAL DESIGN TOKENS & BRAND PALETTE
+     Change these variables to adjust the entire website color scheme.
+     ========================================================================== */
+
+  /* Primary Brand Greens */
+  --color-brand-primary: #1b352c;
+  --color-brand-primary-hover: #12241e;
+  --color-brand-accent: #4c856e;
+  --color-brand-accent-light: #e1ede6;
+  --color-brand-accent-soft: #f2f7f4;
+
+  /* Full Brand Step Scale */
   --color-brand-50: #f2f7f4;
   --color-brand-100: #e1ede6;
   --color-brand-200: #c4dcce;
@@ -15,14 +28,35 @@
   --color-brand-900: #1b352c;
   --color-brand-950: #0f1f1a;
 
+  /* Background & Surface Tokens */
   --color-bg-ivory: #FAF8F5;
+  --color-bg-main: #FAF8F5;
+  --color-bg-surface: #FFFFFF;
+  --color-bg-warm: #F5EFE6;
+  --color-bg-muted: #F3EEE7;
+
+  /* Text & Typography Tokens */
   --color-text-charcoal: #212529;
+  --color-text-main: #212529;
+  --color-text-muted: #6C757D;
+  --color-text-heading: #1B352C;
+  --color-text-inverse: #FFFFFF;
+
+  /* Border & Divider Tokens */
+  --color-border-main: #E8E2D9;
+  --color-border-subtle: #F0EAE1;
+  --color-border-focus: #4C856E;
+
+  /* Promotional & Highlight Tokens */
+  --color-promo-amber: #F59E0B;
+  --color-promo-amber-light: #FEF3C7;
+  --color-promo-amber-dark: #92400E;
 }
 
 body {
   font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background-color: #FAF8F5;
-  color: #212529;
+  background-color: var(--color-bg-main);
+  color: var(--color-text-main);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -38,14 +72,14 @@ html {
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #FAF8F5;
+  background: var(--color-bg-main);
 }
 ::-webkit-scrollbar-thumb {
-  background: #c4dcce;
+  background: var(--color-brand-200);
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #9bc2af;
+  background: var(--color-brand-300);
 }
 
 /* Pulse animation utility */
@@ -62,4 +96,13 @@ html {
 
 .animate-soft-in {
   animation: soft-fade-in 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Consistent product image container on white background */
+.product-image-frame {
+  background-color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
 }

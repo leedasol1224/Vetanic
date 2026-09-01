@@ -68,11 +68,11 @@ export const ProductDetailModal: React.FC = () => {
         <div className="p-6 overflow-y-auto space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
             {/* Product Image */}
-            <div className="relative rounded-2xl overflow-hidden bg-[#F5EFE6]/60 border border-brand-100/50 aspect-square flex items-center justify-center">
+            <div className="relative rounded-2xl overflow-hidden bg-white border border-brand-100/70 aspect-square p-4 flex items-center justify-center">
               <img
                 src={product.imageUrl}
                 alt={product.name}
-                className="w-full h-full object-cover object-center"
+                className="w-full h-full object-contain object-center"
               />
               <div className="absolute top-3 left-3">
                 <PetBadge type={product.petType} size="md" />

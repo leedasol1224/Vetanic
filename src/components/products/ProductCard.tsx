@@ -30,11 +30,11 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
       className="group relative flex flex-col bg-white rounded-2xl overflow-hidden border border-brand-100 hover:border-brand-300 shadow-card hover:shadow-soft-lg transition-all duration-300 cursor-pointer"
     >
       {/* Image container */}
-      <div className="relative aspect-[4/3] w-full overflow-hidden bg-[#F5EFE6]/50">
+      <div className="relative aspect-square w-full overflow-hidden bg-white p-4 flex items-center justify-center border-b border-brand-100/60">
         <img
           src={product.imageUrl}
           alt={product.name}
-          className="h-full w-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
+          className="h-full w-full object-contain object-center group-hover:scale-105 transition-transform duration-500"
           loading="lazy"
         />
 
