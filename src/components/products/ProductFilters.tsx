@@ -28,7 +28,7 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({
   onCategoryChange,
 }) => {
   return (
-    <div className="space-y-4 bg-white/70 backdrop-blur-sm p-4 sm:p-5 rounded-2xl border border-brand-100/80 shadow-sm">
+    <div className="space-y-4 bg-white p-4 sm:p-5 rounded-2xl border border-[#DED7CE] shadow-sm">
       {/* Pet Selection */}
       <div className="flex flex-wrap items-center gap-2">
         <span className="text-xs font-bold text-charcoal-muted uppercase tracking-wider mr-2">
@@ -39,8 +39,8 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({
           onClick={() => onPetChange('all')}
           className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${
             selectedPet === 'all'
-              ? 'bg-brand-800 text-white shadow-sm'
-              : 'bg-[#F5EFE6] text-charcoal hover:bg-brand-100'
+              ? 'bg-brand-600 text-white shadow-sm'
+              : 'bg-[#FAF7F2] text-charcoal hover:bg-[#E9E0D4] border border-[#DED7CE]'
           }`}
         >
           All Pets
@@ -50,8 +50,8 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({
           onClick={() => onPetChange('dog')}
           className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${
             selectedPet === 'dog'
-              ? 'bg-brand-800 text-white shadow-sm'
-              : 'bg-[#F5EFE6] text-charcoal hover:bg-brand-100'
+              ? 'bg-brand-600 text-white shadow-sm'
+              : 'bg-[#FAF7F2] text-charcoal hover:bg-[#E9E0D4] border border-[#DED7CE]'
           }`}
         >
           🐶 Dogs
@@ -61,8 +61,8 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({
           onClick={() => onPetChange('cat')}
           className={`px-4 py-1.5 rounded-full text-xs font-bold transition-all ${
             selectedPet === 'cat'
-              ? 'bg-brand-800 text-white shadow-sm'
-              : 'bg-[#F5EFE6] text-charcoal hover:bg-brand-100'
+              ? 'bg-brand-600 text-white shadow-sm'
+              : 'bg-[#FAF7F2] text-charcoal hover:bg-[#E9E0D4] border border-[#DED7CE]'
           }`}
         >
           🐱 Cats
@@ -85,8 +85,8 @@ export const ProductFilters: React.FC<ProductFiltersProps> = ({
                 onClick={() => onCategoryChange(cat.id)}
                 className={`whitespace-nowrap px-3.5 py-1.5 rounded-xl text-xs font-semibold transition-all ${
                   isSelected
-                    ? 'bg-brand-700 text-white shadow-sm font-bold'
-                    : 'bg-white text-charcoal-muted hover:text-charcoal hover:bg-gray-50 border border-gray-200/70'
+                    ? 'bg-brand-600 text-white shadow-sm font-bold'
+                    : 'bg-[#FAF7F2] text-charcoal hover:text-charcoal hover:bg-[#E9E0D4] border border-[#DED7CE]'
                 }`}
               >
                 {cat.label}

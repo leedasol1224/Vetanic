@@ -33,6 +33,7 @@ export const ProductDetailModal: React.FC = () => {
   const handleDecrement = () => setQuantity((prev) => (prev > 1 ? prev - 1 : 1));
 
   const handleAdd = () => {
+    if (!product.isAvailable) return;
     addToOrder(product, quantity);
     closeProductModal();
   };
@@ -40,24 +41,24 @@ export const ProductDetailModal: React.FC = () => {
   const estimatedLineSubtotal = (pricing.activePrice * quantity).toFixed(2);
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-3 sm:p-4 bg-black/50 backdrop-blur-sm animate-soft-in">
+    <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-3 sm:p-4 bg-charcoal/60 backdrop-blur-sm animate-soft-in">
       <div 
         className="fixed inset-0" 
         onClick={closeProductModal} 
         aria-hidden="true" 
       />
 
-      <div className="relative w-full max-w-2xl bg-white rounded-3xl shadow-soft-lg overflow-hidden border border-brand-100 z-10 my-8 flex flex-col max-h-[90vh]">
+      <div className="relative w-full max-w-2xl bg-white rounded-3xl shadow-soft-lg overflow-hidden border border-[#DED7CE] z-10 my-8 flex flex-col max-h-[90vh]">
         {/* Header bar */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-100 bg-[#FAF8F5]">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[#DED7CE] bg-[#FAF7F2]">
           <div className="flex items-center gap-2">
-            <span className="text-xs font-bold text-brand-800 tracking-wider uppercase">Product Details</span>
+            <span className="text-xs font-bold text-brand-600 tracking-wider uppercase">Product Details</span>
             <span className="text-gray-300">•</span>
             <span className="text-xs text-charcoal-muted">{product.categoryName}</span>
           </div>
           <button
             onClick={closeProductModal}
-            className="w-8 h-8 rounded-full bg-white hover:bg-gray-100 flex items-center justify-center text-charcoal-muted hover:text-charcoal transition-colors border border-gray-200"
+            className="w-8 h-8 rounded-full bg-white hover:bg-[#F4EFE7] flex items-center justify-center text-charcoal-muted hover:text-charcoal transition-colors border border-[#DED7CE]"
             aria-label="Close modal"
           >
             <X className="w-4 h-4" />
@@ -68,7 +69,7 @@ export const ProductDetailModal: React.FC = () => {
         <div className="p-6 overflow-y-auto space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
             {/* Product Image */}
-            <div className="relative rounded-2xl overflow-hidden bg-white border border-brand-100/70 aspect-square p-4 flex items-center justify-center">
+            <div className="relative rounded-2xl overflow-hidden bg-white border border-[#DED7CE] aspect-square p-5 flex items-center justify-center">
               <img
                 src={product.imageUrl}
                 alt={product.name}
@@ -82,7 +83,7 @@ export const ProductDetailModal: React.FC = () => {
             {/* Product Info Summary */}
             <div className="flex flex-col">
               <div className="flex items-center gap-2 mb-1">
-                <span className="text-xs font-semibold text-brand-700 bg-brand-50 px-2.5 py-0.5 rounded-full">
+                <span className="text-xs font-semibold text-charcoal-muted bg-[#FAF7F2] px-2.5 py-0.5 rounded-full border border-[#DED7CE]/80">
                   {product.categoryName}
                 </span>
                 <span className="text-xs text-charcoal-muted">
@@ -94,14 +95,14 @@ export const ProductDetailModal: React.FC = () => {
                 {product.name}
               </h2>
 
-              <p className="text-brand-800 font-medium text-sm mt-1 mb-3">
+              <p className="text-charcoal-muted font-normal text-sm mt-1 mb-3">
                 {product.shortDescription}
               </p>
 
-              {/* Pricing Callout */}
-              <div className="p-3.5 bg-[#FAF8F5] rounded-2xl border border-brand-200/80 mb-3 space-y-1.5">
+              {/* Pricing Callout (Charcoal price, Deep Red promo) */}
+              <div className="p-3.5 bg-[#FAF7F2] rounded-2xl border border-[#DED7CE] mb-3 space-y-1.5">
                 <div className="flex items-baseline gap-2 flex-wrap">
-                  <span className="text-2xl font-bold text-brand-900 font-serif">
+                  <span className="text-2xl font-bold text-charcoal font-serif">
                     SGD {pricing.activePrice.toFixed(2)}
                   </span>
                   {pricing.isPromo && (
@@ -110,31 +111,31 @@ export const ProductDetailModal: React.FC = () => {
                     </span>
                   )}
                   {pricing.isPromo && (
-                    <span className="text-[10px] font-bold text-amber-900 bg-amber-100 px-2 py-0.5 rounded-md">
-                      Launch Price
+                    <span className="text-[10px] font-bold text-brand-600 bg-brand-50 px-2 py-0.5 rounded-md border border-brand-200">
+                      Singapore Launch Price
                     </span>
                   )}
                 </div>
 
                 {product.bundleOfferText && (
-                  <div className="text-xs font-bold text-brand-800 flex items-center gap-1.5 pt-1 border-t border-brand-200/50">
+                  <div className="text-xs font-medium text-charcoal flex items-center gap-1.5 pt-1.5 border-t border-[#DED7CE]/60">
                     <Tag className="w-3.5 h-3.5 text-brand-600 flex-shrink-0" />
                     <span>{product.bundleOfferText}</span>
                   </div>
                 )}
               </div>
 
-              <div className="p-3 bg-brand-50/60 rounded-xl border border-brand-100/70 mb-4 space-y-1">
-                <div className="flex items-center gap-2 text-xs font-medium text-brand-900">
-                  <Package className="w-3.5 h-3.5 text-brand-600" />
+              <div className="p-3 bg-[#FAF7F2]/80 rounded-xl border border-[#DED7CE]/70 mb-4 space-y-1">
+                <div className="flex items-center gap-2 text-xs font-medium text-charcoal">
+                  <Package className="w-3.5 h-3.5 text-sage-600" />
                   <span><strong>Package:</strong> {product.packageSize}</span>
                 </div>
-                <div className="flex items-center gap-2 text-xs font-medium text-brand-900">
-                  <MapPin className="w-3.5 h-3.5 text-brand-600" />
+                <div className="flex items-center gap-2 text-xs font-medium text-charcoal">
+                  <MapPin className="w-3.5 h-3.5 text-sage-600" />
                   <span><strong>Origin:</strong> {product.details.countryOfOrigin}</span>
                 </div>
                 {inOrder && (
-                  <div className="flex items-center gap-1.5 text-xs text-brand-700 font-semibold pt-1 border-t border-brand-200/60">
+                  <div className="flex items-center gap-1.5 text-xs text-brand-600 font-semibold pt-1 border-t border-[#DED7CE]/60">
                     <Check className="w-3.5 h-3.5 text-brand-600" />
                     <span>Currently in order: {currentInOrderQty} units</span>
                   </div>
@@ -144,9 +145,9 @@ export const ProductDetailModal: React.FC = () => {
               {/* Quantity Selector & Add Button */}
               <div className="pt-1">
                 {!product.isAvailable ? (
-                  <div className="p-3.5 bg-amber-50 rounded-2xl border border-amber-200/80 text-center space-y-1">
-                    <span className="text-xs font-bold text-amber-950 block">Currently Sold Out</span>
-                    <p className="text-[11px] text-amber-900 font-normal">
+                  <div className="p-3.5 bg-[#FAF7F2] rounded-2xl border border-[#DED7CE] text-center space-y-1">
+                    <span className="text-xs font-bold text-charcoal block">Currently Sold Out</span>
+                    <p className="text-[11px] text-charcoal-muted font-normal">
                       This item is temporarily unavailable for order requests.
                     </p>
                   </div>
@@ -157,11 +158,11 @@ export const ProductDetailModal: React.FC = () => {
                       <span className="text-charcoal font-bold">Line Total: SGD {estimatedLineSubtotal}</span>
                     </div>
                     <div className="flex items-center gap-3">
-                      <div className="flex items-center border border-gray-200 rounded-xl bg-white shadow-sm overflow-hidden">
+                      <div className="flex items-center border border-[#DED7CE] rounded-xl bg-white shadow-sm overflow-hidden">
                         <button
                           type="button"
                           onClick={handleDecrement}
-                          className="p-2.5 text-charcoal hover:bg-gray-100 transition-colors disabled:opacity-40"
+                          className="p-2.5 text-charcoal hover:bg-[#FAF7F2] transition-colors disabled:opacity-40"
                           disabled={quantity <= 1}
                           aria-label="Decrease quantity"
                         >
@@ -173,7 +174,7 @@ export const ProductDetailModal: React.FC = () => {
                         <button
                           type="button"
                           onClick={handleIncrement}
-                          className="p-2.5 text-charcoal hover:bg-gray-100 transition-colors"
+                          className="p-2.5 text-charcoal hover:bg-[#FAF7F2] transition-colors"
                           aria-label="Increase quantity"
                         >
                           <Plus className="w-4 h-4" />
@@ -183,7 +184,7 @@ export const ProductDetailModal: React.FC = () => {
                       <button
                         type="button"
                         onClick={handleAdd}
-                        className="flex-1 inline-flex items-center justify-center gap-2 bg-brand-800 hover:bg-brand-900 text-white font-semibold px-5 py-3 rounded-xl shadow-sm hover:shadow-md transition-all active:scale-[0.99]"
+                        className="flex-1 inline-flex items-center justify-center gap-2 bg-brand-600 hover:bg-brand-700 text-white font-semibold px-5 py-3 rounded-xl shadow-sm hover:shadow-md transition-all active:scale-[0.99]"
                       >
                         <Plus className="w-4 h-4" />
                         <span>Add to Order</span>
@@ -196,14 +197,14 @@ export const ProductDetailModal: React.FC = () => {
           </div>
 
           {/* Tabbed Info Section */}
-          <div className="border-t border-gray-100 pt-6">
-            <div className="flex gap-2 border-b border-gray-100 pb-2">
+          <div className="border-t border-[#DED7CE] pt-6">
+            <div className="flex gap-2 border-b border-[#DED7CE] pb-2">
               <button
                 onClick={() => setActiveTab('details')}
                 className={`text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors ${
                   activeTab === 'details'
-                    ? 'bg-brand-700 text-white'
-                    : 'text-charcoal-muted hover:bg-gray-100'
+                    ? 'bg-brand-600 text-white'
+                    : 'text-charcoal-muted hover:bg-[#FAF7F2]'
                 }`}
               >
                 Key Features
@@ -212,8 +213,8 @@ export const ProductDetailModal: React.FC = () => {
                 onClick={() => setActiveTab('usage')}
                 className={`text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors ${
                   activeTab === 'usage'
-                    ? 'bg-brand-700 text-white'
-                    : 'text-charcoal-muted hover:bg-gray-100'
+                    ? 'bg-brand-600 text-white'
+                    : 'text-charcoal-muted hover:bg-[#FAF7F2]'
                 }`}
               >
                 Usage & Ingredients
@@ -222,8 +223,8 @@ export const ProductDetailModal: React.FC = () => {
                 onClick={() => setActiveTab('origin')}
                 className={`text-xs font-semibold px-3 py-1.5 rounded-lg transition-colors ${
                   activeTab === 'origin'
-                    ? 'bg-brand-700 text-white'
-                    : 'text-charcoal-muted hover:bg-gray-100'
+                    ? 'bg-brand-600 text-white'
+                    : 'text-charcoal-muted hover:bg-[#FAF7F2]'
                 }`}
               >
                 Storage & Precautions
@@ -234,7 +235,7 @@ export const ProductDetailModal: React.FC = () => {
               {activeTab === 'details' && (
                 <div className="space-y-2">
                   <h4 className="font-semibold text-charcoal flex items-center gap-1.5">
-                    <Sparkles className="w-4 h-4 text-brand-600" />
+                    <Sparkles className="w-4 h-4 text-sage-600" />
                     Product Highlights
                   </h4>
                   {product.details.keyFeatures && (
@@ -244,8 +245,8 @@ export const ProductDetailModal: React.FC = () => {
                       ))}
                     </ul>
                   )}
-                  <div className="mt-3 p-3 bg-[#FAF8F5] rounded-xl border border-gray-200/60 text-xs text-charcoal-muted flex items-start gap-2">
-                    <Info className="w-4 h-4 text-brand-600 flex-shrink-0 mt-0.5" />
+                  <div className="mt-3 p-3 bg-[#FAF7F2] rounded-xl border border-[#DED7CE] text-xs text-charcoal-muted flex items-start gap-2">
+                    <Info className="w-4 h-4 text-sage-600 flex-shrink-0 mt-0.5" />
                     <span>
                       VETANIC formulations are made with companion animal wellbeing at the core, adhering to strict Korean pet supplement quality standards.
                     </span>
@@ -257,13 +258,13 @@ export const ProductDetailModal: React.FC = () => {
                 <div className="space-y-4">
                   <div>
                     <h4 className="font-semibold text-charcoal mb-1">Recommended Usage</h4>
-                    <p className="text-xs text-charcoal-muted italic bg-gray-50 p-2.5 rounded-lg border border-gray-100">
+                    <p className="text-xs text-charcoal-muted italic bg-[#FAF7F2] p-2.5 rounded-lg border border-[#DED7CE]">
                       {product.details.recommendedUsage || 'Product information to be provided by VETANIC.'}
                     </p>
                   </div>
                   <div>
                     <h4 className="font-semibold text-charcoal mb-1">Ingredients</h4>
-                    <p className="text-xs text-charcoal-muted italic bg-gray-50 p-2.5 rounded-lg border border-gray-100">
+                    <p className="text-xs text-charcoal-muted italic bg-[#FAF7F2] p-2.5 rounded-lg border border-[#DED7CE]">
                       {product.details.ingredientsPlaceholder || 'Product information to be provided by VETANIC.'}
                     </p>
                   </div>
@@ -279,11 +280,11 @@ export const ProductDetailModal: React.FC = () => {
                     </p>
                   </div>
                   <div>
-                    <h4 className="font-semibold text-charcoal flex items-center gap-1.5 mb-1 text-amber-900">
-                      <ShieldAlert className="w-4 h-4 text-amber-600" />
+                    <h4 className="font-semibold text-charcoal flex items-center gap-1.5 mb-1">
+                      <ShieldAlert className="w-4 h-4 text-brand-600" />
                       Precautions
                     </h4>
-                    <p className="text-xs text-charcoal-muted italic bg-amber-50/50 p-2.5 rounded-lg border border-amber-100">
+                    <p className="text-xs text-charcoal-muted italic bg-[#FAF7F2] p-2.5 rounded-lg border border-[#DED7CE]">
                       {product.details.precautions || 'Product information to be provided by VETANIC.'}
                     </p>
                   </div>
@@ -294,7 +295,7 @@ export const ProductDetailModal: React.FC = () => {
         </div>
 
         {/* Modal Footer */}
-        <div className="px-6 py-4 bg-gray-50 border-t border-gray-100 flex items-center justify-between">
+        <div className="px-6 py-4 bg-[#FAF7F2] border-t border-[#DED7CE] flex items-center justify-between">
           <button
             onClick={closeProductModal}
             className="text-xs font-semibold text-charcoal-muted hover:text-charcoal"
@@ -311,7 +312,7 @@ export const ProductDetailModal: React.FC = () => {
           ) : (
             <button
               onClick={handleAdd}
-              className="inline-flex items-center gap-2 bg-brand-800 hover:bg-brand-900 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition-all"
+              className="inline-flex items-center gap-2 bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition-all"
             >
               <Check className="w-3.5 h-3.5" />
               <span>Add {quantity} to Order (SGD {estimatedLineSubtotal})</span>

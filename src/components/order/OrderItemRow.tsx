@@ -20,13 +20,13 @@ export const OrderItemRow: React.FC<OrderItemRowProps> = ({
   const lineTotal = (pricing.activePrice * quantity).toFixed(2);
 
   return (
-    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 bg-white rounded-2xl border border-brand-100 shadow-sm">
+    <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 bg-white rounded-2xl border border-[#DED7CE] shadow-sm">
       {/* Product Image & Meta */}
       <div className="flex items-center gap-3.5 flex-1 min-w-0">
         <img
           src={product.imageUrl}
           alt={product.name}
-          className="w-16 h-16 rounded-xl object-contain p-1 border border-brand-100 bg-white flex-shrink-0"
+          className="w-16 h-16 rounded-xl object-contain p-1 border border-[#DED7CE] bg-white flex-shrink-0"
         />
         <div className="min-w-0">
           <div className="flex items-center gap-2 mb-0.5">
@@ -39,7 +39,7 @@ export const OrderItemRow: React.FC<OrderItemRowProps> = ({
             {product.name}
           </h4>
           <div className="flex items-baseline gap-1.5 mt-0.5">
-            <span className="text-xs font-bold text-brand-900">
+            <span className="text-xs font-bold text-charcoal">
               SGD {pricing.activePrice.toFixed(2)}
             </span>
             {pricing.isPromo && (
@@ -52,8 +52,8 @@ export const OrderItemRow: React.FC<OrderItemRowProps> = ({
       </div>
 
       {/* Quantity, Line Total & Remove controls */}
-      <div className="flex items-center justify-between sm:justify-end gap-4 w-full sm:w-auto pt-2 sm:pt-0 border-t sm:border-t-0 border-gray-100">
-        <div className="flex items-center border border-gray-200 rounded-xl bg-gray-50/70 p-0.5">
+      <div className="flex items-center justify-between sm:justify-end gap-4 w-full sm:w-auto pt-2 sm:pt-0 border-t sm:border-t-0 border-[#DED7CE]/60">
+        <div className="flex items-center border border-[#DED7CE] rounded-xl bg-[#FAF7F2] p-0.5">
           <button
             type="button"
             onClick={() => onUpdateQuantity(product.id, quantity - 1)}
@@ -88,7 +88,7 @@ export const OrderItemRow: React.FC<OrderItemRowProps> = ({
         <button
           type="button"
           onClick={() => onRemove(product.id)}
-          className="text-gray-400 hover:text-rose-600 p-2 rounded-xl hover:bg-rose-50 transition-colors"
+          className="text-gray-400 hover:text-brand-600 p-2 rounded-xl hover:bg-brand-50 transition-colors"
           title="Remove from order"
           aria-label="Remove item"
         >

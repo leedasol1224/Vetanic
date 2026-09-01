@@ -31,11 +31,11 @@ export const ShopByPet: React.FC = () => {
   ];
 
   return (
-    <section className="py-16 md:py-20 bg-[#FAF8F5]">
+    <section className="py-16 md:py-20 bg-[#FAF7F2] border-b border-[#DED7CE]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex flex-col md:flex-row md:items-end justify-between mb-10">
           <div>
-            <span className="text-xs font-bold text-brand-700 uppercase tracking-widest block mb-2">
+            <span className="text-xs font-bold text-brand-600 uppercase tracking-widest block mb-2">
               Companion Tailored
             </span>
             <h2 className="text-3xl sm:text-4xl font-serif font-bold text-charcoal tracking-tight">
@@ -52,23 +52,23 @@ export const ShopByPet: React.FC = () => {
             <Link
               key={cat.id}
               to={cat.link}
-              className="group relative bg-white rounded-3xl overflow-hidden border border-brand-100/90 hover:border-brand-300 shadow-card hover:shadow-soft-lg transition-all duration-300 flex flex-col"
+              className="group relative bg-white rounded-3xl overflow-hidden border border-[#DED7CE] hover:border-brand-300 shadow-card hover:shadow-soft-lg transition-all duration-300 flex flex-col"
             >
-              <div className="relative aspect-[16/10] w-full overflow-hidden bg-[#F5EFE6]/60">
+              <div className="relative aspect-[16/10] w-full overflow-hidden bg-[#FAF7F2]">
                 <img
                   src={cat.image}
                   alt={cat.title}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   loading="lazy"
                 />
-                <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm px-2.5 py-0.5 rounded-full text-[11px] font-bold text-brand-900 border border-brand-100 shadow-sm">
+                <div className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm px-2.5 py-0.5 rounded-full text-[11px] font-bold text-sage-800 border border-sage-200 shadow-sm">
                   {cat.badge}
                 </div>
               </div>
 
               <div className="p-6 flex flex-col flex-1 justify-between">
                 <div>
-                  <h3 className="text-xl font-bold text-charcoal group-hover:text-brand-800 transition-colors mb-2">
+                  <h3 className="text-xl font-bold text-charcoal group-hover:text-brand-600 transition-colors mb-2">
                     {cat.title}
                   </h3>
                   <p className="text-xs text-charcoal-muted leading-relaxed">
@@ -76,7 +76,7 @@ export const ShopByPet: React.FC = () => {
                   </p>
                 </div>
 
-                <div className="pt-5 mt-4 border-t border-gray-100 flex items-center justify-between text-xs font-bold text-brand-800 group-hover:text-brand-950">
+                <div className="pt-5 mt-4 border-t border-[#DED7CE]/60 flex items-center justify-between text-xs font-bold text-brand-600 group-hover:text-brand-700">
                   <span>Explore {cat.title}</span>
                   <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </div>

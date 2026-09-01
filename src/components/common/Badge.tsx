@@ -16,12 +16,13 @@ export const PetBadge: React.FC<BadgeProps> = ({ type, size = 'sm' }) => {
       ? 'DOG ONLY'
       : 'CATS ONLY';
 
+  // Sage Green wellness accent styling
   const styleClasses =
     label === 'DOG + CAT'
-      ? 'bg-[#e7efe9] text-[#2c5344] border-[#c4dcce]'
+      ? 'bg-sage-100 text-sage-800 border-sage-300'
       : label === 'DOG ONLY'
-      ? 'bg-[#f4efe6] text-[#78593a] border-[#e2d5c3]'
-      : 'bg-[#edf2f7] text-[#3d5a80] border-[#cbd5e1]';
+      ? 'bg-sage-50 text-sage-700 border-sage-200'
+      : 'bg-sage-100 text-sage-800 border-sage-300';
 
   return (
     <span

@@ -4,53 +4,58 @@
 
 :root {
   /* ==========================================================================
-     VETANIC GLOBAL DESIGN TOKENS & BRAND PALETTE
-     Change these variables to adjust the entire website color scheme.
+     VETANIC OFFICIAL BRAND DESIGN TOKENS
      ========================================================================== */
 
-  /* Primary Brand Greens */
-  --color-brand-primary: #1b352c;
-  --color-brand-primary-hover: #12241e;
-  --color-brand-accent: #4c856e;
-  --color-brand-accent-light: #e1ede6;
-  --color-brand-accent-soft: #f2f7f4;
+  /* Primary Brand: VETANIC Deep Red */
+  --color-brand-primary: #9E2328;
+  --color-brand-primary-hover: #841C21;
+  --color-brand-50: #FBF2F2;
+  --color-brand-100: #F6E3E4;
+  --color-brand-200: #ECC7C9;
+  --color-brand-300: #DE9FA2;
+  --color-brand-400: #CC6F74;
+  --color-brand-500: #B5454B;
+  --color-brand-600: #9E2328; /* Primary */
+  --color-brand-700: #841C21; /* Hover */
+  --color-brand-800: #6C161A;
+  --color-brand-900: #551215;
+  --color-brand-950: #330709;
 
-  /* Full Brand Step Scale */
-  --color-brand-50: #f2f7f4;
-  --color-brand-100: #e1ede6;
-  --color-brand-200: #c4dcce;
-  --color-brand-300: #9bc2af;
-  --color-brand-400: #6fa38d;
-  --color-brand-500: #4c856e;
-  --color-brand-600: #386a56;
-  --color-brand-700: #2c5344;
-  --color-brand-800: #224136;
-  --color-brand-900: #1b352c;
-  --color-brand-950: #0f1f1a;
+  /* Wellness Accent: Sage Green */
+  --color-sage-accent: #A8B89A;
+  --color-sage-50: #F6F8F4;
+  --color-sage-100: #EBF0E7;
+  --color-sage-200: #D6E0CE;
+  --color-sage-300: #BED0B3;
+  --color-sage-400: #A8B89A; /* Wellness Sage */
+  --color-sage-500: #8D9F7F;
+  --color-sage-600: #718264;
+  --color-sage-700: #57654C;
+  --color-sage-800: #414C39;
+  --color-sage-900: #2E3628;
 
-  /* Background & Surface Tokens */
-  --color-bg-ivory: #FAF8F5;
-  --color-bg-main: #FAF8F5;
-  --color-bg-surface: #FFFFFF;
-  --color-bg-warm: #F5EFE6;
-  --color-bg-muted: #F3EEE7;
+  /* Backgrounds & Surfaces */
+  --color-bg-main: #FAF7F2;      /* Warm Ivory */
+  --color-bg-surface: #FFFFFF;   /* Card Surface */
+  --color-bg-secondary: #E9E0D4; /* Soft Beige */
+  --color-bg-ivory: #FAF7F2;
 
-  /* Text & Typography Tokens */
-  --color-text-charcoal: #212529;
-  --color-text-main: #212529;
-  --color-text-muted: #6C757D;
-  --color-text-heading: #1B352C;
+  /* Typography */
+  --color-text-main: #222222;    /* Primary Text / Charcoal */
+  --color-text-charcoal: #222222;
+  --color-text-muted: #6F6A65;   /* Secondary Text / Warm Gray */
   --color-text-inverse: #FFFFFF;
 
-  /* Border & Divider Tokens */
-  --color-border-main: #E8E2D9;
-  --color-border-subtle: #F0EAE1;
-  --color-border-focus: #4C856E;
+  /* Borders & Dividers */
+  --color-border-main: #DED7CE;  /* Subtle Beige Border */
+  --color-border-subtle: #EFEAE2;
+  --color-border-focus: #9E2328;
 
-  /* Promotional & Highlight Tokens */
-  --color-promo-amber: #F59E0B;
-  --color-promo-amber-light: #FEF3C7;
-  --color-promo-amber-dark: #92400E;
+  /* Promotional Badges */
+  --color-promo-badge: #9E2328;
+  --color-promo-badge-bg: #FBF2F2;
+  --color-promo-badge-border: #ECC7C9;
 }
 
 body {
@@ -75,11 +80,11 @@ html {
   background: var(--color-bg-main);
 }
 ::-webkit-scrollbar-thumb {
-  background: var(--color-brand-200);
+  background: var(--color-border-main);
   border-radius: 9999px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--color-brand-300);
+  background: #C4B39D;
 }
 
 /* Pulse animation utility */

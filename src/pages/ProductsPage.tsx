@@ -74,11 +74,11 @@ export const ProductsPage: React.FC = () => {
   });
 
   return (
-    <main className="flex-1 bg-[#FAF8F5] py-12 md:py-16">
+    <main className="flex-1 bg-[#FAF7F2] py-12 md:py-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Page Header */}
         <div className="text-center max-w-2xl mx-auto mb-10">
-          <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-brand-100/80 text-brand-900 text-xs font-bold uppercase tracking-wider mb-3 border border-brand-200">
+          <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-brand-50 text-brand-600 text-xs font-bold uppercase tracking-wider mb-3 border border-brand-200">
             <Sparkles className="w-3.5 h-3.5 text-brand-600" />
             <span>Singapore Official Range</span>
           </div>
@@ -107,14 +107,14 @@ export const ProductsPage: React.FC = () => {
           <div>
             Showing <strong className="text-charcoal font-bold">{filteredProducts.length}</strong> of {PRODUCTS.length} products
             {(selectedPet !== 'all' || selectedCategory !== 'all') && (
-              <span className="ml-2 text-brand-700 font-semibold">(Filtered)</span>
+              <span className="ml-2 text-brand-600 font-semibold">(Filtered)</span>
             )}
           </div>
 
           {(selectedPet !== 'all' || selectedCategory !== 'all') && (
             <button
               onClick={handleResetFilters}
-              className="inline-flex items-center gap-1 text-xs font-bold text-brand-800 hover:text-brand-950 underline underline-offset-2"
+              className="inline-flex items-center gap-1 text-xs font-bold text-brand-600 hover:text-brand-700 underline underline-offset-2"
             >
               <RotateCcw className="w-3 h-3" />
               <span>Reset Filters</span>
@@ -130,8 +130,8 @@ export const ProductsPage: React.FC = () => {
             ))}
           </div>
         ) : (
-          <div className="bg-white rounded-3xl p-12 text-center border border-brand-100 max-w-md mx-auto my-8">
-            <div className="w-12 h-12 rounded-full bg-brand-50 mx-auto flex items-center justify-center text-brand-700 mb-4">
+          <div className="bg-white rounded-3xl p-12 text-center border border-[#DED7CE] max-w-md mx-auto my-8">
+            <div className="w-12 h-12 rounded-full bg-[#FAF7F2] border border-[#DED7CE] mx-auto flex items-center justify-center text-brand-600 mb-4">
               🐾
             </div>
             <h3 className="text-lg font-bold text-charcoal mb-2">No matching products found</h3>
@@ -140,7 +140,7 @@ export const ProductsPage: React.FC = () => {
             </p>
             <button
               onClick={handleResetFilters}
-              className="inline-flex items-center gap-2 bg-brand-800 text-white text-xs font-bold px-5 py-2.5 rounded-full hover:bg-brand-900 transition-colors"
+              className="inline-flex items-center gap-2 bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold px-5 py-2.5 rounded-full transition-colors"
             >
               <RotateCcw className="w-3.5 h-3.5" />
               <span>Show All Products</span>

@@ -9,12 +9,12 @@ export const FeaturedProducts: React.FC = () => {
   const featured = PRODUCTS.filter((p) => p.featured).slice(0, 4);
 
   return (
-    <section className="py-16 md:py-24 bg-white border-y border-brand-100/60">
+    <section className="py-16 md:py-24 bg-white border-y border-[#DED7CE]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-12">
           <div>
-            <div className="inline-flex items-center gap-1.5 text-xs font-bold text-brand-700 uppercase tracking-wider mb-2">
+            <div className="inline-flex items-center gap-1.5 text-xs font-bold text-brand-600 uppercase tracking-wider mb-2">
               <Sparkles className="w-3.5 h-3.5 text-brand-600" />
               <span>Singapore Favorites</span>
             </div>
@@ -25,7 +25,7 @@ export const FeaturedProducts: React.FC = () => {
 
           <Link
             to="/products"
-            className="inline-flex items-center gap-1.5 text-sm font-bold text-brand-800 hover:text-brand-950 mt-4 sm:mt-0 transition-colors group"
+            className="inline-flex items-center gap-1.5 text-sm font-bold text-brand-600 hover:text-brand-700 mt-4 sm:mt-0 transition-colors group"
           >
             <span>View All Products</span>
             <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />

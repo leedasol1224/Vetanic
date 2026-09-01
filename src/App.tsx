@@ -30,7 +30,7 @@ function App() {
     <OrderProvider>
       <Router>
         <ScrollToTop />
-        <div className="min-h-screen flex flex-col bg-[#FAF8F5] text-[#212529]">
+        <div className="min-h-screen flex flex-col bg-[#FAF7F2] text-[#222222]">
           <AnnouncementBar />
           <Navbar />
           

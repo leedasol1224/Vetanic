@@ -14,33 +14,33 @@ export const DeliveryProgressBar: React.FC = () => {
   const progressPercent = Math.min(100, Math.round((productTotal / 50.00) * 100));
 
   return (
-    <div className="bg-white rounded-2xl p-4 sm:p-5 border border-brand-100 shadow-sm space-y-3.5 animate-soft-in">
+    <div className="bg-white rounded-2xl p-4 sm:p-5 border border-[#DED7CE] shadow-sm space-y-3.5 animate-soft-in">
       {/* Progress Bar & Header */}
       <div>
         <div className="flex items-center justify-between gap-2 mb-2">
           <div className="flex items-center gap-2 text-xs font-bold text-charcoal">
-            <Truck className="w-4 h-4 text-brand-700" />
+            <Truck className="w-4 h-4 text-brand-600" />
             <span>
               {isFreeDeliveryUnlocked ? (
-                <span className="text-brand-800">You've unlocked free local delivery!</span>
+                <span className="text-brand-600 font-bold">You've unlocked free local delivery!</span>
               ) : (
                 <span>
-                  Add <strong className="text-brand-900 font-bold">SGD {freeDeliveryThresholdDelta.toFixed(2)}</strong> more to enjoy free local delivery.
+                  Add <strong className="text-charcoal font-bold">SGD {freeDeliveryThresholdDelta.toFixed(2)}</strong> more to enjoy free local delivery.
                 </span>
               )}
             </span>
           </div>
 
-          <span className="text-[11px] font-bold text-brand-800 bg-brand-50 px-2 py-0.5 rounded-full border border-brand-100">
+          <span className="text-[11px] font-bold text-charcoal bg-[#FAF7F2] px-2 py-0.5 rounded-full border border-[#DED7CE]">
             {progressPercent}%
           </span>
         </div>
 
         {/* Progress track */}
-        <div className="w-full h-2 rounded-full bg-gray-100 overflow-hidden">
+        <div className="w-full h-2 rounded-full bg-[#FAF7F2] border border-[#DED7CE]/60 overflow-hidden">
           <div
             className={`h-full transition-all duration-500 rounded-full ${
-              isFreeDeliveryUnlocked ? 'bg-brand-600' : 'bg-amber-400'
+              isFreeDeliveryUnlocked ? 'bg-brand-600' : 'bg-sage-400'
             }`}
             style={{ width: `${progressPercent}%` }}
           />
@@ -49,11 +49,11 @@ export const DeliveryProgressBar: React.FC = () => {
 
       {/* Mix & Match Upsell Alerts */}
       {upsellMessages.length > 0 && (
-        <div className="pt-2 border-t border-gray-100 space-y-2">
+        <div className="pt-2 border-t border-[#DED7CE]/60 space-y-2">
           {upsellMessages.map((msg, idx) => (
             <div
               key={idx}
-              className="p-3 bg-brand-50/80 rounded-xl border border-brand-200/70 text-xs text-brand-950 flex items-start justify-between gap-2"
+              className="p-3 bg-[#FAF7F2] rounded-xl border border-[#DED7CE] text-xs text-charcoal flex items-start justify-between gap-2"
             >
               <div className="flex items-start gap-2">
                 <Sparkles className="w-4 h-4 text-brand-600 flex-shrink-0 mt-0.5" />
@@ -61,7 +61,7 @@ export const DeliveryProgressBar: React.FC = () => {
               </div>
               <Link
                 to="/products"
-                className="inline-flex items-center gap-1 text-[11px] font-bold text-brand-800 hover:text-brand-950 underline underline-offset-2 flex-shrink-0"
+                className="inline-flex items-center gap-1 text-[11px] font-bold text-brand-600 hover:text-brand-700 underline underline-offset-2 flex-shrink-0"
               >
                 <span>Browse</span>
               </Link>
