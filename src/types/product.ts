@@ -12,6 +12,25 @@ export type ProductCategory =
 
 export type MerchandisingCollection = 'everyday-care' | 'wellness-support' | 'treats' | 'standard';
 
+export interface ProductDetails {
+  keyBenefits: string[];
+  mainIngredients: string[];
+  fullIngredients: string;
+  feedingUsageGuide: string;
+  recommendedDailyAmount: string;
+  suitablePetType: string;
+  suitableLifeStage: string;
+  packageSize: string;
+  countryOfOrigin: string;
+  storageInstructions: string;
+  precautions: string;
+  additionalNotes?: string;
+  // Legacy / convenience fields
+  keyFeatures?: string[];
+  ingredientsPlaceholder?: string;
+  recommendedUsage?: string;
+}
+
 export interface Product {
   id: string;
   slug: string;
@@ -25,21 +44,14 @@ export interface Product {
   shortDescription: string;
   packageSize: string;
   imageUrl: string;
+  galleryImages?: string[];
   isAvailable: boolean;
   displayOrder: number;
   featured?: boolean;
   regularPrice: number;
   launchPrice: number;
   bundleOfferText?: string;
-  details: {
-    keyFeatures?: string[];
-    ingredientsPlaceholder?: string;
-    recommendedUsage?: string;
-    packageSize: string;
-    countryOfOrigin: string;
-    storageInstructions?: string;
-    precautions?: string;
-  };
+  details: ProductDetails;
 }
 
 export interface CategoryInfo {

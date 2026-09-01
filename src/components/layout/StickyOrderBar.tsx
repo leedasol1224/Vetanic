@@ -1,14 +1,14 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { ShoppingBag, ArrowRight } from 'lucide-react';
 import { useOrder } from '../../context/OrderContext';
 
 export const StickyOrderBar: React.FC = () => {
-  const { totalItemCount } = useOrder();
+  const { totalItemCount, pricingSummary, openCartDrawer } = useOrder();
   const location = useLocation();
 
-  // Hide on order page itself
-  if (location.pathname === '/order' || totalItemCount === 0) {
+  // Hide on order page or admin pages or when 0 items
+  if (location.pathname === '/order' || location.pathname.startsWith('/admin') || totalItemCount === 0) {
     return null;
   }
 
@@ -23,17 +23,20 @@ export const StickyOrderBar: React.FC = () => {
             <div className="text-xs font-bold text-charcoal">
               {totalItemCount} {totalItemCount === 1 ? 'item' : 'items'} in order
             </div>
-            <div className="text-[10px] text-charcoal-muted">Ready to submit details</div>
+            <div className="text-[11px] text-brand-600 font-bold">
+              Est. SGD {pricingSummary.estimatedTotal.toFixed(2)}
+            </div>
           </div>
         </div>
 
-        <Link
-          to="/order"
-          className="inline-flex items-center gap-1.5 bg-brand-600 text-white font-bold text-xs px-4 py-2.5 rounded-xl shadow-sm hover:bg-brand-700 transition-colors"
+        <button
+          type="button"
+          onClick={openCartDrawer}
+          className="inline-flex items-center gap-1.5 bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs px-4 py-2.5 rounded-xl shadow-sm transition-colors"
         >
-          <span>Complete Order</span>
+          <span>View Order</span>
           <ArrowRight className="w-3.5 h-3.5" />
-        </Link>
+        </button>
       </div>
     </div>
   );

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { X, Plus, Minus, Check, Package, MapPin, ShieldAlert, Sparkles, Info, Tag } from 'lucide-react';
+import { Link } from 'react-router-dom';
+import { X, Plus, Minus, Check, Package, MapPin, ShieldAlert, Sparkles, Info, Tag, ExternalLink } from 'lucide-react';
 import { useOrder } from '../../context/OrderContext';
 import { PetBadge } from '../common/Badge';
 import { getProductPricing } from '../../lib/pricing';
@@ -52,17 +53,28 @@ export const ProductDetailModal: React.FC = () => {
         {/* Header bar */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-[#DED7CE] bg-[#FAF7F2]">
           <div className="flex items-center gap-2">
-            <span className="text-xs font-bold text-brand-600 tracking-wider uppercase">Product Details</span>
+            <span className="text-xs font-bold text-brand-600 tracking-wider uppercase">Product Quick View</span>
             <span className="text-gray-300">•</span>
             <span className="text-xs text-charcoal-muted">{product.categoryName}</span>
           </div>
-          <button
-            onClick={closeProductModal}
-            className="w-8 h-8 rounded-full bg-white hover:bg-[#F4EFE7] flex items-center justify-center text-charcoal-muted hover:text-charcoal transition-colors border border-[#DED7CE]"
-            aria-label="Close modal"
-          >
-            <X className="w-4 h-4" />
-          </button>
+
+          <div className="flex items-center gap-3">
+            <Link
+              to={`/products/${product.id}`}
+              onClick={closeProductModal}
+              className="text-xs font-semibold text-brand-600 hover:text-brand-700 inline-flex items-center gap-1"
+            >
+              <span>Full Page</span>
+              <ExternalLink className="w-3 h-3" />
+            </Link>
+            <button
+              onClick={closeProductModal}
+              className="w-8 h-8 rounded-full bg-white hover:bg-[#F4EFE7] flex items-center justify-center text-charcoal-muted hover:text-charcoal transition-colors border border-[#DED7CE]"
+              aria-label="Close modal"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
         </div>
 
         {/* Modal Body */}
@@ -99,7 +111,7 @@ export const ProductDetailModal: React.FC = () => {
                 {product.shortDescription}
               </p>
 
-              {/* Pricing Callout (Charcoal price, Deep Red promo) */}
+              {/* Pricing Callout */}
               <div className="p-3.5 bg-[#FAF7F2] rounded-2xl border border-[#DED7CE] mb-3 space-y-1.5">
                 <div className="flex items-baseline gap-2 flex-wrap">
                   <span className="text-2xl font-bold text-charcoal font-serif">
@@ -238,9 +250,9 @@ export const ProductDetailModal: React.FC = () => {
                     <Sparkles className="w-4 h-4 text-sage-600" />
                     Product Highlights
                   </h4>
-                  {product.details.keyFeatures && (
+                  {product.details.keyBenefits && (
                     <ul className="space-y-1.5 pl-4 list-disc text-charcoal-muted text-xs sm:text-sm">
-                      {product.details.keyFeatures.map((feat, idx) => (
+                      {product.details.keyBenefits.map((feat, idx) => (
                         <li key={idx}>{feat}</li>
                       ))}
                     </ul>
@@ -257,16 +269,20 @@ export const ProductDetailModal: React.FC = () => {
               {activeTab === 'usage' && (
                 <div className="space-y-4">
                   <div>
-                    <h4 className="font-semibold text-charcoal mb-1">Recommended Usage</h4>
-                    <p className="text-xs text-charcoal-muted italic bg-[#FAF7F2] p-2.5 rounded-lg border border-[#DED7CE]">
-                      {product.details.recommendedUsage || 'Product information to be provided by VETANIC.'}
+                    <h4 className="font-semibold text-charcoal mb-1">Recommended Dosage & Feeding</h4>
+                    <p className="text-xs text-charcoal-muted bg-[#FAF7F2] p-2.5 rounded-lg border border-[#DED7CE]">
+                      {product.details.recommendedDailyAmount}
                     </p>
                   </div>
                   <div>
-                    <h4 className="font-semibold text-charcoal mb-1">Ingredients</h4>
-                    <p className="text-xs text-charcoal-muted italic bg-[#FAF7F2] p-2.5 rounded-lg border border-[#DED7CE]">
-                      {product.details.ingredientsPlaceholder || 'Product information to be provided by VETANIC.'}
-                    </p>
+                    <h4 className="font-semibold text-charcoal mb-1">Key Ingredients</h4>
+                    <div className="flex flex-wrap gap-1.5">
+                      {product.details.mainIngredients.map((ing, idx) => (
+                        <span key={idx} className="text-xs bg-sage-100/70 border border-sage-200 text-sage-800 px-2 py-0.5 rounded-md">
+                          {ing}
+                        </span>
+                      ))}
+                    </div>
                   </div>
                 </div>
               )}
@@ -276,7 +292,7 @@ export const ProductDetailModal: React.FC = () => {
                   <div>
                     <h4 className="font-semibold text-charcoal mb-1">Storage Instructions</h4>
                     <p className="text-xs text-charcoal-muted">
-                      {product.details.storageInstructions || 'Store in a cool, dry place away from direct sunlight.'}
+                      {product.details.storageInstructions}
                     </p>
                   </div>
                   <div>
@@ -284,8 +300,8 @@ export const ProductDetailModal: React.FC = () => {
                       <ShieldAlert className="w-4 h-4 text-brand-600" />
                       Precautions
                     </h4>
-                    <p className="text-xs text-charcoal-muted italic bg-[#FAF7F2] p-2.5 rounded-lg border border-[#DED7CE]">
-                      {product.details.precautions || 'Product information to be provided by VETANIC.'}
+                    <p className="text-xs text-charcoal-muted bg-[#FAF7F2] p-2.5 rounded-lg border border-[#DED7CE]">
+                      {product.details.precautions}
                     </p>
                   </div>
                 </div>
@@ -296,12 +312,15 @@ export const ProductDetailModal: React.FC = () => {
 
         {/* Modal Footer */}
         <div className="px-6 py-4 bg-[#FAF7F2] border-t border-[#DED7CE] flex items-center justify-between">
-          <button
+          <Link
+            to={`/products/${product.id}`}
             onClick={closeProductModal}
-            className="text-xs font-semibold text-charcoal-muted hover:text-charcoal"
+            className="text-xs font-semibold text-brand-600 hover:underline flex items-center gap-1"
           >
-            Close Window
-          </button>
+            <span>View Full Product Page</span>
+            <ExternalLink className="w-3 h-3" />
+          </Link>
+
           {!product.isAvailable ? (
             <button
               disabled

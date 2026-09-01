@@ -26,6 +26,9 @@ interface OrderContextType {
   activeProductModal: Product | null;
   openProductModal: (product: Product) => void;
   closeProductModal: () => void;
+  isCartDrawerOpen: boolean;
+  openCartDrawer: () => void;
+  closeCartDrawer: () => void;
 }
 
 const OrderContext = createContext<OrderContextType | undefined>(undefined);
@@ -37,6 +40,7 @@ export const OrderProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   const [showAddedToast, setShowAddedToast] = useState(false);
   const [lastSubmittedOrder, setLastSubmittedOrder] = useState<OrderRecord | null>(null);
   const [activeProductModal, setActiveProductModal] = useState<Product | null>(null);
+  const [isCartDrawerOpen, setIsCartDrawerOpen] = useState(false);
 
   // Sync to local storage
   useEffect(() => {
@@ -107,6 +111,14 @@ export const OrderProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     setShowAddedToast(false);
   };
 
+  const openCartDrawer = () => {
+    setIsCartDrawerOpen(true);
+  };
+
+  const closeCartDrawer = () => {
+    setIsCartDrawerOpen(false);
+  };
+
   const submitOrder = async (submission: OrderSubmission): Promise<OrderRecord> => {
     const orderRecord = await submitOrderRequest({
       ...submission,
@@ -153,7 +165,10 @@ export const OrderProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         setLastSubmittedOrder,
         activeProductModal,
         openProductModal,
-        closeProductModal
+        closeProductModal,
+        isCartDrawerOpen,
+        openCartDrawer,
+        closeCartDrawer
       }}
     >
       {children}

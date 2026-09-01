@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, ShoppingBag, ArrowRight } from 'lucide-react';
+import { Menu, X, ShoppingBag } from 'lucide-react';
 import { useOrder } from '../../context/OrderContext';
 
 export const Navbar: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const location = useLocation();
-  const { totalItemCount } = useOrder();
+  const { totalItemCount, openCartDrawer } = useOrder();
 
   const navLinks = [
     { name: 'Home', path: '/' },
@@ -63,28 +63,27 @@ export const Navbar: React.FC = () => {
             ))}
           </nav>
 
-          {/* Persistent Order Now CTA */}
+          {/* Cart Drawer Trigger ("Your Order · X items") */}
           <div className="hidden md:flex items-center gap-4">
-            <Link
-              to="/order"
-              className="relative inline-flex items-center gap-2 bg-brand-600 hover:bg-brand-700 text-white text-sm font-semibold px-5 py-2.5 rounded-full shadow-sm hover:shadow-md transition-all active:scale-[0.98]"
+            <button
+              type="button"
+              onClick={openCartDrawer}
+              className="relative inline-flex items-center gap-2 bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold px-5 py-2.5 rounded-full shadow-sm hover:shadow-md transition-all active:scale-[0.98]"
             >
               <ShoppingBag className="w-4 h-4" />
-              <span>Order Now</span>
-              {totalItemCount > 0 && (
-                <span className="ml-1 bg-white text-brand-600 text-xs font-black px-2 py-0.5 rounded-full">
-                  {totalItemCount}
-                </span>
-              )}
-            </Link>
+              <span>
+                Your Order{totalItemCount > 0 ? ` · ${totalItemCount} ${totalItemCount === 1 ? 'item' : 'items'}` : ''}
+              </span>
+            </button>
           </div>
 
           {/* Mobile Menu & Cart Trigger */}
           <div className="flex items-center gap-2 md:hidden">
-            <Link
-              to="/order"
+            <button
+              type="button"
+              onClick={openCartDrawer}
               className="relative p-2 text-charcoal hover:bg-[#E9E0D4] rounded-full transition-colors"
-              aria-label="Order Cart"
+              aria-label="Open Cart Drawer"
             >
               <ShoppingBag className="w-6 h-6" />
               {totalItemCount > 0 && (
@@ -92,7 +91,7 @@ export const Navbar: React.FC = () => {
                   {totalItemCount}
                 </span>
               )}
-            </Link>
+            </button>
 
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -123,18 +122,6 @@ export const Navbar: React.FC = () => {
                 {link.name}
               </Link>
             ))}
-          </div>
-
-          <div className="pt-3 border-t border-[#DED7CE]">
-            <Link
-              to="/order"
-              onClick={() => setMobileMenuOpen(false)}
-              className="w-full flex items-center justify-center gap-2 bg-brand-600 hover:bg-brand-700 text-white font-bold py-3.5 px-4 rounded-xl shadow-sm"
-            >
-              <ShoppingBag className="w-5 h-5" />
-              <span>Order Now {totalItemCount > 0 ? `(${totalItemCount} items)` : ''}</span>
-              <ArrowRight className="w-4 h-4 ml-1" />
-            </Link>
           </div>
         </div>
       )}

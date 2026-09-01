@@ -90,4 +90,5 @@ export interface OrderRecord extends OrderSubmission {
   createdAt: string;
   status: OrderStatus;
   totalItemCount: number;
+  internalNotes?: string;
 }

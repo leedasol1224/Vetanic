@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { Plus, Eye, Check, Sparkles } from 'lucide-react';
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { Plus, Minus } from 'lucide-react';
 import { Product } from '../../types/product';
 import { PetBadge } from '../common/Badge';
 import { useOrder } from '../../context/OrderContext';
@@ -10,151 +11,149 @@ interface ProductCardProps {
 }
 
 export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
-  const { addToOrder, openProductModal, isItemInOrder, getItemQuantity } = useOrder();
-  const [justAdded, setJustAdded] = useState(false);
+  const { addToOrder, updateQuantity, getItemQuantity } = useOrder();
 
-  const inOrder = isItemInOrder(product.id);
-  const qtyInOrder = getItemQuantity(product.id);
+  const currentQuantity = getItemQuantity(product.id);
   const pricing = getProductPricing(product);
 
-  const handleQuickAdd = (e: React.MouseEvent) => {
+  const handleAddInitial = (e: React.MouseEvent) => {
+    e.preventDefault();
     e.stopPropagation();
     addToOrder(product, 1);
-    setJustAdded(true);
-    setTimeout(() => setJustAdded(false), 1500);
+  };
+
+  const handleIncrement = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    updateQuantity(product.id, currentQuantity + 1);
+  };
+
+  const handleDecrement = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    updateQuantity(product.id, currentQuantity - 1);
   };
 
   return (
-    <div
-      onClick={() => openProductModal(product)}
-      className="group relative flex flex-col bg-white rounded-2xl overflow-hidden border border-[#DED7CE] hover:border-brand-300 shadow-card hover:shadow-soft-lg transition-all duration-300 cursor-pointer"
-    >
-      {/* Image container */}
-      <div className="relative aspect-square w-full overflow-hidden bg-white p-5 flex items-center justify-center border-b border-[#DED7CE]/70">
-        <img
-          src={product.imageUrl}
-          alt={product.name}
-          className="h-full w-full object-contain object-center group-hover:scale-105 transition-transform duration-500"
-          loading="lazy"
-        />
+    <div className="group relative flex flex-col bg-white rounded-3xl overflow-hidden border border-[#DED7CE] hover:border-brand-300 shadow-card hover:shadow-soft-lg transition-all duration-300">
+      {/* Clickable Card Link to Individual Product Page */}
+      <Link
+        to={`/products/${product.id}`}
+        className="flex flex-col flex-1"
+      >
+        {/* Product Image Stage */}
+        <div className="relative aspect-square w-full overflow-hidden bg-white p-6 flex items-center justify-center border-b border-[#DED7CE]/60">
+          <img
+            src={product.imageUrl}
+            alt={product.name}
+            className="h-full w-full object-contain object-center group-hover:scale-105 transition-transform duration-500"
+            loading="lazy"
+          />
 
-        {/* Pet Badge */}
-        <div className="absolute top-3 left-3">
-          <PetBadge type={product.petType} size="sm" />
+          {/* Pet Badge */}
+          <div className="absolute top-3.5 left-3.5">
+            <PetBadge type={product.petType} size="sm" />
+          </div>
+
+          {/* Sold Out Badge or In-Order Pill */}
+          {!product.isAvailable ? (
+            <div className="absolute top-3.5 right-3.5 bg-charcoal/80 text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider shadow-sm">
+              Sold Out
+            </div>
+          ) : currentQuantity > 0 ? (
+            <div className="absolute top-3.5 right-3.5 bg-brand-600 text-white text-[11px] font-bold px-2.5 py-0.5 rounded-full shadow-sm flex items-center gap-1">
+              <span>{currentQuantity} in Order</span>
+            </div>
+          ) : null}
         </div>
 
-        {/* Sold Out Badge or In-Cart Tag */}
-        {!product.isAvailable ? (
-          <div className="absolute top-3 right-3 bg-charcoal/80 text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider shadow-sm">
-            Sold Out
-          </div>
-        ) : inOrder ? (
-          <div className="absolute top-3 right-3 bg-brand-600 text-white text-[11px] font-bold px-2 py-0.5 rounded-full flex items-center gap-1 shadow-sm">
-            <Check className="w-3 h-3 stroke-[3]" />
-            <span>{qtyInOrder} in Order</span>
-          </div>
-        ) : null}
-      </div>
-
-      {/* Card Body */}
-      <div className="flex flex-col flex-1 p-5">
-        <div className="flex items-center justify-between gap-2 mb-1">
-          <span className="text-[11px] font-semibold text-charcoal-muted uppercase tracking-wider">
-            {product.categoryName}
-          </span>
-          <span className="text-[11px] text-charcoal-muted font-medium">
-            {product.packageSize}
-          </span>
-        </div>
-
-        <h3 className="text-base sm:text-lg font-bold text-charcoal group-hover:text-brand-600 transition-colors line-clamp-1">
-          {product.name}
-        </h3>
-
-        <p className="text-xs text-charcoal-muted line-clamp-2 mt-1 mb-3">
-          {product.shortDescription}
-        </p>
-
-        {/* Pricing Display (Charcoal prices, NOT all red) */}
-        <div className="mb-3 pt-2 border-t border-[#DED7CE]/50">
-          <div className="flex items-baseline gap-2 flex-wrap">
-            <span className="text-lg font-bold text-charcoal font-serif">
-              SGD {pricing.activePrice.toFixed(2)}
+        {/* Card Body */}
+        <div className="flex flex-col flex-1 p-5 pb-3">
+          <div className="flex items-center justify-between gap-2 mb-1">
+            <span className="text-[11px] font-semibold text-charcoal-muted uppercase tracking-wider">
+              {product.categoryName}
             </span>
-
-            {pricing.isPromo && (
-              <span className="text-xs text-charcoal-muted line-through">
-                SGD {pricing.regularPrice.toFixed(2)}
-              </span>
-            )}
+            <span className="text-[11px] text-charcoal-muted font-medium">
+              {product.packageSize}
+            </span>
           </div>
 
-          {/* Deep Red Promotional Indicator */}
-          {pricing.isPromo && (
-            <div className="flex items-center gap-1 mt-1">
-              <span className="inline-flex items-center gap-1 text-[10px] font-bold text-brand-600 bg-brand-50 px-2 py-0.5 rounded-md border border-brand-200">
-                <Sparkles className="w-2.5 h-2.5 text-brand-600" />
-                <span>Singapore Launch Price</span>
+          <h3 className="text-base font-bold text-charcoal group-hover:text-brand-600 transition-colors line-clamp-1">
+            {product.name}
+          </h3>
+
+          <p className="text-xs text-charcoal-muted line-clamp-1 mt-1 mb-3">
+            {product.shortDescription}
+          </p>
+
+          {/* Pricing & Subtle Mix & Match tag */}
+          <div className="mt-auto pt-2 border-t border-[#DED7CE]/40">
+            <div className="flex items-baseline gap-2 flex-wrap">
+              <span className="text-base font-bold text-charcoal font-serif">
+                SGD {pricing.activePrice.toFixed(2)}
+              </span>
+
+              {pricing.isPromo && (
+                <span className="text-xs text-charcoal-muted line-through">
+                  SGD {pricing.regularPrice.toFixed(2)}
+                </span>
+              )}
+            </div>
+
+            <div className="mt-1 flex items-center gap-2">
+              <span className="text-[11px] text-brand-600 font-medium">
+                {product.bundleOfferText || 'Mix & Match available'}
               </span>
             </div>
-          )}
-
-          {/* Bundle Offer Summary */}
-          {product.bundleOfferText && (
-            <div className="mt-2 text-[11px] text-charcoal font-medium bg-[#F4EFE7] px-2.5 py-1 rounded-lg border border-[#DED7CE]/80">
-              {product.bundleOfferText}
-            </div>
-          )}
+          </div>
         </div>
+      </Link>
 
-        {/* Actions */}
-        <div className="flex items-center gap-2 pt-2 mt-auto border-t border-[#DED7CE]/50">
+      {/* Dynamic Action Button Bar */}
+      <div className="p-5 pt-0 mt-auto">
+        {!product.isAvailable ? (
           <button
             type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              openProductModal(product);
-            }}
-            className="flex-1 inline-flex items-center justify-center gap-1.5 py-2 px-3 text-xs font-semibold text-charcoal bg-[#FAF7F2] hover:bg-[#F4EFE7] rounded-xl transition-colors border border-[#DED7CE]"
+            disabled
+            className="w-full py-2.5 px-4 text-xs font-bold rounded-xl bg-gray-100 text-gray-400 border border-gray-200 cursor-not-allowed text-center"
+            title="Currently out of stock"
           >
-            <Eye className="w-3.5 h-3.5 text-charcoal-muted" />
-            <span>View Details</span>
+            Sold Out
           </button>
+        ) : currentQuantity === 0 ? (
+          <button
+            type="button"
+            onClick={handleAddInitial}
+            className="w-full inline-flex items-center justify-center gap-1.5 py-2.5 px-4 text-xs font-bold rounded-xl bg-brand-600 hover:bg-brand-700 text-white transition-all shadow-sm hover:shadow active:scale-[0.99]"
+          >
+            <Plus className="w-3.5 h-3.5" />
+            <span>Add to Order</span>
+          </button>
+        ) : (
+          <div className="flex items-center justify-between w-full bg-brand-50 border border-brand-200 rounded-xl p-1 shadow-sm">
+            <button
+              type="button"
+              onClick={handleDecrement}
+              className="w-8 h-8 flex items-center justify-center bg-white hover:bg-brand-100 text-brand-700 rounded-lg transition-colors border border-brand-200/80 shadow-xs"
+              aria-label="Decrease quantity"
+            >
+              <Minus className="w-3.5 h-3.5" />
+            </button>
 
-          {!product.isAvailable ? (
+            <span className="text-xs font-bold text-charcoal min-w-[2rem] text-center">
+              {currentQuantity} in Order
+            </span>
+
             <button
               type="button"
-              disabled
-              className="inline-flex items-center justify-center gap-1 py-2 px-3 text-xs font-bold rounded-xl bg-gray-100 text-gray-400 border border-gray-200 cursor-not-allowed"
-              title="Currently out of stock"
+              onClick={handleIncrement}
+              className="w-8 h-8 flex items-center justify-center bg-brand-600 hover:bg-brand-700 text-white rounded-lg transition-colors shadow-xs"
+              aria-label="Increase quantity"
             >
-              <span>Sold Out</span>
+              <Plus className="w-3.5 h-3.5" />
             </button>
-          ) : (
-            <button
-              type="button"
-              onClick={handleQuickAdd}
-              className={`inline-flex items-center justify-center gap-1 py-2 px-3 text-xs font-bold rounded-xl transition-all shadow-sm ${
-                justAdded
-                  ? 'bg-brand-700 text-white'
-                  : 'bg-brand-600 hover:bg-brand-700 text-white'
-              }`}
-              title="Add 1 to Order"
-            >
-              {justAdded ? (
-                <>
-                  <Check className="w-3.5 h-3.5 stroke-[3]" />
-                  <span>Added</span>
-                </>
-              ) : (
-                <>
-                  <Plus className="w-3.5 h-3.5" />
-                  <span>Add to Order</span>
-                </>
-              )}
-            </button>
-          )}
-        </div>
+          </div>
+        )}
       </div>
     </div>
   );
