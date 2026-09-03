@@ -139,18 +139,22 @@ export const PRODUCTS: Product[] = [
     id: 'joint-support',
     sku: 'VET-JNT-SUPP',
     slug: 'joint-support',
-    name: 'Joint Support',
+    name: 'Joint Support ver 2.0',
     petType: 'dog',
     petTypeLabel: 'DOG ONLY',
     category: 'joint-care',
     categoryName: 'Joint Support',
     collection: 'everyday-care',
     collectionName: 'Everyday Care',
-    shortDescription: 'Targeted daily mobility and cartilage comfort support for canine companions.',
-    packageSize: '2g × 30 sticks',
+    shortDescription: 'Meat-free sweet potato puree formula with Boswellia, OptiMSM, Lilium extract, and NAG for dual joint & cartilage care in dogs.',
+    packageSize: '150g (10g × 15 sticks)',
     imageUrl: '/images/products/joint-support.png',
     galleryImages: [
-      '/images/products/joint-support.png'
+      '/images/products/joint-support/pack_poodle.jpg',
+      '/images/products/joint-support/box_red_stage.jpg',
+      '/images/products/joint-support/box_side_pillars.jpg',
+      '/images/products/joint-support/dog_licking.jpg',
+      '/images/products/joint-support/stick_detail.jpg'
     ],
     isAvailable: false, // Marked as Sold Out
     displayOrder: 2,
@@ -163,35 +167,35 @@ export const PRODUCTS: Product[] = [
     bundleOfferText: 'Mix & Match available in Everyday Care',
     details: {
       keyBenefits: [
-        'Cartilage Support',
-        'Daily Mobility',
-        'Glucosamine & Green Mussel',
-        'Dogs Only'
+        'Boswellia & OptiMSM',
+        'Lilium Extract 50mg',
+        'NAG & CoQ10 20mg',
+        'Vet Co-Developed Puree'
       ],
       recommendedFor: [
-        'Senior dogs or breeds prone to hip and joint stiffness',
-        'Active, agile dogs needing daily cartilage maintenance',
-        'Dogs showing hesitation when climbing stairs or standing up'
+        'Dogs of all breeds needing daily joint mobility and cartilage maintenance',
+        'Senior companions experiencing hip stiffness or hesitation on stairs',
+        'Dogs that love lickable puree treat sticks (meat-free, sweet potato base)'
       ],
-      mainIngredients: ['Glucosamine HCl', 'MSM (Methylsulfonylmethane)', 'Green Lipped Mussel Powder', 'Chondroitin Sulfate'],
-      keyIngredients: ['Glucosamine HCl', 'MSM (Methylsulfonylmethane)', 'Green Lipped Mussel Powder', 'Chondroitin Sulfate', 'Boswellia Extract'],
-      fullIngredients: 'Glucosamine Hydrochloride, Methylsulfonylmethane (MSM), New Zealand Green Lipped Mussel Powder, Chondroitin Sulfate (Bovine), Boswellia Serrata Extract, Natural Palatability Enhancer.',
-      howToFeed: 'Tear open 1 stick daily and mix into regular dry food, wet food, or lukewarm water.',
-      feedingUsageGuide: 'Mix 1 stick daily into regular dog food or lukewarm water.',
-      recommendedDailyAmount: 'Under 10kg: 1 stick daily · 10–20kg: 2 sticks daily · Over 20kg: 3 sticks daily.',
+      mainIngredients: ['Lilium Bulb Extract (50mg)', 'Boswellia Flexir (20mg)', 'OptiMSM (20mg)', 'N-Acetyl Glucosamine NAG (10mg)', 'CoQ10 & Vitamin C (20mg)'],
+      keyIngredients: ['Lilium Lancifolium Bulb Extract (50mg)', 'Boswellia Flexir Complex (20mg)', 'OptiMSM (20mg)', 'N-Acetyl Glucosamine (10mg)', 'C-Fence Vitamin C (10mg)', 'Coenzyme Q10 (10mg)'],
+      fullIngredients: 'Korean Sweet Potato Puree, Purified Water, Lilium Lancifolium Bulb Extract (50mg per stick), Boswellia Flexir Complex (20mg per stick), OptiMSM (20mg per stick), N-Acetyl Glucosamine (NAG 10mg per stick), C-Fence Vitamin C (10mg per stick), Coenzyme Q10 (10mg per stick), Natural Yeast & Amino Acid Savory Flavor, Tapioca Starch. Meat-free formula. HACCP Certified.',
+      howToFeed: 'Feed directly as a lickable puree treat stick from hand, or blend into meals or water.',
+      feedingUsageGuide: 'Feed directly from the stick or mix into regular dog food.',
+      recommendedDailyAmount: 'Dogs under 5kg: 1 stick daily · Dogs 5–15kg: 1–2 sticks daily · Dogs over 15kg: 2–3 sticks daily.',
       suitablePetType: 'Dogs (All breeds)',
       suitableLifeStage: 'Adult dogs & senior companions (3+ months)',
-      packageSize: '2g × 30 sticks (60g)',
+      packageSize: '150g (10g × 15 liquid puree sticks)',
       countryOfOrigin: 'Republic of Korea',
-      storageInstructions: 'Store in a cool, dry place away from moisture. Consume immediately after opening individual stick.',
-      storage: 'Store in a cool, dry place. Keep sticks sealed.',
+      storageInstructions: 'Store in a cool, dry place away from heat and direct sunlight. Feed individual stick immediately after opening.',
+      storage: 'Store in a cool, dry place. Feed stick immediately after opening.',
       precautions: [
         'Currently sold out.',
-        'Formulated specifically for dogs. Contains shellfish derivatives (green-lipped mussel). Consult your veterinarian if your pet has known seafood allergies.'
+        'Formulated specifically for dogs. Meat-free sweet potato recipe with natural yeast savory flavor.'
       ],
       productFaq: [
         {
-          question: 'When will Joint Support be restocked in Singapore?',
+          question: 'When will Joint Support ver 2.0 be restocked in Singapore?',
           answer: 'We are currently preparing our next fresh batch from Korea. Please stay tuned on our Instagram @vetanic.sg for restock announcements.'
         }
       ]
