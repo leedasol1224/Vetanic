@@ -217,6 +217,7 @@ export const PRODUCTS: Product[] = [
     imageUrl: '/images/products/clear-eyes.png',
     galleryImages: [
       '/images/products/clear-eyes/pack_poodle.jpg',
+      '/images/products/clear-eyes/lab_science.jpg',
       '/images/products/clear-eyes/box_side_pillars.jpg',
       '/images/products/clear-eyes/dog_papillon_licking.jpg',
       '/images/products/clear-eyes/dog_brown_licking.jpg'
@@ -268,18 +269,21 @@ export const PRODUCTS: Product[] = [
     id: 'probiotics',
     sku: 'VET-PRO-GUT',
     slug: 'probiotics',
-    name: 'Probiotics',
+    name: 'Probiotics for Dogs & Cats',
     petType: 'both',
     petTypeLabel: 'DOG + CAT',
     category: 'digestion',
     categoryName: 'Digestion',
     collection: 'wellness-support',
     collectionName: 'Wellness Support',
-    shortDescription: 'Multi-strain beneficial cultures and prebiotics to support a balanced gut microbiome and firm stools.',
-    packageSize: '2g × 30 sticks',
+    shortDescription: '11 patented probiotic strains (10 Billion CFU input) with prebiotics and digestive enzymes for companion gut & coat wellness.',
+    packageSize: '60g (2g × 30 sticks)',
     imageUrl: '/images/products/probiotics.png',
     galleryImages: [
-      '/images/products/probiotics.png'
+      '/images/products/probiotics/pack_duo.jpg',
+      '/images/products/probiotics/box_spoon_powder.jpg',
+      '/images/products/probiotics/box_side_strains.jpg',
+      '/images/products/probiotics/dog_bichon_eating.jpg'
     ],
     isAvailable: true,
     displayOrder: 4,
@@ -292,27 +296,27 @@ export const PRODUCTS: Product[] = [
     bundleOfferText: 'Mix & Match available in Wellness Support',
     details: {
       keyBenefits: [
-        'Gut Microbiome Balance',
-        'Firm Stools Support',
-        'Patented Live Strains',
-        'Dogs + Cats'
+        '10 Billion CFU Input',
+        '11 Patented Strains',
+        'Rosell Micro-Encapsulated',
+        'Dogs + Cats Dual Care'
       ],
       recommendedFor: [
-        'Dogs and cats with sensitive stomachs or irregular, loose stools',
-        'Pets transitioning to new food or recovering from digestive stress',
-        'Companions needing daily digestive comfort and natural immunity support'
+        'Dogs and cats with sensitive stomachs, irregular or loose stools, and gas',
+        'Pets needing daily gut microbiome balance, natural immunity, and coat luster',
+        'Companions transitioning to new diets or recovering from digestive stress'
       ],
-      mainIngredients: ['Patented Multi-strain Probiotics Blend', 'Prebiotics (FOS)', 'Digestive Enzymes'],
-      keyIngredients: ['Multi-strain Probiotics (L. acidophilus, B. animalis, E. faecium)', 'Fructooligosaccharides (FOS)', 'Digestive Enzymes (Amylase, Protease)'],
-      fullIngredients: 'Probiotic Culture Blend (10+ billion CFU input), Fructooligosaccharides (FOS), Chicory Root Inulin, Digestive Enzymes, Natural Flavoring.',
-      howToFeed: 'Sprinkle over room-temperature wet or dry food once daily. Do not mix with boiling water to protect live probiotic cultures.',
-      feedingUsageGuide: 'Sprinkle over wet or dry food once daily. Avoid hot liquids above 40°C.',
+      mainIngredients: ['11 Patented Multi-Strain Probiotics (10 Billion CFU Input)', 'Prebiotics (FOS & Inulin)', 'Digestive Enzymes', 'Hypet Coat Strains'],
+      keyIngredients: ['11 Patented Strains (L. paracasei Lafti L26, L. rhamnosus GG, L. plantarum Rosell-1012, B. animalis Lafti B94, L. lactis Rosell-1058, B. bifidum Rosell-71, L. acidophilus Rosell-418, L. acidophilus HY7032, L. reuteri HY7506, L. curvatus HY7601, L. plantarum KY1032)', 'Fructooligosaccharides (FOS)', 'Chicory Inulin', 'Digestive Enzymes'],
+      fullIngredients: 'Patented Probiotic Blend (10+ Billion CFU input per stick: L. paracasei Lafti L26, L. rhamnosus GG, L. plantarum Rosell-1012, B. animalis ssp. lactis Lafti B94, L. lactis Rosell-1058, B. bifidum Rosell-71, L. acidophilus Rosell-418, L. acidophilus HY7032, L. reuteri HY7506, L. curvatus HY7601, L. plantarum KY1032), Fructooligosaccharides (FOS), Chicory Root Inulin, Digestive Enzymes, Natural Palatability Broth. HACCP Certified.',
+      howToFeed: 'Sprinkle 1 stick daily over room-temperature wet food, kibble, or mix into lukewarm water. Avoid boiling liquids above 40°C to protect live cultures.',
+      feedingUsageGuide: 'Sprinkle over food or mix with lukewarm water once daily.',
       recommendedDailyAmount: 'Pets under 10kg: 1 stick daily · Pets over 10kg: 2 sticks daily.',
       suitablePetType: 'Dogs & Cats',
       suitableLifeStage: 'All life stages (3+ months)',
-      packageSize: '2g × 30 sticks (60g)',
+      packageSize: '60g (2g × 30 individual powder sticks)',
       countryOfOrigin: 'Republic of Korea',
-      storageInstructions: 'Store in a cool, dry place. Refrigeration during hot humid weather helps maintain maximum live bacterial count.',
+      storageInstructions: 'Store in a cool, dry place away from direct sunlight. Can be refrigerated during hot humid months to preserve live culture counts.',
       storage: 'Store in a cool, dry place. Refrigeration optional.',
       precautions: [
         'Do not mix with foods or liquids hotter than 40°C to preserve live probiotic strains.'
