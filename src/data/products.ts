@@ -334,12 +334,15 @@ export const PRODUCTS: Product[] = [
     categoryName: 'Hairball Care',
     collection: 'wellness-support',
     collectionName: 'Wellness Support',
-    shortDescription: 'Gentle natural dietary fiber salmon puree formula to support smooth hairball passage and digestive comfort in cats.',
+    shortDescription: 'Gentle natural dietary fiber salmon puree formula with Oat Fiber, FOS, Psyllium Husk, and LPL2 probiotics for feline hairball & gut care.',
     packageSize: '180g (12g × 15 sticks)',
     imageUrl: '/images/products/hairball-care.png',
     galleryImages: [
-      '/images/products/hairball-care.png',
-      '/images/products/hairball-care/cat_duo_scene.jpg'
+      '/images/products/hairball-care/pack_cat.jpg',
+      '/images/products/hairball-care/podium_salmon.jpg',
+      '/images/products/hairball-care/cat_licking.jpg',
+      '/images/products/hairball-care/cat_duo_scene.jpg',
+      '/images/products/hairball-care/stick_detail.jpg'
     ],
     isAvailable: true,
     displayOrder: 5,
@@ -353,19 +356,19 @@ export const PRODUCTS: Product[] = [
     details: {
       keyBenefits: [
         'Fresh Salmon Puree',
-        'Smooth Hairball Passage',
-        'Gentle Dietary Fiber',
-        'Digestive Comfort'
+        'Oat Dietary Fiber 60mg',
+        'Psyllium Husk & FOS',
+        'L. plantarum L2 Strain'
       ],
       recommendedFor: [
-        'Indoor cats experiencing frequent hairball regurgitation',
+        'Indoor cats experiencing frequent hairball regurgitation or dry coughing',
         'Medium and long-haired cat breeds (Persian, Ragdoll, British Longhair, etc.)',
-        'Cats during seasonal coat shedding periods'
+        'Cats during seasonal coat shedding periods needing smooth bowel regularity'
       ],
-      mainIngredients: ['Fresh Salmon', 'Psyllium Husk Dietary Fiber', 'Beet Pulp Fiber', 'Cat Grass Extract', 'Prebiotics'],
-      keyIngredients: ['Fresh Salmon', 'Psyllium Husk Powder', 'Beet Pulp Fiber', 'Cat Grass (Wheatgrass) Extract', 'FOS Prebiotics', 'Taurine'],
-      fullIngredients: 'Fresh Salmon, Purified Water, Psyllium Husk Dietary Fiber, Sugar Beet Fiber, Wheatgrass/Cat Grass Extract, Fructooligosaccharides (FOS), Taurine, Tapioca Starch, Natural Palatability Broth. HACCP Certified.',
-      howToFeed: 'Feed directly as a lickable treat stick or blend into daily wet/dry cat food.',
+      mainIngredients: ['Fresh Salmon', 'Oat Dietary Fiber (60mg)', 'Fructooligosaccharides FOS (60mg)', 'Psyllium Husk Fiber (24mg)', 'Lactobacillus plantarum L2'],
+      keyIngredients: ['Fresh Salmon', 'Oat Dietary Fiber (60mg)', 'Fructooligosaccharides FOS (60mg)', 'Psyllium Husk Dietary Fiber (24mg)', 'Lactobacillus plantarum L2 (Probiotic LPL2)', 'Taurine'],
+      fullIngredients: 'Fresh Salmon, Purified Water, Oat Dietary Fiber (60mg per stick), Fructooligosaccharides (FOS 60mg per stick), Psyllium Husk Dietary Fiber (24mg per stick), Lactobacillus plantarum L2 Probiotic Culture, Taurine, Tapioca Starch, Natural Palatability Broth. HACCP Certified.',
+      howToFeed: 'Feed directly as a lickable treat stick from hand or blend into daily wet/dry cat food.',
       feedingUsageGuide: 'Feed directly or mix with daily wet/dry cat food.',
       recommendedDailyAmount: 'Standard adult cats (under 5kg): 1 stick daily · Long-haired cats or shedding season: 1–2 sticks daily.',
       suitablePetType: 'Cats (Short & Long Hair)',
