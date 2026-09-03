@@ -12,11 +12,11 @@ export const VisualHeroSection: React.FC = () => {
         <div className="absolute inset-0 w-full h-full">
           <img
             src={brandAssets.homepage.heroProductPetImage}
-            alt="VETANIC Korean Pet Wellness Lineup with Dog and Cat"
-            className="w-full h-full object-cover object-[center_30%] sm:object-[center_40%] lg:object-center"
+            alt="VETANIC Probiotics for Dogs & Cats"
+            className="w-full h-full object-cover object-[center_25%] sm:object-[center_30%] md:object-[65%_30%] lg:object-[70%_35%]"
           />
           {/* Subtle gradient vignette for effortless readability without obscuring products or pets */}
-          <div className="absolute inset-0 bg-gradient-to-t from-charcoal/85 via-charcoal/40 to-charcoal/10 sm:bg-gradient-to-r sm:from-charcoal/80 sm:via-charcoal/40 sm:to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-charcoal/80 via-charcoal/35 to-transparent sm:bg-gradient-to-r sm:from-charcoal/75 sm:via-charcoal/35 sm:to-transparent" />
         </div>
 
         {/* Content Container */}
