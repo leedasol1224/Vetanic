@@ -205,18 +205,21 @@ export const PRODUCTS: Product[] = [
     id: 'clear-eyes',
     sku: 'VET-EYE-CLR',
     slug: 'clear-eyes',
-    name: 'Clear Eyes',
+    name: 'Clear Eyes ver 2.0',
     petType: 'dog',
     petTypeLabel: 'DOG ONLY',
     category: 'eye-care',
     categoryName: 'Eye Care',
     collection: 'everyday-care',
     collectionName: 'Everyday Care',
-    shortDescription: 'Targeted nutritional support for canine ocular wellness, tear stain care, and liver vitality.',
-    packageSize: '2g × 30 sticks',
+    shortDescription: 'Meat-free sweet potato puree formula with Marigold Lutein, Honeyberry, Milk Thistle, and Bilberry for dual eye & liver care in dogs.',
+    packageSize: '150g (10g × 15 sticks)',
     imageUrl: '/images/products/clear-eyes.png',
     galleryImages: [
-      '/images/products/clear-eyes.png'
+      '/images/products/clear-eyes/pack_poodle.jpg',
+      '/images/products/clear-eyes/box_side_pillars.jpg',
+      '/images/products/clear-eyes/dog_papillon_licking.jpg',
+      '/images/products/clear-eyes/dog_brown_licking.jpg'
     ],
     isAvailable: true,
     displayOrder: 3,
@@ -229,31 +232,31 @@ export const PRODUCTS: Product[] = [
     bundleOfferText: 'Mix & Match available in Everyday Care',
     details: {
       keyBenefits: [
-        'Ocular Wellness',
-        'Tear Stain Support',
-        'FloraGLO Lutein & Bilberry',
-        'Palatable Powder Stick'
+        'Marigold Lutein 20mg',
+        'Honeyberry Extract 50mg',
+        'Milk Thistle & Bilberry',
+        'AstaPure Astaxanthin'
       ],
       recommendedFor: [
-        'Dogs with excessive tearing or noticeable tear stains',
-        'Breeds prone to eye dryness and lens cloudiness',
-        'Aging dogs needing daily antioxidant and liver vitality support'
+        'Dogs with excessive tearing, tear stains, or cloudy lenses',
+        'Breeds prone to ocular sensitivity and aging dogs needing liver antioxidant care',
+        'Companions that enjoy delicious lickable puree treat sticks (sweet potato base)'
       ],
-      mainIngredients: ['FloraGLO Lutein', 'Bilberry Extract', 'Milk Thistle Extract (Silymarin)', 'Vitamin A', 'Astaxanthin'],
-      keyIngredients: ['FloraGLO Lutein', 'Bilberry Extract (Anthocyanins)', 'Milk Thistle Extract (Silymarin)', 'Astaxanthin', 'Vitamin A', 'Taurine'],
-      fullIngredients: 'FloraGLO Lutein Powder, Bilberry Extract, Milk Thistle Extract (Silymarin), Astaxanthin Powder, Vitamin A Acetate, Taurine, Natural Palatability Enhancer.',
-      howToFeed: 'Sprinkle and mix 1 individual stick into daily meals, wet food, or pure drinking water.',
-      feedingUsageGuide: 'Sprinkle and mix into daily meals, wet food, or pure water.',
-      recommendedDailyAmount: 'Dogs under 10kg: 1 stick daily · Dogs over 10kg: 2 sticks daily.',
+      mainIngredients: ['Honeyberries Extract (50mg)', 'Marigold Lutein (20mg)', 'Milk Thistle Silymarin (20mg)', 'Bilberry Extract (20mg)', 'AstaPure Astaxanthin & Vitamin C (20mg)'],
+      keyIngredients: ['Honeyberries (Hascap) Extract (50mg)', 'Marigold Flower Extract [Lutein] (20mg)', 'Milk Thistle Extract [Silymarin] (20mg)', 'Bilberry Extract (20mg)', 'AstaPure Haematococcus Extract [Astaxanthin] (10mg)', 'C-Fence Vitamin C (10mg)'],
+      fullIngredients: 'Korean Sweet Potato Puree, Purified Water, Honeyberries (Hascap) Extract (50mg per stick), Marigold Flower Extract [Lutein] (20mg per stick), Milk Thistle Extract (20mg per stick), Bilberry Extract (20mg per stick), AstaPure Haematococcus Extract [Astaxanthin] (10mg per stick), C-Fence Vitamin C (10mg per stick), Natural Yeast & Amino Acid Savory Flavor, Tapioca Starch. Meat-free formula. HACCP Certified.',
+      howToFeed: 'Feed directly as a lickable puree treat stick from hand, or blend into daily dog meals.',
+      feedingUsageGuide: 'Feed directly from the stick or mix into regular food.',
+      recommendedDailyAmount: 'Dogs under 5kg: 1 stick daily · Dogs 5–15kg: 1–2 sticks daily · Dogs over 15kg: 2–3 sticks daily.',
       suitablePetType: 'Dogs (All breeds)',
       suitableLifeStage: 'All life stages (3+ months)',
-      packageSize: '2g × 30 sticks (60g)',
+      packageSize: '150g (10g × 15 liquid puree sticks)',
       countryOfOrigin: 'Republic of Korea',
-      storageInstructions: 'Store in a cool, dry place away from heat and direct sunlight. Keep stick sealed until use.',
+      storageInstructions: 'Store in a cool, dry place away from heat and direct sunlight. Feed individual stick immediately after opening.',
       storage: 'Store in a cool, dry place away from direct sunlight.',
       precautions: [
         'Formulated specifically for canine companions.',
-        'Keep out of reach of children and other animals.'
+        'Meat-free sweet potato recipe with savory yeast aroma.'
       ]
     }
   },
