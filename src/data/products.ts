@@ -316,18 +316,19 @@ export const PRODUCTS: Product[] = [
     id: 'hairball-care',
     sku: 'VET-CAT-HAIR',
     slug: 'hairball-care',
-    name: 'Hairball Care',
+    name: 'Hairball Care for Cats',
     petType: 'cat',
     petTypeLabel: 'CATS ONLY',
     category: 'hairball',
     categoryName: 'Hairball Care',
     collection: 'wellness-support',
     collectionName: 'Wellness Support',
-    shortDescription: 'Gentle natural dietary fiber formula to support smooth hairball passage and digestive comfort in cats.',
-    packageSize: '2g × 30 sticks',
+    shortDescription: 'Gentle natural dietary fiber salmon puree formula to support smooth hairball passage and digestive comfort in cats.',
+    packageSize: '180g (12g × 15 sticks)',
     imageUrl: '/images/products/hairball-care.png',
     galleryImages: [
-      '/images/products/hairball-care.png'
+      '/images/products/hairball-care.png',
+      '/images/products/hairball-care/cat_duo_scene.jpg'
     ],
     isAvailable: true,
     displayOrder: 5,
@@ -340,27 +341,27 @@ export const PRODUCTS: Product[] = [
     bundleOfferText: 'Mix & Match available in Wellness Support',
     details: {
       keyBenefits: [
+        'Fresh Salmon Puree',
         'Smooth Hairball Passage',
         'Gentle Dietary Fiber',
-        'Digestive Comfort',
-        'Cats Only'
+        'Digestive Comfort'
       ],
       recommendedFor: [
         'Indoor cats experiencing frequent hairball regurgitation',
         'Medium and long-haired cat breeds (Persian, Ragdoll, British Longhair, etc.)',
         'Cats during seasonal coat shedding periods'
       ],
-      mainIngredients: ['Psyllium Husk Dietary Fiber', 'Beet Pulp Fiber', 'Cat Grass Extract', 'Prebiotics'],
-      keyIngredients: ['Psyllium Husk Powder', 'Beet Pulp Fiber', 'Cat Grass (Wheatgrass) Extract', 'FOS Prebiotics', 'Taurine'],
-      fullIngredients: 'Psyllium Husk Dietary Fiber, Sugar Beet Fiber, Wheatgrass/Cat Grass Extract, Fructooligosaccharides (FOS), Taurine, Natural Palatability Broth.',
+      mainIngredients: ['Fresh Salmon', 'Psyllium Husk Dietary Fiber', 'Beet Pulp Fiber', 'Cat Grass Extract', 'Prebiotics'],
+      keyIngredients: ['Fresh Salmon', 'Psyllium Husk Powder', 'Beet Pulp Fiber', 'Cat Grass (Wheatgrass) Extract', 'FOS Prebiotics', 'Taurine'],
+      fullIngredients: 'Fresh Salmon, Purified Water, Psyllium Husk Dietary Fiber, Sugar Beet Fiber, Wheatgrass/Cat Grass Extract, Fructooligosaccharides (FOS), Taurine, Tapioca Starch, Natural Palatability Broth. HACCP Certified.',
       howToFeed: 'Feed directly as a lickable treat stick or blend into daily wet/dry cat food.',
       feedingUsageGuide: 'Feed directly or mix with daily wet/dry cat food.',
       recommendedDailyAmount: 'Standard adult cats (under 5kg): 1 stick daily · Long-haired cats or shedding season: 1–2 sticks daily.',
       suitablePetType: 'Cats (Short & Long Hair)',
       suitableLifeStage: 'All life stages (3+ months)',
-      packageSize: '2g × 30 sticks (60g)',
+      packageSize: '180g (12g × 15 puree sticks)',
       countryOfOrigin: 'Republic of Korea',
-      storageInstructions: 'Store in a cool, dry place away from direct sunlight. Reseal pouch after opening.',
+      storageInstructions: 'Store in a cool, dry place away from direct sunlight. Once opened, feed individual stick immediately.',
       storage: 'Store in a cool, dry place.',
       precautions: [
         'Exclusively formulated for feline companions.',
@@ -372,18 +373,22 @@ export const PRODUCTS: Product[] = [
     id: 'urena-clear',
     sku: 'VET-CAT-UREN',
     slug: 'urena-clear',
-    name: 'Urena Clear',
+    name: 'Urena Clear for Cats',
     petType: 'cat',
     petTypeLabel: 'CATS ONLY',
     category: 'kidney-urinary',
     categoryName: 'Kidney & Urinary',
     collection: 'wellness-support',
     collectionName: 'Wellness Support',
-    shortDescription: 'Targeted nutritional support for feline urinary tract integrity, bladder comfort, and healthy hydration.',
-    packageSize: '2g × 30 sticks',
+    shortDescription: 'Chicken breast puree supplement with PACran Cranberry, Pumpkin Seed, L-Theanine, and Zinc for feline urinary & bladder care.',
+    packageSize: '180g (12g × 15 sticks)',
     imageUrl: '/images/products/urena-clear.png',
     galleryImages: [
-      '/images/products/urena-clear.png'
+      '/images/products/urena-clear/pack_cat.jpg',
+      '/images/products/urena-clear/podium_chicken.jpg',
+      '/images/products/urena-clear/cat_licking.jpg',
+      '/images/products/urena-clear/cat_duo_scene.jpg',
+      '/images/products/urena-clear/stick_detail.jpg'
     ],
     isAvailable: true,
     displayOrder: 6,
@@ -396,27 +401,27 @@ export const PRODUCTS: Product[] = [
     bundleOfferText: 'Mix & Match available in Wellness Support',
     details: {
       keyBenefits: [
-        'Urinary Tract Wellness',
-        'Bladder Lining Support',
-        'Cranberry & D-Mannose',
-        'Hydration Friendly'
+        'Fresh Chicken Breast Puree',
+        'PACran Cranberry 25mg',
+        'L-Theanine 42mg Calming',
+        'Pumpkin Seed & Zinc'
       ],
       recommendedFor: [
-        'Cats needing daily urinary tract and bladder wellness support',
-        'Felines with low water intake or stress-related urinary sensitivity',
-        'Adult and senior cats'
+        'Cats needing daily urinary tract, bladder comfort, and renal wellness support',
+        'Felines with low water intake or stress-triggered urinary sensitivity',
+        'Cats that enjoy lickable, delicious chicken puree treat sticks'
       ],
-      mainIngredients: ['Cranberry Extract', 'D-Mannose', 'N-Acetyl Glucosamine (NAG)', 'Chitosan'],
-      keyIngredients: ['Cranberry Extract (PACs)', 'D-Mannose', 'N-Acetyl Glucosamine (NAG)', 'Potassium Citrate', 'Chitosan', 'L-Theanine'],
-      fullIngredients: 'Cranberry Extract Powder, D-Mannose, N-Acetyl Glucosamine, Potassium Citrate, Chitosan, L-Theanine, Natural Broth Extract.',
-      howToFeed: 'Feed directly from the stick or blend into wet meals with 10–20 ml of warm water as a nourishing hydration drink.',
+      mainIngredients: ['Fresh Chicken Breast', 'Pumpkin Seed Extract Complex (30mg)', 'PACran Cranberry Powder (25mg)', 'L-Theanine (42mg)', 'Zinc Oxide (12mg)'],
+      keyIngredients: ['Fresh Chicken Breast', 'Pumpkin Seed Extract Complex (30mg)', 'PACran Cranberry Powder (25mg)', 'L-Theanine (42mg)', 'Zinc Oxide (12mg)', 'Rye Pollen (Cernitin) Extract'],
+      fullIngredients: 'Fresh Korean Chicken Breast, Purified Water, Pumpkin Seed Extract Complex (30mg per stick), PACran Cranberry Powder (25mg per stick), L-Theanine (42mg per stick), Zinc Oxide (12mg per stick), Rye Pollen Extract, Tapioca Starch, Natural Palatability Enhancer. HACCP Certified.',
+      howToFeed: 'Feed directly as a lickable puree treat stick from hand, or blend into wet food with 10–20 ml of warm water as a nourishing hydration drink.',
       feedingUsageGuide: 'Feed directly or mix into meals with warm water for extra hydration.',
-      recommendedDailyAmount: 'Daily wellness support: 1 stick daily · Intensive hydration routine: Up to 2 sticks daily.',
+      recommendedDailyAmount: 'Cats under 5kg: 1 stick daily · Cats over 5kg or intensive hydration routine: 1–2 sticks daily.',
       suitablePetType: 'Cats',
       suitableLifeStage: 'Adult cats & senior felines (3+ months)',
-      packageSize: '2g × 30 sticks (60g)',
+      packageSize: '180g (12g × 15 liquid puree sticks)',
       countryOfOrigin: 'Republic of Korea',
-      storageInstructions: 'Store in a cool, dry place away from heat and direct sunlight.',
+      storageInstructions: 'Store in a cool, dry place away from heat and direct sunlight. Feed immediately after opening individual stick.',
       storage: 'Store in a cool, dry place away from direct sunlight.',
       precautions: [
         'Intended as a nutritional wellness supplement, not a cure or replacement for emergency veterinary renal therapies.',
