@@ -83,11 +83,12 @@ export const PRODUCTS: Product[] = [
     categoryName: 'Skin & Coat',
     collection: 'everyday-care',
     collectionName: 'Everyday Care',
-    shortDescription: 'Pure, concentrated Omega-3 marine oil in an easy-to-swallow 1 cm mini capsule.',
-    packageSize: '151 mg × 60 capsules',
+    shortDescription: 'Pure, German KD Pharma rTG Omega-3 oil (119.5mg EPA+DHA) in an easy-to-swallow 1.0 cm mini capsule.',
+    packageSize: '9.06g (151mg × 60 capsules)',
     imageUrl: '/images/products/fresh-omega-3-mini.png',
     galleryImages: [
-      '/images/products/fresh-omega-3-mini.png'
+      '/images/products/fresh-omega-3-mini/pack_blister.jpg',
+      '/images/products/fresh-omega-3-mini/lifestyle_blue.jpg'
     ],
     isAvailable: true,
     displayOrder: 1,
@@ -100,9 +101,9 @@ export const PRODUCTS: Product[] = [
     bundleOfferText: 'Mix & Match available in Everyday Care',
     details: {
       keyBenefits: [
-        'Skin & Coat Support',
-        'Dogs + Cats',
-        '1 cm Mini Capsule',
+        '119.5mg EPA+DHA (>80% rTG)',
+        'German KD Pharma Oil',
+        '1.0 cm Mini Capsule',
         'Individual Blister Pack'
       ],
       recommendedFor: [
@@ -110,15 +111,15 @@ export const PRODUCTS: Product[] = [
         'Pets experiencing seasonal shedding or dull, dry fur',
         'Companions that resist large or pungent oil capsules'
       ],
-      mainIngredients: ['Refined Fish Oil (EPA 55 mg + DHA 35 mg)', 'Vitamin E (d-α-tocopherol)'],
-      keyIngredients: ['Refined Fish Oil (EPA 55 mg + DHA 35 mg)', 'Vitamin E (d-α-tocopherol)'],
-      fullIngredients: 'High-Purity Refined Fish Oil (Anchovy, Sardine), D-Alpha-Tocopherol (Vitamin E), Gelatin (capsule shell), Glycerin.',
+      mainIngredients: ['German KD Pharma rTG Fish Oil (EPA+DHA 119.5mg)', 'Vitamin A', 'Vitamin E (d-α-tocopherol)'],
+      keyIngredients: ['German KD Pharma rTG Fish Oil (EPA+DHA 119.5mg)', 'Vitamin A', 'Vitamin E (d-α-tocopherol)'],
+      fullIngredients: 'High-Purity German KD Pharma rTG Refined Fish Oil (EPA + DHA 119.5mg per 151mg capsule, >80% rTG purity), Retinyl Palmitate (Vitamin A), D-Alpha-Tocopherol (Vitamin E), Gelatin (capsule shell), Glycerin.',
       howToFeed: 'Feed whole capsule directly by hand, hide inside favourite treats, or snip the tip of the capsule and drizzle the pure oil directly over food.',
       feedingUsageGuide: 'Feed whole capsule directly or pierce tip and mix oil into daily meals.',
       recommendedDailyAmount: 'Under 5kg: 1 capsule daily · 5–10kg: 2 capsules daily · Over 10kg: 2–3 capsules daily (or switch to Fresh Omega-3 Premium).',
       suitablePetType: 'Dogs & Cats (Small Breeds & All Companions)',
       suitableLifeStage: 'All life stages (3+ months)',
-      packageSize: '151 mg × 60 capsules (Blister Pack)',
+      packageSize: '9.06g (151 mg × 60 capsules in individual blister pack)',
       countryOfOrigin: 'Republic of Korea',
       storageInstructions: 'Store at room temperature in a cool, dry place away from heat and direct sunlight. Keep capsules sealed in blister pack until use.',
       storage: 'Store in a cool, dry place away from direct sunlight.',
@@ -129,7 +130,7 @@ export const PRODUCTS: Product[] = [
       productFaq: [
         {
           question: 'Can I pierce the capsule if my pet refuses whole pills?',
-          answer: 'Yes! The mini capsule is easy to snip or pierce with a clean pin, allowing you to drizzle the fresh, odourless oil directly onto kibble, wet food, or treats.'
+          answer: 'Yes! The 1cm mini capsule is easy to snip or pierce with a clean pin, allowing you to drizzle the fresh, odourless oil directly onto kibble, wet food, or treats.'
         }
       ]
     }
@@ -434,11 +435,12 @@ export const PRODUCTS: Product[] = [
     categoryName: 'Skin & Coat',
     collection: 'wellness-support',
     collectionName: 'Wellness Support',
-    shortDescription: 'High-potency Omega-3 essential fatty acids tailored for medium and large companions.',
-    packageSize: '500 mg × 60 capsules',
+    shortDescription: 'High-potency German KD Pharma rTG Omega-3 (322mg EPA+DHA) with Astaxanthin and CoQ10 for medium & large pets.',
+    packageSize: '24.6g (410mg × 60 capsules)',
     imageUrl: '/images/products/fresh-omega-3-premium.png',
     galleryImages: [
-      '/images/products/fresh-omega-3-premium.png'
+      '/images/products/fresh-omega-3-premium/pack_blister.jpg',
+      '/images/products/fresh-omega-3-premium/box_stage.jpg'
     ],
     isAvailable: true,
     displayOrder: 7,
@@ -451,25 +453,25 @@ export const PRODUCTS: Product[] = [
     bundleOfferText: 'Mix & Match available in Wellness Support',
     details: {
       keyBenefits: [
-        'High-Potency EPA & DHA',
-        'Medium & Large Pets',
-        'Skin Barrier Support',
-        'Pure Marine Oil'
+        '322mg EPA+DHA (>80% rTG)',
+        'Astaxanthin + CoQ10',
+        'German KD Pharma Oil',
+        '1.47 cm Dark Blister Capsule'
       ],
       recommendedFor: [
         'Medium and large dogs requiring higher daily EPA/DHA intake',
-        'Pets needing joint mobility and systemic cellular vitality support',
+        'Pets needing joint mobility, heart vitality, and cellular antioxidant protection',
         'Companions with dry, itchy skin or lacklustre coat'
       ],
-      mainIngredients: ['Refined Marine Fish Oil (EPA 180 mg + DHA 120 mg)', 'Vitamin E (d-α-tocopherol)'],
-      keyIngredients: ['High-Concentration Anchovy & Sardine Oil (EPA 180 mg + DHA 120 mg)', 'Vitamin E (d-α-tocopherol)'],
-      fullIngredients: 'High-Purity Refined Fish Oil (Anchovy, Sardine), D-Alpha-Tocopherol (Vitamin E), Gelatin (capsule shell), Glycerin.',
+      mainIngredients: ['German KD Pharma rTG Fish Oil (EPA+DHA 322mg)', 'Haematococcus Astaxanthin', 'Coenzyme Q10 (CoQ10)', 'Vitamin E'],
+      keyIngredients: ['German KD Pharma rTG Fish Oil (EPA+DHA 322mg)', 'Haematococcus Pluvialis Extract (Astaxanthin)', 'Coenzyme Q10', 'Vitamin E'],
+      fullIngredients: 'High-Purity German KD Pharma rTG Refined Fish Oil (EPA + DHA 322mg per 410mg capsule, >80% rTG purity), Haematococcus Pluvialis Extract (Natural Astaxanthin), Coenzyme Q10 (CoQ10), D-Alpha-Tocopherol (Vitamin E), Gelatin (capsule shell), Glycerin.',
       howToFeed: 'Administer whole capsule with meals, or pierce tip and mix oil directly into kibble or wet food.',
       feedingUsageGuide: 'Administer whole capsule with meals, or pierce and mix oil into pet food.',
-      recommendedDailyAmount: '10–20kg: 1 capsule daily · 20–30kg: 2 capsules daily · Over 30kg: 2–3 capsules daily.',
-      suitablePetType: 'Dogs & Cats (Medium to Large breeds)',
+      recommendedDailyAmount: 'Under 5kg: 1 capsule daily · 5–11kg: 2 capsules daily · 11–17kg: 3 capsules daily · Over 17kg: 4 capsules daily.',
+      suitablePetType: 'Dogs & Cats (Medium to Large breeds & All Companions)',
       suitableLifeStage: 'All life stages (3+ months)',
-      packageSize: '500 mg × 60 capsules (Blister Pack)',
+      packageSize: '24.6g (410 mg × 60 capsules in individual blister pack)',
       countryOfOrigin: 'Republic of Korea',
       storageInstructions: 'Store in a cool, dry, dark location away from heat and moisture. Keep capsules in blister pack until consumed.',
       storage: 'Store in a cool, dry, dark place.',
