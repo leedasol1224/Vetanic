@@ -543,18 +543,22 @@ export const PRODUCTS: Product[] = [
     id: 'sweet-potato-pumpkin-treats',
     sku: 'VET-TRT-PUMP',
     slug: 'sweet-potato-pumpkin-treats',
-    name: 'Sweet Potato & Pumpkin Treats',
+    name: "Paju's Sweet Potato & Pumpkin Treats",
     petType: 'dog',
     petTypeLabel: 'DOG ONLY',
     category: 'treats',
     categoryName: 'Healthy Treats',
     collection: 'treats',
     collectionName: 'Treats',
-    shortDescription: 'Naturally delicious, low-fat oven-baked reward snacks made from 100% Korean agricultural produce.',
-    packageSize: '70g',
+    shortDescription: 'Naturally delicious, meat-free oven-baked reward snacks made with 100% Korean agricultural produce from Paju.',
+    packageSize: '90g',
     imageUrl: '/images/products/sweet-potato-pumpkin-treats.png',
     galleryImages: [
-      '/images/products/sweet-potato-pumpkin-treats.png'
+      '/images/products/sweet-potato-pumpkin/pack.jpg',
+      '/images/products/sweet-potato-pumpkin/maltese.jpg',
+      '/images/products/sweet-potato-pumpkin/ingredients_scene.jpg',
+      '/images/products/sweet-potato-pumpkin/feeding_paw.jpg',
+      '/images/products/sweet-potato-pumpkin/labrador.jpg'
     ],
     isAvailable: true,
     displayOrder: 9,
@@ -567,31 +571,31 @@ export const PRODUCTS: Product[] = [
     bundleOfferText: 'Bundle discount: 2 for SGD 22.00 · 3 for SGD 31.50',
     details: {
       keyBenefits: [
-        '100% Korean Produce',
-        'Oven-Baked Wholesome',
-        'Low-Fat Reward',
-        'Zero Artificial Flavours'
+        'Meat-Free Recipe',
+        '100% Paju Korean Produce',
+        'Prebiotics (FOS) Digestion',
+        'HACCP Certified Quality'
       ],
       recommendedFor: [
-        'Dogs on weight-management or low-fat diets',
-        'Daily positive reinforcement training and reward snacks',
-        'Companions sensitive to artificial flavorings and chemical preservatives'
+        'Dogs needing gentle meat-free treats or low-fat wholesome rewards',
+        'Companions benefiting from dietary fiber and gut health support (FOS)',
+        'Daily positive training rewards and soft, chewable snacks'
       ],
-      mainIngredients: ['Korean Sweet Potato (85%)', 'Korean Pumpkin (15%)'],
-      keyIngredients: ['100% Korean Sweet Potato', '100% Korean Pumpkin'],
-      fullIngredients: 'Korean Sweet Potato (85%), Korean Pumpkin (15%). Free from artificial colorants, synthetic flavors, added sugar, salt, and chemical preservatives.',
-      howToFeed: 'Break into smaller bite-sized pieces for training or serve whole as a wholesome guilt-free reward.',
-      feedingUsageGuide: 'Break into smaller pieces for training or serve as a healthy daily snack.',
+      mainIngredients: ['Paju Korean Sweet Potato', 'Paju Korean Pumpkin', 'Fructooligosaccharides (FOS)'],
+      keyIngredients: ['Paju Korean Sweet Potato', 'Paju Korean Pumpkin', 'Fructooligosaccharides (FOS)'],
+      fullIngredients: 'Korean Sweet Potato (Paju grown), Korean Pumpkin (Paju grown), Fructooligosaccharides (FOS), Vegetable Glycerin, Natural Palatability Enhancer. Meat-free formula. No artificial coloring, synthetic flavors, added sugar, salt, or chemical preservatives.',
+      howToFeed: 'Break into smaller bite-sized pieces for training, or feed whole as a wholesome, soft chewy reward.',
+      feedingUsageGuide: 'Break into smaller pieces for training or serve whole as a healthy daily reward.',
       recommendedDailyAmount: 'Small dogs (under 5kg): 1–2 pieces daily · Medium dogs (5–15kg): 2–4 pieces daily · Large dogs (>15kg): 4–6 pieces daily. (Treats should not exceed 10% of daily caloric intake).',
       suitablePetType: 'Dogs (All breeds)',
       suitableLifeStage: 'All life stages (3+ months)',
-      packageSize: '70g (Resealable pouch)',
+      packageSize: '90g (Resealable zipper pouch)',
       countryOfOrigin: 'Republic of Korea',
-      storageInstructions: 'Store in a cool, dry place. Reseal tightly and consume promptly after opening.',
-      storage: 'Store in a cool, dry place. Keep sealed.',
+      storageInstructions: 'Store in a cool, dry place. Reseal the airtight zipper pouch tightly after opening to preserve freshness and softness.',
+      storage: 'Store in a cool, dry place. Reseal zipper pouch tightly.',
       precautions: [
         'Provide fresh drinking water at all times.',
-        'Feed in moderation as part of a balanced diet.'
+        'Feed in moderation as part of a balanced daily diet.'
       ]
     }
   },
