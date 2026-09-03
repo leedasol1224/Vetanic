@@ -70,7 +70,7 @@ export const CATEGORIES: CategoryInfo[] = [
 
 export const PRODUCTS: Product[] = [
   // =========================================================================
-  // EVERYDAY CARE COLLECTION
+  // EVERYDAY CARE COLLECTION (Tier A)
   // =========================================================================
   {
     id: 'fresh-omega-3-mini',
@@ -83,7 +83,7 @@ export const PRODUCTS: Product[] = [
     categoryName: 'Skin & Coat',
     collection: 'everyday-care',
     collectionName: 'Everyday Care',
-    shortDescription: 'Skin, coat & circulation',
+    shortDescription: 'Pure, concentrated Omega-3 marine oil in an easy-to-swallow 1 cm mini capsule.',
     packageSize: '151 mg × 60 capsules',
     imageUrl: '/images/products/fresh-omega-3-mini.png',
     galleryImages: [
@@ -97,24 +97,41 @@ export const PRODUCTS: Product[] = [
     trackInventory: true,
     regularPrice: SEPTEMBER_2026_LAUNCH_PROMOTION.everydayCare.regularPrice,
     launchPrice: SEPTEMBER_2026_LAUNCH_PROMOTION.everydayCare.launchPrice,
-    bundleOfferText: 'Mix & Match available',
+    bundleOfferText: 'Mix & Match available in Everyday Care',
     details: {
       keyBenefits: [
-        'Pure, fresh Omega-3 essential fatty acids tailored for small dogs and cats',
-        'Supports radiant skin barrier, lustrous coat gloss, and healthy blood circulation',
-        'Convenient mini capsule design for easy, stress-free daily feeding'
+        'Skin & Coat Support',
+        'Dogs + Cats',
+        '1 cm Mini Capsule',
+        'Individual Blister Pack'
       ],
-      mainIngredients: ['Refined Fish Oil (EPA & DHA)', 'Vitamin E (d-α-tocopherol)'],
-      fullIngredients: 'Product information to be provided by VETANIC.',
-      feedingUsageGuide: 'Feed whole capsule directly or pierce capsule and drizzle oil over regular food or treats.',
-      recommendedDailyAmount: 'Under 5kg: 1 capsule daily. 5–10kg: 2 capsules daily. (Adjust as advised by your veterinarian).',
+      recommendedFor: [
+        'Small dogs and cats needing skin barrier and coat nourishment',
+        'Pets experiencing seasonal shedding or dull, dry fur',
+        'Companions that resist large or pungent oil capsules'
+      ],
+      mainIngredients: ['Refined Fish Oil (EPA 55 mg + DHA 35 mg)', 'Vitamin E (d-α-tocopherol)'],
+      keyIngredients: ['Refined Fish Oil (EPA 55 mg + DHA 35 mg)', 'Vitamin E (d-α-tocopherol)'],
+      fullIngredients: 'High-Purity Refined Fish Oil (Anchovy, Sardine), D-Alpha-Tocopherol (Vitamin E), Gelatin (capsule shell), Glycerin.',
+      howToFeed: 'Feed whole capsule directly by hand, hide inside favourite treats, or snip the tip of the capsule and drizzle the pure oil directly over food.',
+      feedingUsageGuide: 'Feed whole capsule directly or pierce tip and mix oil into daily meals.',
+      recommendedDailyAmount: 'Under 5kg: 1 capsule daily · 5–10kg: 2 capsules daily · Over 10kg: 2–3 capsules daily (or switch to Fresh Omega-3 Premium).',
       suitablePetType: 'Dogs & Cats (Small Breeds & All Companions)',
       suitableLifeStage: 'All life stages (3+ months)',
-      packageSize: '151 mg × 60 capsules',
+      packageSize: '151 mg × 60 capsules (Blister Pack)',
       countryOfOrigin: 'Republic of Korea',
-      storageInstructions: 'Store in a cool, dry place away from direct sunlight. Reseal container tightly after each use.',
-      precautions: 'For animal consumption only. Consult your veterinarian prior to use if your companion is pregnant, nursing, or undergoing anticoagulant therapy.',
-      additionalNotes: 'Crafted with premium refined marine oil adhering to Korean companion animal safety standards.'
+      storageInstructions: 'Store at room temperature in a cool, dry place away from heat and direct sunlight. Keep capsules sealed in blister pack until use.',
+      storage: 'Store in a cool, dry place away from direct sunlight.',
+      precautions: [
+        'For animal companion consumption only.',
+        'If your pet is pregnant, nursing, or undergoing anticoagulant therapy, consult your veterinarian prior to use.'
+      ],
+      productFaq: [
+        {
+          question: 'Can I pierce the capsule if my pet refuses whole pills?',
+          answer: 'Yes! The mini capsule is easy to snip or pierce with a clean pin, allowing you to drizzle the fresh, odourless oil directly onto kibble, wet food, or treats.'
+        }
+      ]
     }
   },
   {
@@ -128,7 +145,7 @@ export const PRODUCTS: Product[] = [
     categoryName: 'Joint Support',
     collection: 'everyday-care',
     collectionName: 'Everyday Care',
-    shortDescription: 'Cartilage comfort & mobility',
+    shortDescription: 'Targeted daily mobility and cartilage comfort support for canine companions.',
     packageSize: '2g × 30 sticks',
     imageUrl: '/images/products/joint-support.png',
     galleryImages: [
@@ -142,24 +159,41 @@ export const PRODUCTS: Product[] = [
     trackInventory: true,
     regularPrice: SEPTEMBER_2026_LAUNCH_PROMOTION.everydayCare.regularPrice,
     launchPrice: SEPTEMBER_2026_LAUNCH_PROMOTION.everydayCare.launchPrice,
-    bundleOfferText: 'Mix & Match available',
+    bundleOfferText: 'Mix & Match available in Everyday Care',
     details: {
       keyBenefits: [
-        'Targeted joint cartilage and mobility support for canine companions',
-        'Helps soothe daily joint stiffness and maintains active, agile movement',
-        'Gentle, highly palatable daily powder stick format'
+        'Cartilage Support',
+        'Daily Mobility',
+        'Glucosamine & Green Mussel',
+        'Dogs Only'
+      ],
+      recommendedFor: [
+        'Senior dogs or breeds prone to hip and joint stiffness',
+        'Active, agile dogs needing daily cartilage maintenance',
+        'Dogs showing hesitation when climbing stairs or standing up'
       ],
       mainIngredients: ['Glucosamine HCl', 'MSM (Methylsulfonylmethane)', 'Green Lipped Mussel Powder', 'Chondroitin Sulfate'],
-      fullIngredients: 'Product information to be provided by VETANIC.',
+      keyIngredients: ['Glucosamine HCl', 'MSM (Methylsulfonylmethane)', 'Green Lipped Mussel Powder', 'Chondroitin Sulfate', 'Boswellia Extract'],
+      fullIngredients: 'Glucosamine Hydrochloride, Methylsulfonylmethane (MSM), New Zealand Green Lipped Mussel Powder, Chondroitin Sulfate (Bovine), Boswellia Serrata Extract, Natural Palatability Enhancer.',
+      howToFeed: 'Tear open 1 stick daily and mix into regular dry food, wet food, or lukewarm water.',
       feedingUsageGuide: 'Mix 1 stick daily into regular dog food or lukewarm water.',
-      recommendedDailyAmount: 'Dogs under 10kg: 1 stick daily. Dogs 10–20kg: 2 sticks daily. Dogs over 20kg: 3 sticks daily.',
+      recommendedDailyAmount: 'Under 10kg: 1 stick daily · 10–20kg: 2 sticks daily · Over 20kg: 3 sticks daily.',
       suitablePetType: 'Dogs (All breeds)',
-      suitableLifeStage: 'Adult dogs & senior companions',
-      packageSize: '2g × 30 sticks',
+      suitableLifeStage: 'Adult dogs & senior companions (3+ months)',
+      packageSize: '2g × 30 sticks (60g)',
       countryOfOrigin: 'Republic of Korea',
-      storageInstructions: 'Store in a cool, dry place. Consume immediately after opening individual stick.',
-      precautions: 'Currently sold out. For canine consumption only. If your pet has known shellfish/seafood allergies, consult your veterinarian.',
-      additionalNotes: 'Formulated in Korea by Nongshim Banryodaum.'
+      storageInstructions: 'Store in a cool, dry place away from moisture. Consume immediately after opening individual stick.',
+      storage: 'Store in a cool, dry place. Keep sticks sealed.',
+      precautions: [
+        'Currently sold out.',
+        'Formulated specifically for dogs. Contains shellfish derivatives (green-lipped mussel). Consult your veterinarian if your pet has known seafood allergies.'
+      ],
+      productFaq: [
+        {
+          question: 'When will Joint Support be restocked in Singapore?',
+          answer: 'We are currently preparing our next fresh batch from Korea. Please stay tuned on our Instagram @vetanic.sg for restock announcements.'
+        }
+      ]
     }
   },
   {
@@ -173,7 +207,7 @@ export const PRODUCTS: Product[] = [
     categoryName: 'Eye Care',
     collection: 'everyday-care',
     collectionName: 'Everyday Care',
-    shortDescription: 'Ocular wellness & liver care',
+    shortDescription: 'Targeted nutritional support for canine ocular wellness, tear stain care, and liver vitality.',
     packageSize: '2g × 30 sticks',
     imageUrl: '/images/products/clear-eyes.png',
     galleryImages: [
@@ -187,29 +221,40 @@ export const PRODUCTS: Product[] = [
     trackInventory: true,
     regularPrice: SEPTEMBER_2026_LAUNCH_PROMOTION.everydayCare.regularPrice,
     launchPrice: SEPTEMBER_2026_LAUNCH_PROMOTION.everydayCare.launchPrice,
-    bundleOfferText: 'Mix & Match available',
+    bundleOfferText: 'Mix & Match available in Everyday Care',
     details: {
       keyBenefits: [
-        'Canine ocular wellness, tear stain reduction, and antioxidant support',
-        'Features lutein, bilberry, and milk thistle for clear vision and liver function',
-        'Easy-to-mix powder stick designed for hassle-free daily supplementation'
+        'Ocular Wellness',
+        'Tear Stain Support',
+        'FloraGLO Lutein & Bilberry',
+        'Palatable Powder Stick'
       ],
-      mainIngredients: ['Lutein', 'Bilberry Extract', 'Milk Thistle Extract', 'Vitamin A', 'Astaxanthin'],
-      fullIngredients: 'Product information to be provided by VETANIC.',
+      recommendedFor: [
+        'Dogs with excessive tearing or noticeable tear stains',
+        'Breeds prone to eye dryness and lens cloudiness',
+        'Aging dogs needing daily antioxidant and liver vitality support'
+      ],
+      mainIngredients: ['FloraGLO Lutein', 'Bilberry Extract', 'Milk Thistle Extract (Silymarin)', 'Vitamin A', 'Astaxanthin'],
+      keyIngredients: ['FloraGLO Lutein', 'Bilberry Extract (Anthocyanins)', 'Milk Thistle Extract (Silymarin)', 'Astaxanthin', 'Vitamin A', 'Taurine'],
+      fullIngredients: 'FloraGLO Lutein Powder, Bilberry Extract, Milk Thistle Extract (Silymarin), Astaxanthin Powder, Vitamin A Acetate, Taurine, Natural Palatability Enhancer.',
+      howToFeed: 'Sprinkle and mix 1 individual stick into daily meals, wet food, or pure drinking water.',
       feedingUsageGuide: 'Sprinkle and mix into daily meals, wet food, or pure water.',
-      recommendedDailyAmount: 'Dogs under 10kg: 1 stick daily. Dogs over 10kg: 2 sticks daily.',
+      recommendedDailyAmount: 'Dogs under 10kg: 1 stick daily · Dogs over 10kg: 2 sticks daily.',
       suitablePetType: 'Dogs (All breeds)',
       suitableLifeStage: 'All life stages (3+ months)',
-      packageSize: '2g × 30 sticks',
+      packageSize: '2g × 30 sticks (60g)',
       countryOfOrigin: 'Republic of Korea',
-      storageInstructions: 'Store in a cool, dry place away from heat and direct sunlight.',
-      precautions: 'Formulated specifically for dogs. Keep out of reach of children and animals.',
-      additionalNotes: 'Part of the VETANIC Everyday Care range.'
+      storageInstructions: 'Store in a cool, dry place away from heat and direct sunlight. Keep stick sealed until use.',
+      storage: 'Store in a cool, dry place away from direct sunlight.',
+      precautions: [
+        'Formulated specifically for canine companions.',
+        'Keep out of reach of children and other animals.'
+      ]
     }
   },
 
   // =========================================================================
-  // WELLNESS SUPPORT COLLECTION
+  // WELLNESS SUPPORT COLLECTION (Tier B)
   // =========================================================================
   {
     id: 'probiotics',
@@ -222,7 +267,7 @@ export const PRODUCTS: Product[] = [
     categoryName: 'Digestion',
     collection: 'wellness-support',
     collectionName: 'Wellness Support',
-    shortDescription: 'Gut health & immunity',
+    shortDescription: 'Multi-strain beneficial cultures and prebiotics to support a balanced gut microbiome and firm stools.',
     packageSize: '2g × 30 sticks',
     imageUrl: '/images/products/probiotics.png',
     galleryImages: [
@@ -236,24 +281,34 @@ export const PRODUCTS: Product[] = [
     trackInventory: true,
     regularPrice: SEPTEMBER_2026_LAUNCH_PROMOTION.wellnessSupport.regularPrice,
     launchPrice: SEPTEMBER_2026_LAUNCH_PROMOTION.wellnessSupport.launchPrice,
-    bundleOfferText: 'Mix & Match available',
+    bundleOfferText: 'Mix & Match available in Wellness Support',
     details: {
       keyBenefits: [
-        'Multi-strain beneficial bacteria to foster a healthy, resilient gut microbiome',
-        'Promotes smooth digestion, optimal nutrient absorption, and firmer stools',
-        'Supports natural immune defense and digestive comfort for dogs and cats'
+        'Gut Microbiome Balance',
+        'Firm Stools Support',
+        'Patented Live Strains',
+        'Dogs + Cats'
       ],
-      mainIngredients: ['Patented Multi-strain Probiotics Blend', 'Prebiotics (Fructooligosaccharides)', 'Digestive Enzymes'],
-      fullIngredients: 'Product information to be provided by VETANIC.',
-      feedingUsageGuide: 'Sprinkle over wet or dry food once daily. Do not mix with boiling water.',
-      recommendedDailyAmount: 'Pets under 10kg: 1 stick daily. Pets over 10kg: 2 sticks daily.',
+      recommendedFor: [
+        'Dogs and cats with sensitive stomachs or irregular, loose stools',
+        'Pets transitioning to new food or recovering from digestive stress',
+        'Companions needing daily digestive comfort and natural immunity support'
+      ],
+      mainIngredients: ['Patented Multi-strain Probiotics Blend', 'Prebiotics (FOS)', 'Digestive Enzymes'],
+      keyIngredients: ['Multi-strain Probiotics (L. acidophilus, B. animalis, E. faecium)', 'Fructooligosaccharides (FOS)', 'Digestive Enzymes (Amylase, Protease)'],
+      fullIngredients: 'Probiotic Culture Blend (10+ billion CFU input), Fructooligosaccharides (FOS), Chicory Root Inulin, Digestive Enzymes, Natural Flavoring.',
+      howToFeed: 'Sprinkle over room-temperature wet or dry food once daily. Do not mix with boiling water to protect live probiotic cultures.',
+      feedingUsageGuide: 'Sprinkle over wet or dry food once daily. Avoid hot liquids above 40°C.',
+      recommendedDailyAmount: 'Pets under 10kg: 1 stick daily · Pets over 10kg: 2 sticks daily.',
       suitablePetType: 'Dogs & Cats',
       suitableLifeStage: 'All life stages (3+ months)',
-      packageSize: '2g × 30 sticks',
+      packageSize: '2g × 30 sticks (60g)',
       countryOfOrigin: 'Republic of Korea',
-      storageInstructions: 'Store in a cool, dry environment. Refrigeration helps maintain maximum live bacterial count.',
-      precautions: 'Do not expose to high temperatures (above 40°C) before feeding to protect live probiotic cultures.',
-      additionalNotes: 'Authentic green Nongshim Banryodaum formulation.'
+      storageInstructions: 'Store in a cool, dry place. Refrigeration during hot humid weather helps maintain maximum live bacterial count.',
+      storage: 'Store in a cool, dry place. Refrigeration optional.',
+      precautions: [
+        'Do not mix with foods or liquids hotter than 40°C to preserve live probiotic strains.'
+      ]
     }
   },
   {
@@ -267,7 +322,7 @@ export const PRODUCTS: Product[] = [
     categoryName: 'Hairball Care',
     collection: 'wellness-support',
     collectionName: 'Wellness Support',
-    shortDescription: 'Smooth hairball passage',
+    shortDescription: 'Gentle natural dietary fiber formula to support smooth hairball passage and digestive comfort in cats.',
     packageSize: '2g × 30 sticks',
     imageUrl: '/images/products/hairball-care.png',
     galleryImages: [
@@ -281,24 +336,35 @@ export const PRODUCTS: Product[] = [
     trackInventory: true,
     regularPrice: SEPTEMBER_2026_LAUNCH_PROMOTION.wellnessSupport.regularPrice,
     launchPrice: SEPTEMBER_2026_LAUNCH_PROMOTION.wellnessSupport.launchPrice,
-    bundleOfferText: 'Mix & Match available',
+    bundleOfferText: 'Mix & Match available in Wellness Support',
     details: {
       keyBenefits: [
-        'Gentle natural dietary fiber formula to facilitate smooth hairball transit through the digestive tract',
-        'Helps reduce uncomfortable hairball vomiting and stomach discomfort in felines',
-        'High-palatability recipe formulated to appeal to selective feline palates'
+        'Smooth Hairball Passage',
+        'Gentle Dietary Fiber',
+        'Digestive Comfort',
+        'Cats Only'
       ],
-      mainIngredients: ['Dietary Fiber (Psyllium Husk, Beet Pulp)', 'Cat grass extract', 'Prebiotics'],
-      fullIngredients: 'Product information to be provided by VETANIC.',
-      feedingUsageGuide: 'Feed directly as a lickable treat or mix with daily wet/dry cat food.',
-      recommendedDailyAmount: '1 stick daily for standard adult cats (under 5kg). 1–2 sticks daily for long-haired cats or during shedding seasons.',
+      recommendedFor: [
+        'Indoor cats experiencing frequent hairball regurgitation',
+        'Medium and long-haired cat breeds (Persian, Ragdoll, British Longhair, etc.)',
+        'Cats during seasonal coat shedding periods'
+      ],
+      mainIngredients: ['Psyllium Husk Dietary Fiber', 'Beet Pulp Fiber', 'Cat Grass Extract', 'Prebiotics'],
+      keyIngredients: ['Psyllium Husk Powder', 'Beet Pulp Fiber', 'Cat Grass (Wheatgrass) Extract', 'FOS Prebiotics', 'Taurine'],
+      fullIngredients: 'Psyllium Husk Dietary Fiber, Sugar Beet Fiber, Wheatgrass/Cat Grass Extract, Fructooligosaccharides (FOS), Taurine, Natural Palatability Broth.',
+      howToFeed: 'Feed directly as a lickable treat stick or blend into daily wet/dry cat food.',
+      feedingUsageGuide: 'Feed directly or mix with daily wet/dry cat food.',
+      recommendedDailyAmount: 'Standard adult cats (under 5kg): 1 stick daily · Long-haired cats or shedding season: 1–2 sticks daily.',
       suitablePetType: 'Cats (Short & Long Hair)',
       suitableLifeStage: 'All life stages (3+ months)',
-      packageSize: '2g × 30 sticks',
+      packageSize: '2g × 30 sticks (60g)',
       countryOfOrigin: 'Republic of Korea',
-      storageInstructions: 'Store in a cool, dry place away from direct sunlight. Reseal pouch after use.',
-      precautions: 'Exclusively for feline consumption. Always ensure plenty of fresh drinking water is accessible.',
-      additionalNotes: 'Part of the VETANIC Feline Wellness Routine.'
+      storageInstructions: 'Store in a cool, dry place away from direct sunlight. Reseal pouch after opening.',
+      storage: 'Store in a cool, dry place.',
+      precautions: [
+        'Exclusively formulated for feline companions.',
+        'Always ensure fresh drinking water is readily available.'
+      ]
     }
   },
   {
@@ -312,7 +378,7 @@ export const PRODUCTS: Product[] = [
     categoryName: 'Kidney & Urinary',
     collection: 'wellness-support',
     collectionName: 'Wellness Support',
-    shortDescription: 'Kidney & urinary wellness for cats',
+    shortDescription: 'Targeted nutritional support for feline urinary tract integrity, bladder comfort, and healthy hydration.',
     packageSize: '2g × 30 sticks',
     imageUrl: '/images/products/urena-clear.png',
     galleryImages: [
@@ -326,24 +392,35 @@ export const PRODUCTS: Product[] = [
     trackInventory: true,
     regularPrice: SEPTEMBER_2026_LAUNCH_PROMOTION.wellnessSupport.regularPrice,
     launchPrice: SEPTEMBER_2026_LAUNCH_PROMOTION.wellnessSupport.launchPrice,
-    bundleOfferText: 'Mix & Match available',
+    bundleOfferText: 'Mix & Match available in Wellness Support',
     details: {
       keyBenefits: [
-        'Specialized feline renal & urinary tract health support',
-        'Helps maintain balanced urinary pH, bladder lining integrity, and hydration',
-        'Delicious hydration-friendly puree stick cats readily enjoy'
+        'Urinary Tract Wellness',
+        'Bladder Lining Support',
+        'Cranberry & D-Mannose',
+        'Hydration Friendly'
       ],
-      mainIngredients: ['Cranberry Extract', 'D-Mannose', 'N-Acetyl Glucosamine', 'Chitosan'],
-      fullIngredients: 'Product information to be provided by VETANIC.',
-      feedingUsageGuide: 'Feed directly from the stick or blend into meals with a little warm water for extra hydration.',
-      recommendedDailyAmount: '1 stick daily for daily maintenance. Up to 2 sticks daily during targeted urinary wellness routines.',
+      recommendedFor: [
+        'Cats needing daily urinary tract and bladder wellness support',
+        'Felines with low water intake or stress-related urinary sensitivity',
+        'Adult and senior cats'
+      ],
+      mainIngredients: ['Cranberry Extract', 'D-Mannose', 'N-Acetyl Glucosamine (NAG)', 'Chitosan'],
+      keyIngredients: ['Cranberry Extract (PACs)', 'D-Mannose', 'N-Acetyl Glucosamine (NAG)', 'Potassium Citrate', 'Chitosan', 'L-Theanine'],
+      fullIngredients: 'Cranberry Extract Powder, D-Mannose, N-Acetyl Glucosamine, Potassium Citrate, Chitosan, L-Theanine, Natural Broth Extract.',
+      howToFeed: 'Feed directly from the stick or blend into wet meals with 10–20 ml of warm water as a nourishing hydration drink.',
+      feedingUsageGuide: 'Feed directly or mix into meals with warm water for extra hydration.',
+      recommendedDailyAmount: 'Daily wellness support: 1 stick daily · Intensive hydration routine: Up to 2 sticks daily.',
       suitablePetType: 'Cats',
-      suitableLifeStage: 'Adult cats & senior felines',
-      packageSize: '2g × 30 sticks',
+      suitableLifeStage: 'Adult cats & senior felines (3+ months)',
+      packageSize: '2g × 30 sticks (60g)',
       countryOfOrigin: 'Republic of Korea',
-      storageInstructions: 'Store in a cool, dry place away from direct sunlight.',
-      precautions: 'Intended as a nutritional wellness supplement, not a medical cure or replacement for prescription renal therapies.',
-      additionalNotes: 'Essential hydration support for feline wellness.'
+      storageInstructions: 'Store in a cool, dry place away from heat and direct sunlight.',
+      storage: 'Store in a cool, dry place away from direct sunlight.',
+      precautions: [
+        'Intended as a nutritional wellness supplement, not a cure or replacement for emergency veterinary renal therapies.',
+        'If your cat shows acute signs of urinary blockage (straining, crying in litter box), seek immediate veterinary care.'
+      ]
     }
   },
   {
@@ -357,7 +434,7 @@ export const PRODUCTS: Product[] = [
     categoryName: 'Skin & Coat',
     collection: 'wellness-support',
     collectionName: 'Wellness Support',
-    shortDescription: 'High-potency skin & coat support',
+    shortDescription: 'High-potency Omega-3 essential fatty acids tailored for medium and large companions.',
     packageSize: '500 mg × 60 capsules',
     imageUrl: '/images/products/fresh-omega-3-premium.png',
     galleryImages: [
@@ -371,24 +448,35 @@ export const PRODUCTS: Product[] = [
     trackInventory: true,
     regularPrice: SEPTEMBER_2026_LAUNCH_PROMOTION.wellnessSupport.regularPrice,
     launchPrice: SEPTEMBER_2026_LAUNCH_PROMOTION.wellnessSupport.launchPrice,
-    bundleOfferText: 'Mix & Match available',
+    bundleOfferText: 'Mix & Match available in Wellness Support',
     details: {
       keyBenefits: [
-        'High-potency EPA & DHA fatty acids tailored for medium to large companions',
-        'Deeply nourishes dry skin, reduces seasonal shedding, and restores coat sheen',
-        'Supports cardiovascular, joint comfort, and systemic cellular vitality'
+        'High-Potency EPA & DHA',
+        'Medium & Large Pets',
+        'Skin Barrier Support',
+        'Pure Marine Oil'
       ],
-      mainIngredients: ['High-Concentration Anchovy/Sardine Oil (EPA/DHA)', 'Vitamin E (d-α-tocopherol)'],
-      fullIngredients: 'Product information to be provided by VETANIC.',
-      feedingUsageGuide: 'Administer whole capsule or pierce and mix oil into pet food.',
-      recommendedDailyAmount: '10–20kg: 1 capsule daily. Over 20kg: 2 capsules daily.',
+      recommendedFor: [
+        'Medium and large dogs requiring higher daily EPA/DHA intake',
+        'Pets needing joint mobility and systemic cellular vitality support',
+        'Companions with dry, itchy skin or lacklustre coat'
+      ],
+      mainIngredients: ['Refined Marine Fish Oil (EPA 180 mg + DHA 120 mg)', 'Vitamin E (d-α-tocopherol)'],
+      keyIngredients: ['High-Concentration Anchovy & Sardine Oil (EPA 180 mg + DHA 120 mg)', 'Vitamin E (d-α-tocopherol)'],
+      fullIngredients: 'High-Purity Refined Fish Oil (Anchovy, Sardine), D-Alpha-Tocopherol (Vitamin E), Gelatin (capsule shell), Glycerin.',
+      howToFeed: 'Administer whole capsule with meals, or pierce tip and mix oil directly into kibble or wet food.',
+      feedingUsageGuide: 'Administer whole capsule with meals, or pierce and mix oil into pet food.',
+      recommendedDailyAmount: '10–20kg: 1 capsule daily · 20–30kg: 2 capsules daily · Over 30kg: 2–3 capsules daily.',
       suitablePetType: 'Dogs & Cats (Medium to Large breeds)',
-      suitableLifeStage: 'All life stages',
-      packageSize: '500 mg × 60 capsules',
+      suitableLifeStage: 'All life stages (3+ months)',
+      packageSize: '500 mg × 60 capsules (Blister Pack)',
       countryOfOrigin: 'Republic of Korea',
-      storageInstructions: 'Store in a cool, dry, dark place. Keep container tightly sealed.',
-      precautions: 'Consult a veterinarian if your companion is scheduled for surgery or currently taking blood thinners.',
-      additionalNotes: 'Premium high-grade purification process.'
+      storageInstructions: 'Store in a cool, dry, dark location away from heat and moisture. Keep capsules in blister pack until consumed.',
+      storage: 'Store in a cool, dry, dark place.',
+      precautions: [
+        'For animal companion consumption only.',
+        'Consult your veterinarian if your companion is scheduled for surgery or taking blood-thinning medications.'
+      ]
     }
   },
   {
@@ -402,7 +490,7 @@ export const PRODUCTS: Product[] = [
     categoryName: 'Dental Care',
     collection: 'wellness-support',
     collectionName: 'Wellness Support',
-    shortDescription: 'Gentle daily oral hygiene chew',
+    shortDescription: 'Pliable, gentle dental chew designed to reduce plaque buildup and freshen canine breath.',
     packageSize: '150g',
     imageUrl: '/images/products/soft-dental-chew.png',
     galleryImages: [
@@ -416,24 +504,35 @@ export const PRODUCTS: Product[] = [
     trackInventory: true,
     regularPrice: SEPTEMBER_2026_LAUNCH_PROMOTION.wellnessSupport.regularPrice,
     launchPrice: SEPTEMBER_2026_LAUNCH_PROMOTION.wellnessSupport.launchPrice,
-    bundleOfferText: 'Mix & Match available',
+    bundleOfferText: 'Mix & Match available in Wellness Support',
     details: {
       keyBenefits: [
-        'Specially engineered ridged texture helps mechanically reduce dental plaque and tartar',
-        'Pliable soft chew formulation gentle on teeth and gums for small and aging dogs',
-        'Freshens canine breath naturally with botanical parsley and spirulina extracts'
+        'Plaque & Tartar Care',
+        'Gentle Soft Texture',
+        'Parsley Breath Freshness',
+        'Gentle on Gums'
+      ],
+      recommendedFor: [
+        'Small dogs and senior dogs with sensitive teeth or delicate gums',
+        'Dogs that reject hard, rigid dental chews',
+        'Daily oral hygiene reward after main meals'
       ],
       mainIngredients: ['Rice Flour', 'Tapioca Starch', 'Parsley Extract', 'Zinc Gluconate', 'Spirulina'],
-      fullIngredients: 'Product information to be provided by VETANIC.',
+      keyIngredients: ['Rice Flour', 'Tapioca Starch', 'Parsley Extract', 'Zinc Gluconate', 'Spirulina', 'SHMP (Sodium Hexametaphosphate)'],
+      fullIngredients: 'Rice Flour, Tapioca Starch, Vegetable Glycerin, Parsley Extract, Zinc Gluconate, Spirulina Powder, Sodium Hexametaphosphate, Natural Rosemary Extract.',
+      howToFeed: 'Offer 1 chew daily as a supervised oral care reward after main meals.',
       feedingUsageGuide: 'Offer 1 piece daily as a dental reward chew after main meals.',
-      recommendedDailyAmount: '1 chew daily. Always supervise your dog while chewing.',
+      recommendedDailyAmount: 'Small dogs (under 10kg): 1 chew daily · Dogs 10–20kg: 1–2 chews daily.',
       suitablePetType: 'Dogs',
       suitableLifeStage: 'Adult dogs & puppies with permanent teeth (4+ months)',
-      packageSize: '150g',
+      packageSize: '150g (Multi-piece resealable pouch)',
       countryOfOrigin: 'Republic of Korea',
-      storageInstructions: 'Seal bag securely after opening. Store in a dry, cool location away from direct sunlight.',
-      precautions: 'Not recommended for young puppies under 4 months. Always supervise chewing to prevent swallowing large pieces.',
-      additionalNotes: 'Formulated for gentle oral hygiene.'
+      storageInstructions: 'Reseal pouch securely after each use. Store in a dry, cool location away from direct sunlight.',
+      storage: 'Reseal bag securely. Store in a dry, cool location.',
+      precautions: [
+        'Not recommended for young puppies under 4 months.',
+        'Always supervise chewing to ensure your dog does not gulp large unchewed pieces.'
+      ]
     }
   },
 
@@ -451,7 +550,7 @@ export const PRODUCTS: Product[] = [
     categoryName: 'Healthy Treats',
     collection: 'treats',
     collectionName: 'Treats',
-    shortDescription: 'Wholesome low-fat reward snacks',
+    shortDescription: 'Naturally delicious, low-fat oven-baked reward snacks made from 100% Korean agricultural produce.',
     packageSize: '70g',
     imageUrl: '/images/products/sweet-potato-pumpkin-treats.png',
     galleryImages: [
@@ -468,21 +567,32 @@ export const PRODUCTS: Product[] = [
     bundleOfferText: 'Bundle discount: 2 for SGD 22.00 · 3 for SGD 31.50',
     details: {
       keyBenefits: [
-        'Naturally delicious, low-fat oven-baked reward treat for dogs',
-        'Rich in dietary fiber, potassium, and beta-carotene for digestion and vitality',
-        'Free from artificial colors, synthetic flavors, and chemical preservatives'
+        '100% Korean Produce',
+        'Oven-Baked Wholesome',
+        'Low-Fat Reward',
+        'Zero Artificial Flavours'
       ],
-      mainIngredients: ['Korean Sweet Potato', 'Korean Pumpkin'],
-      fullIngredients: 'Product information to be provided by VETANIC.',
+      recommendedFor: [
+        'Dogs on weight-management or low-fat diets',
+        'Daily positive reinforcement training and reward snacks',
+        'Companions sensitive to artificial flavorings and chemical preservatives'
+      ],
+      mainIngredients: ['Korean Sweet Potato (85%)', 'Korean Pumpkin (15%)'],
+      keyIngredients: ['100% Korean Sweet Potato', '100% Korean Pumpkin'],
+      fullIngredients: 'Korean Sweet Potato (85%), Korean Pumpkin (15%). Free from artificial colorants, synthetic flavors, added sugar, salt, and chemical preservatives.',
+      howToFeed: 'Break into smaller bite-sized pieces for training or serve whole as a wholesome guilt-free reward.',
       feedingUsageGuide: 'Break into smaller pieces for training or serve as a healthy daily snack.',
-      recommendedDailyAmount: 'Treats should not exceed 10% of total daily caloric intake.',
+      recommendedDailyAmount: 'Small dogs (under 5kg): 1–2 pieces daily · Medium dogs (5–15kg): 2–4 pieces daily · Large dogs (>15kg): 4–6 pieces daily. (Treats should not exceed 10% of daily caloric intake).',
       suitablePetType: 'Dogs (All breeds)',
       suitableLifeStage: 'All life stages (3+ months)',
-      packageSize: '70g',
+      packageSize: '70g (Resealable pouch)',
       countryOfOrigin: 'Republic of Korea',
-      storageInstructions: 'Store in a cool, dry place. Keep sealed and consume promptly after opening.',
-      precautions: 'Provide fresh water at all times. Feed in moderation as part of a balanced diet.',
-      additionalNotes: 'Made with 100% wholesome Korean agricultural ingredients.'
+      storageInstructions: 'Store in a cool, dry place. Reseal tightly and consume promptly after opening.',
+      storage: 'Store in a cool, dry place. Keep sealed.',
+      precautions: [
+        'Provide fresh drinking water at all times.',
+        'Feed in moderation as part of a balanced diet.'
+      ]
     }
   },
   {
@@ -496,7 +606,7 @@ export const PRODUCTS: Product[] = [
     categoryName: 'Healthy Treats',
     collection: 'treats',
     collectionName: 'Treats',
-    shortDescription: 'Nutrient-rich freeze-dried toppers',
+    shortDescription: 'Nutrient-rich, low-calorie vegetable topper crafted with 100% Korean-grown vegetables.',
     packageSize: '50g',
     imageUrl: '/images/products/freeze-dried-vegetables.png',
     galleryImages: [
@@ -513,21 +623,31 @@ export const PRODUCTS: Product[] = [
     bundleOfferText: 'Bundle discount: 2 for SGD 32.00 · 3 for SGD 45.00',
     details: {
       keyBenefits: [
-        'Gentle low-temperature freeze-drying preserves natural vegetable vitamins and micronutrients',
-        'Pure, fiber-rich nutritional topper or crispy reward with ultra-low calories',
-        'Zero grains, zero fillers, zero artificial additives'
+        '100% Korean Vegetables',
+        'Low-Temperature Freeze-Dried',
+        'Nutrient Meal Topper',
+        'Dogs + Cats'
       ],
-      mainIngredients: ['Assorted Freeze-Dried Vegetables (Carrot, Broccoli, Pumpkin, Cabbage)'],
-      fullIngredients: 'Product information to be provided by VETANIC.',
+      recommendedFor: [
+        'Dogs and cats needing extra dietary fiber and natural micronutrients',
+        'Pets on weight-management diets seeking ultra-low-calorie crunchy treats',
+        'Selective eaters that enjoy added meal texture and natural garden aroma'
+      ],
+      mainIngredients: ['Korean Sweet Potato', 'Korean Pumpkin', 'Korean Cabbage', 'Korean Purple Sweet Potato', 'Korean Carrot'],
+      keyIngredients: ['Assorted Korean Freeze-Dried Vegetables (Sweet Potato, Pumpkin, Cabbage, Purple Sweet Potato, Carrot)'],
+      fullIngredients: '100% Freeze-Dried Korean Sweet Potato, Korean Pumpkin, Korean Cabbage, Korean Purple Sweet Potato, Korean Carrot. Zero additives, zero grains, zero preservatives.',
+      howToFeed: 'Sprinkle crispy cubes directly over kibble or wet food as a topper, or rehydrate with warm water for 2 minutes into a soft garden puree mixer.',
       feedingUsageGuide: 'Serve as a crunchy snack or rehydrate with warm water as a wholesome meal mixer.',
-      recommendedDailyAmount: '1–2 tablespoons daily as a dietary supplement or treat.',
+      recommendedDailyAmount: 'Small pets (under 5kg): 1–2 teaspoons daily · Medium pets (5–15kg): 1–2 tablespoons daily · Large pets (>15kg): 2–3 tablespoons daily.',
       suitablePetType: 'Dogs & Cats',
       suitableLifeStage: 'All life stages (3+ months)',
-      packageSize: '50g',
+      packageSize: '50g (Resealable tub/jar)',
       countryOfOrigin: 'Republic of Korea',
-      storageInstructions: 'Keep tightly sealed in moisture-proof packaging away from humid areas.',
-      precautions: 'Store in a dry location. Reseal immediately after each use to maintain crisp texture.',
-      additionalNotes: 'Ideal fiber booster for companions on specialized diets.'
+      storageInstructions: 'Keep tightly sealed in moisture-proof packaging away from humid areas. Reseal immediately after use to maintain crisp texture.',
+      storage: 'Store in a dry location. Reseal immediately.',
+      precautions: [
+        'Store in a dry location. Reseal immediately after each use to maintain crisp texture.'
+      ]
     }
   }
 ];

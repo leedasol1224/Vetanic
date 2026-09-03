@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { X, Plus, Minus, Check, Package, MapPin, ShieldAlert, Sparkles, Info, Tag, ExternalLink } from 'lucide-react';
+import { X, Plus, Minus, Check, Package, MapPin, ShieldAlert, Sparkles, Tag, ExternalLink } from 'lucide-react';
 import { useOrder } from '../../context/OrderContext';
 import { PetBadge } from '../common/Badge';
 import { getProductPricing } from '../../lib/pricing';
@@ -40,6 +40,9 @@ export const ProductDetailModal: React.FC = () => {
   };
 
   const estimatedLineSubtotal = (pricing.activePrice * quantity).toFixed(2);
+  const precautionsList = Array.isArray(product.details.precautions)
+    ? product.details.precautions
+    : [product.details.precautions];
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto flex items-center justify-center p-3 sm:p-4 bg-charcoal/60 backdrop-blur-sm animate-soft-in">
@@ -98,23 +101,23 @@ export const ProductDetailModal: React.FC = () => {
                 <span className="text-xs font-semibold text-charcoal-muted bg-[#FAF7F2] px-2.5 py-0.5 rounded-full border border-[#DED7CE]/80">
                   {product.categoryName}
                 </span>
-                <span className="text-xs text-charcoal-muted">
+                <span className="text-xs text-charcoal-muted font-medium">
                   {product.packageSize}
                 </span>
               </div>
 
-              <h2 className="text-2xl font-bold text-charcoal tracking-tight">
+              <h2 className="text-2xl font-heading font-bold text-charcoal tracking-tight">
                 {product.name}
               </h2>
 
-              <p className="text-charcoal-muted font-normal text-sm mt-1 mb-3">
+              <p className="text-charcoal-muted font-normal text-xs sm:text-sm mt-1 mb-3">
                 {product.shortDescription}
               </p>
 
               {/* Pricing Callout */}
               <div className="p-3.5 bg-[#FAF7F2] rounded-2xl border border-[#DED7CE] mb-3 space-y-1.5">
                 <div className="flex items-baseline gap-2 flex-wrap">
-                  <span className="text-2xl font-bold text-charcoal font-serif">
+                  <span className="text-2xl font-heading font-bold text-charcoal">
                     SGD {pricing.activePrice.toFixed(2)}
                   </span>
                   {pricing.isPromo && (
@@ -124,7 +127,7 @@ export const ProductDetailModal: React.FC = () => {
                   )}
                   {pricing.isPromo && (
                     <span className="text-[10px] font-bold text-brand-600 bg-brand-50 px-2 py-0.5 rounded-md border border-brand-200">
-                      Singapore Launch Price
+                      September Launch Price
                     </span>
                   )}
                 </div>
@@ -219,7 +222,7 @@ export const ProductDetailModal: React.FC = () => {
                     : 'text-charcoal-muted hover:bg-[#FAF7F2]'
                 }`}
               >
-                Key Features
+                Key Highlights
               </button>
               <button
                 onClick={() => setActiveTab('usage')}
@@ -247,51 +250,49 @@ export const ProductDetailModal: React.FC = () => {
               {activeTab === 'details' && (
                 <div className="space-y-2">
                   <h4 className="font-semibold text-charcoal flex items-center gap-1.5">
-                    <Sparkles className="w-4 h-4 text-sage-600" />
-                    Product Highlights
+                    <Sparkles className="w-4 h-4 text-brand-600" />
+                    Key Benefits
                   </h4>
                   {product.details.keyBenefits && (
-                    <ul className="space-y-1.5 pl-4 list-disc text-charcoal-muted text-xs sm:text-sm">
-                      {product.details.keyBenefits.map((feat, idx) => (
-                        <li key={idx}>{feat}</li>
+                    <div className="grid grid-cols-2 gap-2 pt-1">
+                      {product.details.keyBenefits.map((benefit, idx) => (
+                        <div key={idx} className="p-2.5 bg-[#FAF7F2] rounded-xl border border-[#DED7CE] text-xs font-bold text-charcoal">
+                          {benefit}
+                        </div>
                       ))}
-                    </ul>
+                    </div>
                   )}
-                  <div className="mt-3 p-3 bg-[#FAF7F2] rounded-xl border border-[#DED7CE] text-xs text-charcoal-muted flex items-start gap-2">
-                    <Info className="w-4 h-4 text-sage-600 flex-shrink-0 mt-0.5" />
-                    <span>
-                      VETANIC formulations are made with companion animal wellbeing at the core, adhering to strict Korean pet supplement quality standards.
-                    </span>
-                  </div>
                 </div>
               )}
 
               {activeTab === 'usage' && (
-                <div className="space-y-4">
+                <div className="space-y-3 text-xs">
                   <div>
-                    <h4 className="font-semibold text-charcoal mb-1">Recommended Dosage & Feeding</h4>
-                    <p className="text-xs text-charcoal-muted bg-[#FAF7F2] p-2.5 rounded-lg border border-[#DED7CE]">
+                    <h4 className="font-semibold text-charcoal mb-1">How to Feed</h4>
+                    <p className="text-charcoal-muted bg-[#FAF7F2] p-2.5 rounded-lg border border-[#DED7CE]">
+                      {product.details.howToFeed || product.details.feedingUsageGuide}
+                    </p>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-charcoal mb-1">Recommended Daily Dosage</h4>
+                    <p className="text-charcoal-muted bg-[#FAF7F2] p-2.5 rounded-lg border border-[#DED7CE]">
                       {product.details.recommendedDailyAmount}
                     </p>
                   </div>
                   <div>
-                    <h4 className="font-semibold text-charcoal mb-1">Key Ingredients</h4>
-                    <div className="flex flex-wrap gap-1.5">
-                      {product.details.mainIngredients.map((ing, idx) => (
-                        <span key={idx} className="text-xs bg-sage-100/70 border border-sage-200 text-sage-800 px-2 py-0.5 rounded-md">
-                          {ing}
-                        </span>
-                      ))}
-                    </div>
+                    <h4 className="font-semibold text-charcoal mb-1">Full Ingredients</h4>
+                    <p className="text-charcoal-muted bg-[#FAF7F2] p-2.5 rounded-lg border border-[#DED7CE]">
+                      {product.details.fullIngredients}
+                    </p>
                   </div>
                 </div>
               )}
 
               {activeTab === 'origin' && (
-                <div className="space-y-4">
+                <div className="space-y-3 text-xs">
                   <div>
                     <h4 className="font-semibold text-charcoal mb-1">Storage Instructions</h4>
-                    <p className="text-xs text-charcoal-muted">
+                    <p className="text-charcoal-muted bg-[#FAF7F2] p-2.5 rounded-lg border border-[#DED7CE]">
                       {product.details.storageInstructions}
                     </p>
                   </div>
@@ -300,9 +301,13 @@ export const ProductDetailModal: React.FC = () => {
                       <ShieldAlert className="w-4 h-4 text-brand-600" />
                       Precautions
                     </h4>
-                    <p className="text-xs text-charcoal-muted bg-[#FAF7F2] p-2.5 rounded-lg border border-[#DED7CE]">
-                      {product.details.precautions}
-                    </p>
+                    <div className="p-2.5 bg-[#FAF7F2] rounded-lg border border-[#DED7CE] space-y-1">
+                      {precautionsList.map((p, idx) => (
+                        <p key={idx} className="text-charcoal-muted">
+                          • {p}
+                        </p>
+                      ))}
+                    </div>
                   </div>
                 </div>
               )}
@@ -331,7 +336,7 @@ export const ProductDetailModal: React.FC = () => {
           ) : (
             <button
               onClick={handleAdd}
-              className="inline-flex items-center gap-2 bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold px-4 py-2.5 rounded-xl transition-all"
+              className="inline-flex items-center gap-2 bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold px-4 py-2.5 rounded-full transition-all"
             >
               <Check className="w-3.5 h-3.5" />
               <span>Add {quantity} to Order (SGD {estimatedLineSubtotal})</span>

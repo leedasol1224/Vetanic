@@ -12,18 +12,28 @@ export type ProductCategory =
 
 export type MerchandisingCollection = 'everyday-care' | 'wellness-support' | 'treats' | 'standard';
 
+export interface ProductFaqItem {
+  question: string;
+  answer: string;
+}
+
 export interface ProductDetails {
-  keyBenefits: string[];
-  mainIngredients: string[];
+  keyBenefits: string[]; // 3-4 short visual cards / pills (e.g. "Skin & Coat", "1 cm Mini Capsule")
+  recommendedFor?: string[]; // Short visual bullet points / compact cards
+  keyIngredients?: string[]; // Active functional ingredients
+  mainIngredients: string[]; // Key ingredients (for backwards compatibility)
   fullIngredients: string;
-  feedingUsageGuide: string;
-  recommendedDailyAmount: string;
+  howToFeed: string;
+  feedingUsageGuide: string; // Feeding instructions
+  recommendedDailyAmount: string; // Dosage guideline
   suitablePetType: string;
   suitableLifeStage: string;
   packageSize: string;
   countryOfOrigin: string;
   storageInstructions: string;
-  precautions: string;
+  storage?: string;
+  precautions: string | string[];
+  productFaq?: ProductFaqItem[];
   additionalNotes?: string;
   // Legacy / convenience fields
   keyFeatures?: string[];

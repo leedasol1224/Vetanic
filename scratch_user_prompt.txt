@@ -1,0 +1,198 @@
+<USER_REQUEST>
+Update all VETANIC product detail pages using the product information I provided.
+
+Replace all existing placeholder text such as:
+
+"Product information coming soon"
+"To be provided by VETANIC"
+placeholder benefits
+placeholder feeding instructions
+
+with the actual supplied product information.
+
+IMPORTANT DESIGN PRINCIPLE
+
+Do NOT make the product pages text-heavy.
+
+The VETANIC website should remain image-led and visually clean.
+
+Show only the most important information immediately, and place detailed information inside expandable accordions.
+
+PRODUCT PAGE LAYOUT
+
+Above the fold:
+
+LEFT
+
+Large product image
+Additional product image thumbnails where available
+
+RIGHT
+
+Product name
+DOG / CAT compatibility
+One-sentence short description
+Regular price
+September Launch Price
+Small Mix & Match note where applicable
+Quantity selector
+
+[ − ] 1 [ + ]
+
+Keep this section visually spacious.
+
+Do not place long product descriptions above the fold.
+
+KEY BENEFITS
+
+Immediately below the main product area, show 3–4 key benefits as short visual cards or icon labels.
+
+Example for Fresh Omega-3 Mini:
+
+Skin & Coat
+
+Dogs + Cats
+
+1 cm Mini Capsule
+
+Individual Blister Pack
+
+Avoid long sentences in these cards.
+
+WHO IS IT FOR?
+
+Where the supplied product information contains "Recommended For", show it as a short visual section.
+
+Use short bullet points or compact cards rather than paragraphs.
+
+PRODUCT INFORMATION ACCORDIONS
+
+Put detailed information inside expandable sections:
+
+How to Feed
+
+Ingredients
+
+Feeding Guide
+
+Storage & Precautions
+
+Product FAQ
+
+Only display an accordion if actual information is available for that product.
+
+Do NOT invent missing information.
+
+GENERAL FAQ
+
+Do NOT repeat the same general questions on every product page.
+
+Create a reusable General FAQ section covering:
+
+recommended starting age
+taking multiple VETANIC supplements
+recommended duration of supplementation
+before/after meal guidance
+storage
+existing medical conditions or medication
+food allergies
+
+Product-specific FAQs should remain on individual product pages.
+
+MEDICAL / HEALTH CLAIM RULE
+
+Be conservative with health wording.
+
+Use wording such as:
+
+"supports"
+
+"designed to support"
+
+"daily nutritional support"
+
+"wellness support"
+
+Do not turn the supplied product information into stronger medical or treatment claims.
+
+Do NOT describe the entire VETANIC range as:
+
+"hypoallergenic"
+
+or
+
+"meat-free"
+
+unless that statement is specifically supported for the individual product.
+
+Allergy-related information should be handled product by product.
+
+REMOVE UNNECESSARY INFORMATION
+
+Do not clutter consumer-facing product pages with administrative information such as:
+
+Korean manufacturing facility full addresses
+Korean distributor addresses
+Korean customer service numbers
+feed registration numbers
+administrative manufacturing-date wording
+Korean domestic return/exchange policies
+
+Keep the website focused on information useful to Singapore customers.
+
+CENTRAL PRODUCT DATA
+
+Store all product information centrally rather than hard-coding it into each page component.
+
+Each product should support:
+
+productName
+slug
+petType
+shortDescription
+packageSize
+regularPrice
+launchPrice
+images[]
+keyBenefits[]
+recommendedFor[]
+ingredients[]
+feedingGuide
+howToFeed
+storage
+precautions[]
+faq[]
+pricingGroup
+sku
+
+The same product data should be reusable by:
+
+Product cards
+Product detail pages
+Cart
+Order page
+Admin Products
+Inventory
+IMPORTANT
+
+Do not modify:
+
+existing pricing
+September Launch promotion
+Mix & Match calculations
+cart logic
+inventory
+admin order management
+VETANIC branding
+
+Only improve and populate the product-information architecture and product-detail UX.
+</USER_REQUEST>
+<ADDITIONAL_METADATA>
+The current local time is: 2026-09-03T18:29:11+08:00.
+
+The user has uploaded 3 image(s):
+- /Users/dasollee/.gemini/antigravity/brain/d828c124-b39a-42da-8826-9104432245c6/.user_uploaded/media_1788431282412.jpg
+- /Users/dasollee/.gemini/antigravity/brain/d828c124-b39a-42da-8826-9104432245c6/.user_uploaded/media_1788431282804.png
+- /Users/dasollee/.gemini/antigravity/brain/d828c124-b39a-42da-8826-9104432245c6/.user_uploaded/media_1788431282926.jpg
+You can embed these images in an artifact if you need the USER to review them.
+</ADDITIONAL_METADATA>
