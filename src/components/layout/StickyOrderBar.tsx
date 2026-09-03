@@ -7,8 +7,8 @@ export const StickyOrderBar: React.FC = () => {
   const { totalItemCount, pricingSummary, openCartDrawer } = useOrder();
   const location = useLocation();
 
-  // Hide on order page or admin pages or when 0 items
-  if (location.pathname === '/order' || location.pathname.startsWith('/admin') || totalItemCount === 0) {
+  // Hide on order page or admin/business pages or when 0 items
+  if (location.pathname === '/order' || location.pathname.startsWith('/admin') || location.pathname.startsWith('/business') || totalItemCount === 0) {
     return null;
   }
 

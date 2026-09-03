@@ -89,7 +89,7 @@ export const AdminInventorySalesPage: React.FC = () => {
         <div>
           <div className="flex items-center gap-2">
             <Link
-              to="/admin/inventory"
+              to="/business/inventory"
               className="p-1.5 rounded-lg bg-white border border-[#DED7CE] text-charcoal hover:bg-[#FAF7F2]"
               title="Back to Inventory Overview"
             >
@@ -301,7 +301,7 @@ export const AdminInventorySalesPage: React.FC = () => {
                 <tr key={item.productId} className="hover:bg-[#FAF7F2]/60 transition-colors">
                   <td className="py-3.5 px-4 font-bold text-charcoal">
                     <Link
-                      to={`/admin/inventory/${item.productId}`}
+                      to={`/business/inventory/${item.productId}`}
                       className="hover:text-brand-600 hover:underline"
                     >
                       {item.productName}

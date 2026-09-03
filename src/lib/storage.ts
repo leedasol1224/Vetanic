@@ -1,10 +1,13 @@
 import { OrderItem, OrderRecord, OrderSubmission, OrderStatus } from '../types/order';
 import { ContactEnquiry } from '../types/enquiry';
+import { CommunicationLog } from '../types/communication';
 import { deductOrderStockOnPayment, restoreOrderStockOnCancellation } from './inventory';
+import { createOrderNotification } from './notifications';
 
 const CART_STORAGE_KEY = 'vetanic_cart_items_v1';
 const ORDERS_STORAGE_KEY = 'vetanic_submitted_orders_v1';
 const ENQUIRIES_STORAGE_KEY = 'vetanic_enquiries_v1';
+const COMM_LOGS_STORAGE_KEY = 'vetanic_comm_logs_v1';
 
 export function getSavedCart(): OrderItem[] {
   try {
@@ -117,11 +120,114 @@ export function saveLocalOrder(submission: OrderSubmission): OrderRecord {
     const existing = getOrders();
     existing.unshift(orderRecord);
     localStorage.setItem(ORDERS_STORAGE_KEY, JSON.stringify(existing));
+
+    // Generate in-app Admin Notification & dispatch business email alert
+    createOrderNotification(orderRecord);
   } catch (e) {
     console.error('Failed to save order to local storage', e);
   }
 
   return orderRecord;
+}
+
+/**
+ * Communication History Logs for Customer Responses
+ */
+export function getCommunicationLogs(orderId: string): CommunicationLog[] {
+  try {
+    const raw = localStorage.getItem(COMM_LOGS_STORAGE_KEY);
+    if (!raw) {
+      return seedInitialCommunicationLogs(orderId);
+    }
+    const allLogs: CommunicationLog[] = JSON.parse(raw);
+    const orderLogs = allLogs.filter((l) => l.orderId === orderId || l.orderReference === orderId);
+    if (orderLogs.length === 0 && (orderId.startsWith('demo-') || orderId.startsWith('VET-'))) {
+      return seedInitialCommunicationLogs(orderId);
+    }
+    return orderLogs.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  } catch (e) {
+    console.error('Failed to load communication logs', e);
+    return [];
+  }
+}
+
+export function saveCommunicationLog(
+  logData: Omit<CommunicationLog, 'id' | 'createdAt'>
+): CommunicationLog {
+  const newLog: CommunicationLog = {
+    ...logData,
+    id: `log-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+    createdAt: new Date().toISOString()
+  };
+
+  try {
+    const raw = localStorage.getItem(COMM_LOGS_STORAGE_KEY);
+    const existing: CommunicationLog[] = raw ? JSON.parse(raw) : [];
+    existing.unshift(newLog);
+    localStorage.setItem(COMM_LOGS_STORAGE_KEY, JSON.stringify(existing));
+  } catch (e) {
+    console.error('Failed to save communication log', e);
+  }
+
+  return newLog;
+}
+
+function seedInitialCommunicationLogs(orderId: string): CommunicationLog[] {
+  const demoSeed: CommunicationLog[] = [];
+
+  if (orderId === 'demo-102' || orderId === 'VET-2026-7451') {
+    demoSeed.push({
+      id: 'comm-seed-1',
+      orderId: 'demo-102',
+      orderReference: 'VET-2026-7451',
+      templateType: 'order_confirmed',
+      channel: 'WhatsApp',
+      message: 'Hi Marcus! Thank you for your VETANIC order 🐾 We are happy to confirm your items are available...',
+      createdAt: new Date(Date.now() - 1000 * 60 * 150).toISOString(), // 2.5 hrs ago
+      adminUser: 'Sarah Tan (Operations)',
+      status: 'Sent'
+    });
+  }
+
+  if (orderId === 'demo-103' || orderId === 'VET-2026-6210') {
+    demoSeed.push(
+      {
+        id: 'comm-seed-2',
+        orderId: 'demo-103',
+        orderReference: 'VET-2026-6210',
+        templateType: 'order_confirmed',
+        channel: 'Telegram',
+        message: 'Hi Samantha! Thank you for your VETANIC order 🐾 Order reference VET-2026-6210 confirmed...',
+        createdAt: new Date(Date.now() - 1000 * 60 * 60 * 25).toISOString(),
+        adminUser: 'VETANIC Admin',
+        status: 'Sent'
+      },
+      {
+        id: 'comm-seed-3',
+        orderId: 'demo-103',
+        orderReference: 'VET-2026-6210',
+        templateType: 'payment_received',
+        channel: 'Telegram',
+        message: 'Hi Samantha! We have received your payment for order VET-2026-6210. Thank you ❤️',
+        createdAt: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(),
+        adminUser: 'VETANIC Admin',
+        status: 'Sent'
+      }
+    );
+  }
+
+  if (demoSeed.length > 0) {
+    try {
+      const raw = localStorage.getItem(COMM_LOGS_STORAGE_KEY);
+      const existing: CommunicationLog[] = raw ? JSON.parse(raw) : [];
+      const combined = [...existing, ...demoSeed];
+      localStorage.setItem(COMM_LOGS_STORAGE_KEY, JSON.stringify(combined));
+    } catch (e) {
+      console.error('Failed to seed comm logs', e);
+    }
+  }
+
+  return demoSeed;
 }
 
 export function saveLocalEnquiry(enquiryData: Omit<ContactEnquiry, 'id' | 'createdAt' | 'status'>): ContactEnquiry {

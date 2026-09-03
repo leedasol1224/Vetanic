@@ -338,7 +338,7 @@ export const AdminInventoryPage: React.FC = () => {
                       />
                       <div>
                         <Link
-                          to={`/admin/inventory/${item.productId}`}
+                          to={`/business/inventory/${item.productId}`}
                           className="font-bold text-charcoal hover:text-brand-600 hover:underline block"
                         >
                           {item.productName}
@@ -453,7 +453,7 @@ export const AdminInventoryPage: React.FC = () => {
                       </button>
 
                       <Link
-                        to={`/admin/inventory/${item.productId}`}
+                        to={`/business/inventory/${item.productId}`}
                         className="p-1.5 rounded-lg bg-[#FAF7F2] hover:bg-[#E9E0D4] text-charcoal-muted hover:text-charcoal border border-[#DED7CE] transition-colors"
                         title="View product inventory profile"
                       >

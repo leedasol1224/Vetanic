@@ -220,7 +220,7 @@ export const AdminOrdersPage: React.FC = () => {
                   <tr key={order.id} className="hover:bg-[#FAF7F2]/60 transition-colors">
                     {/* Order Reference */}
                     <td className="py-4 px-4 font-mono font-bold text-brand-600 whitespace-nowrap">
-                      <Link to={`/admin/orders/${order.id}`} className="hover:underline">
+                      <Link to={`/business/orders/${order.id}`} className="hover:underline">
                         {order.orderReference}
                       </Link>
                     </td>
@@ -294,7 +294,7 @@ export const AdminOrdersPage: React.FC = () => {
                     {/* Actions */}
                     <td className="py-4 px-4 text-right whitespace-nowrap">
                       <Link
-                        to={`/admin/orders/${order.id}`}
+                        to={`/business/orders/${order.id}`}
                         className="inline-flex items-center gap-1 bg-[#FAF7F2] hover:bg-[#F4EFE7] text-charcoal font-semibold text-xs px-3 py-1.5 rounded-lg border border-[#DED7CE] transition-colors"
                       >
                         <Eye className="w-3.5 h-3.5 text-charcoal-muted" />

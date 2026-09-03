@@ -97,7 +97,7 @@ export const AdminDashboard: React.FC = () => {
 
         <div className="flex items-center gap-2">
           <Link
-            to="/admin/inventory"
+            to="/business/inventory"
             className="inline-flex items-center justify-center gap-2 bg-white hover:bg-[#FAF7F2] text-charcoal font-bold text-xs px-4 py-2.5 rounded-xl border border-[#DED7CE] shadow-xs transition-all"
           >
             <Boxes className="w-4 h-4 text-brand-600" />
@@ -105,7 +105,7 @@ export const AdminDashboard: React.FC = () => {
           </Link>
 
           <Link
-            to="/admin/orders"
+            to="/business/orders"
             className="inline-flex items-center justify-center gap-2 bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs px-5 py-2.5 rounded-xl shadow-sm transition-all"
           >
             <ShoppingBag className="w-4 h-4" />
@@ -143,7 +143,7 @@ export const AdminDashboard: React.FC = () => {
           </div>
 
           <Link
-            to="/admin/inventory"
+            to="/business/inventory"
             className="inline-flex items-center gap-1.5 bg-amber-900 text-white font-bold text-xs px-4 py-2 rounded-xl hover:bg-amber-950 transition-colors whitespace-nowrap self-start sm:self-auto"
           >
             <span>View Inventory</span>
@@ -214,7 +214,7 @@ export const AdminDashboard: React.FC = () => {
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3.5">
           {/* Today's Orders */}
           <Link
-            to="/admin/orders"
+            to="/business/orders"
             className="bg-white p-4 rounded-2xl border border-[#DED7CE] hover:border-brand-300 shadow-xs transition-all flex flex-col justify-between"
           >
             <div className="flex items-center justify-between text-charcoal-muted mb-2">
@@ -227,7 +227,7 @@ export const AdminDashboard: React.FC = () => {
 
           {/* Pending Confirmation */}
           <Link
-            to="/admin/orders?status=Pending%20Confirmation"
+            to="/business/orders?status=Pending%20Confirmation"
             className="bg-white p-4 rounded-2xl border border-[#DED7CE] hover:border-amber-300 shadow-xs transition-all flex flex-col justify-between"
           >
             <div className="flex items-center justify-between text-amber-800 mb-2">
@@ -240,7 +240,7 @@ export const AdminDashboard: React.FC = () => {
 
           {/* Awaiting Payment */}
           <Link
-            to="/admin/orders?status=Awaiting%20Payment"
+            to="/business/orders?status=Awaiting%20Payment"
             className="bg-white p-4 rounded-2xl border border-[#DED7CE] hover:border-purple-300 shadow-xs transition-all flex flex-col justify-between"
           >
             <div className="flex items-center justify-between text-purple-800 mb-2">
@@ -253,7 +253,7 @@ export const AdminDashboard: React.FC = () => {
 
           {/* Paid Orders */}
           <Link
-            to="/admin/orders?status=Paid"
+            to="/business/orders?status=Paid"
             className="bg-white p-4 rounded-2xl border border-[#DED7CE] hover:border-emerald-300 shadow-xs transition-all flex flex-col justify-between"
           >
             <div className="flex items-center justify-between text-emerald-800 mb-2">
@@ -266,7 +266,7 @@ export const AdminDashboard: React.FC = () => {
 
           {/* Orders to Prepare */}
           <Link
-            to="/admin/orders?status=Preparing"
+            to="/business/orders?status=Preparing"
             className="bg-white p-4 rounded-2xl border border-[#DED7CE] hover:border-orange-300 shadow-xs transition-all flex flex-col justify-between"
           >
             <div className="flex items-center justify-between text-orange-800 mb-2">
@@ -279,7 +279,7 @@ export const AdminDashboard: React.FC = () => {
 
           {/* Completed Orders */}
           <Link
-            to="/admin/orders?status=Completed"
+            to="/business/orders?status=Completed"
             className="bg-white p-4 rounded-2xl border border-[#DED7CE] hover:border-emerald-300 shadow-xs transition-all flex flex-col justify-between"
           >
             <div className="flex items-center justify-between text-charcoal-muted mb-2">
@@ -303,7 +303,7 @@ export const AdminDashboard: React.FC = () => {
           </div>
 
           <Link
-            to="/admin/orders"
+            to="/business/orders"
             className="inline-flex items-center gap-1 text-xs font-bold text-brand-600 hover:text-brand-700 underline underline-offset-2"
           >
             <span>View All Orders</span>
@@ -328,7 +328,7 @@ export const AdminDashboard: React.FC = () => {
               {orders.slice(0, 5).map((order) => (
                 <tr key={order.id} className="hover:bg-[#FAF7F2]/50 transition-colors">
                   <td className="py-4 px-6 font-mono font-bold text-brand-600">
-                    <Link to={`/admin/orders/${order.id}`} className="hover:underline">
+                    <Link to={`/business/orders/${order.id}`} className="hover:underline">
                       {order.orderReference}
                     </Link>
                   </td>
@@ -366,7 +366,7 @@ export const AdminDashboard: React.FC = () => {
                   </td>
                   <td className="py-4 px-6 text-right">
                     <Link
-                      to={`/admin/orders/${order.id}`}
+                      to={`/business/orders/${order.id}`}
                       className="inline-flex items-center gap-1 bg-[#FAF7F2] hover:bg-[#F4EFE7] text-charcoal font-semibold text-xs px-3 py-1.5 rounded-lg border border-[#DED7CE] transition-colors"
                     >
                       <Eye className="w-3.5 h-3.5 text-charcoal-muted" />
