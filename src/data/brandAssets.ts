@@ -21,6 +21,10 @@ export interface BrandAssetConfig {
     singaporeLaunchImage: string;
     brandStoryImage: string;
   };
+  social: {
+    instagramHandle: string;
+    instagramUrl: string;
+  };
   gallery: Array<{
     id: string;
     imageUrl: string;
@@ -32,6 +36,10 @@ export interface BrandAssetConfig {
 }
 
 export const brandAssets: BrandAssetConfig = {
+  social: {
+    instagramHandle: '@vetanic_global',
+    instagramUrl: 'https://instagram.com/vetanic_global',
+  },
   logos: {
     // Official VETANIC logo
     vetanic: '/images/brand/vetanic_logo.png',

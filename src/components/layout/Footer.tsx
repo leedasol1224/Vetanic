@@ -1,131 +1,61 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Mail, MessageCircle, Heart, ArrowUpRight } from 'lucide-react';
 import { InstagramIcon } from '../common/Icons';
+import { brandAssets } from '../../data/brandAssets';
 
 export const Footer: React.FC = () => {
   return (
     <footer className="bg-[#222222] text-[#FAF7F2] pt-16 pb-12 mt-auto border-t border-[#333333]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-10 pb-12 border-b border-[#333333]">
-          {/* Col 1: Brand & Origin */}
-          <div className="md:col-span-2 space-y-4">
-            <div className="flex flex-col space-y-2">
-              <div className="inline-block p-2 bg-white rounded-xl w-fit shadow-xs">
-                <img
-                  src="/images/brand/vetanic_logo.png"
-                  alt="VETANIC"
-                  className="h-6 w-auto object-contain"
-                />
-              </div>
-              <span className="text-xs text-[#DED7CE] font-medium tracking-wide">
-                Korean pet wellness, now in Singapore.
-              </span>
-            </div>
-
-            <div className="p-4 bg-[#2D2D2D] rounded-2xl border border-[#3D3D3D] max-w-lg space-y-2">
-              <div className="flex items-center gap-2">
-                <span className="text-[10px] uppercase font-bold text-[#A8B89A] tracking-wider">
-                  Partner Brand Lineage
-                </span>
-              </div>
-              <p className="text-xs text-[#DED7CE] leading-relaxed">
-                Brought to Singapore in partnership with <strong>Nongshim Banryodaum</strong>. Crafted with transparent ingredients and Korean companion care standards.
-              </p>
-            </div>
-
-            <div className="flex items-center gap-3 pt-2">
-              <a
-                href="https://instagram.com"
-                target="_blank"
-                rel="noopener noreferrer"
-                className="w-10 h-10 rounded-full bg-[#2D2D2D] hover:bg-brand-600 flex items-center justify-center text-[#FAF7F2] transition-colors"
-                aria-label="Instagram"
-              >
-                <InstagramIcon className="w-5 h-5" />
-              </a>
-              <a
-                href="mailto:hello@vetanic.com"
-                className="w-10 h-10 rounded-full bg-[#2D2D2D] hover:bg-brand-600 flex items-center justify-center text-[#FAF7F2] transition-colors"
-                aria-label="Email"
-              >
-                <Mail className="w-5 h-5" />
-              </a>
-              <Link
-                to="/contact"
-                className="w-10 h-10 rounded-full bg-[#2D2D2D] hover:bg-brand-600 flex items-center justify-center text-[#FAF7F2] transition-colors"
-                aria-label="Contact Channels"
-              >
-                <MessageCircle className="w-5 h-5" />
-              </Link>
-            </div>
-          </div>
-
-          {/* Col 2: Navigation Links */}
-          <div>
-            <h4 className="text-xs font-bold uppercase tracking-wider text-[#DED7CE] mb-4">
-              Explore
-            </h4>
-            <ul className="space-y-2.5 text-sm">
-              <li>
-                <Link to="/" className="text-[#A59E96] hover:text-white transition-colors">
-                  Home
-                </Link>
-              </li>
-              <li>
-                <Link to="/about" className="text-[#A59E96] hover:text-white transition-colors">
-                  About Us
-                </Link>
-              </li>
-              <li>
-                <Link to="/products" className="text-[#A59E96] hover:text-white transition-colors">
-                  Our Products
-                </Link>
-              </li>
-              <li>
-                <Link to="/order" className="text-[#A59E96] hover:text-white transition-colors">
-                  Order Request
-                </Link>
-              </li>
-              <li>
-                <Link to="/contact" className="text-[#A59E96] hover:text-white transition-colors">
-                  Contact Us
-                </Link>
-              </li>
-            </ul>
-          </div>
-
-          {/* Col 3: Support & Information */}
-          <div>
-            <h4 className="text-xs font-bold uppercase tracking-wider text-[#DED7CE] mb-4">
-              Information
-            </h4>
-            <ul className="space-y-2.5 text-sm text-[#A59E96]">
-              <li className="flex items-center gap-1 hover:text-white cursor-pointer transition-colors">
-                <span>Shipping & Delivery (SG)</span>
-                <ArrowUpRight className="w-3.5 h-3.5 opacity-60" />
-              </li>
-              <li className="flex items-center gap-1 hover:text-white cursor-pointer transition-colors">
-                <span>Payment & Order Flow</span>
-                <ArrowUpRight className="w-3.5 h-3.5 opacity-60" />
-              </li>
-              <li className="flex items-center gap-1 hover:text-white cursor-pointer transition-colors">
-                <span>Terms & Conditions</span>
-              </li>
-              <li className="flex items-center gap-1 hover:text-white cursor-pointer transition-colors">
-                <span>Privacy Policy</span>
-              </li>
-            </ul>
-          </div>
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center space-y-10">
+        {/* VETANIC Official Logo Card */}
+        <div className="flex justify-center">
+          <Link to="/" className="inline-block p-3 bg-white rounded-2xl shadow-xs transition-transform hover:scale-[1.02]">
+            <img
+              src={brandAssets.logos.vetanic}
+              alt="VETANIC"
+              className="h-7 w-auto object-contain"
+            />
+          </Link>
         </div>
 
-        {/* Bottom copyright & disclaimer */}
-        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-[#8C847C] gap-4">
-          <p>© {new Date().getFullYear()} VETANIC Singapore. All rights reserved.</p>
-          <p className="flex items-center gap-1">
-            <span>Wellness formulated with care in Korea</span>
-            <Heart className="w-3.5 h-3.5 text-brand-600 fill-brand-600" />
-          </p>
+        {/* Minimal Navigation Links */}
+        <nav className="flex flex-wrap items-center justify-center gap-6 sm:gap-10 text-sm font-medium">
+          <Link to="/about" className="text-[#DED7CE] hover:text-white transition-colors">
+            About Us
+          </Link>
+          <Link to="/products" className="text-[#DED7CE] hover:text-white transition-colors">
+            Products
+          </Link>
+          <Link to="/order" className="text-[#DED7CE] hover:text-white transition-colors">
+            Order
+          </Link>
+          <Link to="/contact" className="text-[#DED7CE] hover:text-white transition-colors">
+            Contact
+          </Link>
+        </nav>
+
+        {/* Instagram Customer Contact */}
+        <div className="pt-2 flex flex-col items-center justify-center space-y-2">
+          <span className="text-[11px] font-bold text-[#A8B89A] uppercase tracking-widest">
+            Connect with us
+          </span>
+          <a
+            href={brandAssets.social.instagramUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 text-sm font-bold text-white hover:text-[#FAF7F2] bg-[#2D2D2D] hover:bg-[#3D3D3D] px-4 py-2 rounded-full border border-[#3D3D3D] transition-colors group"
+          >
+            <InstagramIcon className="w-4 h-4 text-brand-500 group-hover:scale-110 transition-transform" />
+            <span>{brandAssets.social.instagramHandle}</span>
+          </a>
+        </div>
+
+        {/* Subtle Brand Lineage Note & Copyright */}
+        <div className="pt-8 border-t border-[#333333] flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[#8C847C]">
+          <span>© 2026 VETANIC. All rights reserved.</span>
+          <span className="text-[11px] text-[#8C847C]">
+            In partnership with Nongshim Banryodaum Korea
+          </span>
         </div>
       </div>
     </footer>

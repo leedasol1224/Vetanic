@@ -112,35 +112,17 @@ export const BRAND_CONTENT = {
   },
 
   contact: {
-    title: "We'd love to hear from you.",
-    subtitle: 'Have a question about our products or your order? Get in touch with us.',
+    title: 'Get in touch',
+    subtitle: 'Have a question about VETANIC or your order? Reach out to us on Instagram.',
     channels: [
       {
         type: 'Instagram',
-        label: '@vetanic.sg',
-        handle: '@vetanic.sg',
-        action: 'Send Direct Message',
-        href: 'https://instagram.com',
+        label: '@vetanic_global',
+        handle: '@vetanic_global',
+        action: 'Message us on Instagram',
+        href: 'https://instagram.com/vetanic_global',
         icon: 'Instagram',
-        placeholder: 'Follow us and reach out via Instagram DM'
-      },
-      {
-        type: 'WhatsApp',
-        label: '+65 (Singapore Inquiries)',
-        handle: 'WhatsApp Message',
-        action: 'Chat with Us',
-        href: 'https://wa.me',
-        icon: 'MessageCircle',
-        placeholder: 'Quick responses for order & product consultations'
-      },
-      {
-        type: 'Email',
-        label: 'hello@vetanic.com',
-        handle: 'hello@vetanic.com',
-        action: 'Email Us',
-        href: 'mailto:hello@vetanic.com',
-        icon: 'Mail',
-        placeholder: 'For general enquiries, feedback & collaborations'
+        placeholder: 'Reach out to our team directly via Instagram Direct Message'
       }
     ]
   },

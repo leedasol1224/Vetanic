@@ -19,13 +19,13 @@ export const VisualSocialGallery: React.FC = () => {
           </div>
 
           <a
-            href="https://instagram.com"
+            href={brandAssets.social.instagramUrl}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 text-xs font-bold text-charcoal hover:text-brand-600 transition-colors self-start sm:self-auto group"
           >
             <InstagramIcon className="w-4 h-4 text-brand-600" />
-            <span>@vetanic.sg on Instagram</span>
+            <span>{brandAssets.social.instagramHandle} on Instagram</span>
             <ArrowUpRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
           </a>
         </div>
