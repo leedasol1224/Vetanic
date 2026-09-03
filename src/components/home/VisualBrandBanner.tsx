@@ -1,19 +1,19 @@
 import React from 'react';
-import { HOMEPAGE_IMAGES } from '../../data/homepageImages';
+import { brandAssets } from '../../data/brandAssets';
 
 export const VisualBrandBanner: React.FC = () => {
   return (
     <section className="relative w-full overflow-hidden bg-charcoal">
-      <div className="relative min-h-[420px] sm:min-h-[500px] lg:min-h-[580px] flex items-center justify-center">
-        {/* Background Image */}
+      <div className="relative min-h-[400px] sm:min-h-[480px] lg:min-h-[560px] flex items-center justify-center">
+        {/* Background Official Product + Pet Lifestyle Image */}
         <div className="absolute inset-0 w-full h-full">
           <img
-            src={HOMEPAGE_IMAGES.lifestyleImage01.imageUrl}
-            alt={HOMEPAGE_IMAGES.lifestyleImage01.alt}
-            className="w-full h-full object-cover object-center"
+            src={brandAssets.homepage.lifestyleProductPetImage}
+            alt="VETANIC Companion Care Moments"
+            className="w-full h-full object-cover object-[center_35%] sm:object-[center_40%] lg:object-center"
           />
-          {/* Subtle Warm Overlay */}
-          <div className="absolute inset-0 bg-charcoal/45 backdrop-brightness-95" />
+          {/* Subtle Warm Overlay for readability */}
+          <div className="absolute inset-0 bg-charcoal/40 backdrop-brightness-95" />
         </div>
 
         {/* Text Overlay Only (No paragraph) */}
@@ -22,7 +22,7 @@ export const VisualBrandBanner: React.FC = () => {
             Korean Companion Care
           </span>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-heading font-extrabold text-white tracking-tight leading-tight">
-            From Korea, for the companions we love.
+            Made for the everyday moments that matter.
           </h2>
         </div>
       </div>

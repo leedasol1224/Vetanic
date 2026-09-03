@@ -26,21 +26,18 @@ export const Navbar: React.FC = () => {
     <header className="sticky top-0 z-40 bg-[#FAF7F2]/95 backdrop-blur-md border-b border-[#DED7CE] transition-all">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
-          {/* Brand Logo */}
+          {/* Brand Logo - Official VETANIC Logo Only */}
           <Link
             to="/"
-            className="flex flex-col group py-1"
+            className="flex items-center group py-1"
             onClick={() => setMobileMenuOpen(false)}
+            aria-label="VETANIC Home"
           >
-            <div className="flex items-center gap-2">
-              <span className="font-serif text-2xl sm:text-3xl font-bold tracking-tight text-charcoal group-hover:text-brand-600 transition-colors">
-                VETANIC
-              </span>
-              <span className="inline-block w-2 h-2 rounded-full bg-brand-600 mb-1" />
-            </div>
-            <span className="text-[10px] tracking-wider text-charcoal-muted uppercase font-medium">
-              by Nongshim Banryodaum
-            </span>
+            <img
+              src="/images/brand/vetanic_logo.png"
+              alt="VETANIC"
+              className="h-7 sm:h-8 w-auto object-contain transition-transform group-hover:scale-[1.02]"
+            />
           </Link>
 
           {/* Desktop Navigation Links */}

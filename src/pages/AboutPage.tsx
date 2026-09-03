@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { Sparkles, ArrowRight, Heart, Shield, Sun, CheckCircle2 } from 'lucide-react';
 import { BRAND_CONTENT } from '../data/content';
+import { brandAssets } from '../data/brandAssets';
 
 export const AboutPage: React.FC = () => {
   const getPhilosophyIcon = (title: string) => {
@@ -75,16 +76,33 @@ export const AboutPage: React.FC = () => {
       {/* Section 2 — VETANIC × Nongshim Banryodaum Lineage Diagram */}
       <section className="py-16 bg-[#E9E0D4]/50 border-y border-[#DED7CE]">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <span className="text-xs font-bold text-brand-600 uppercase tracking-widest block mb-2">
-              Brand Lineage & Trust
-            </span>
-            <h2 className="text-2xl sm:text-3xl font-serif font-bold text-charcoal">
-              {BRAND_CONTENT.about.relationship.title}
-            </h2>
-            <p className="text-sm text-charcoal-muted mt-2">
-              {BRAND_CONTENT.about.relationship.subtitle}
-            </p>
+          <div className="text-center mb-10 space-y-4">
+            {/* Clean Co-Branding Layout with Official Logos */}
+            <div className="inline-flex items-center justify-center gap-4 bg-white px-6 py-3.5 rounded-2xl border border-[#DED7CE] shadow-xs">
+              <img
+                src={brandAssets.logos.vetanic}
+                alt="VETANIC"
+                className="h-7 w-auto object-contain"
+              />
+              <span className="text-charcoal-muted font-serif text-xl">×</span>
+              <img
+                src={brandAssets.logos.banryodaumLogoEn}
+                alt="Nongshim Banryodaum"
+                className="h-7 w-auto object-contain"
+              />
+            </div>
+
+            <div>
+              <span className="text-xs font-bold text-brand-600 uppercase tracking-widest block mb-1.5">
+                Brand Lineage & Trust
+              </span>
+              <h2 className="text-2xl sm:text-3xl font-serif font-bold text-charcoal">
+                {BRAND_CONTENT.about.relationship.title}
+              </h2>
+              <p className="text-sm text-charcoal-muted mt-2">
+                {BRAND_CONTENT.about.relationship.subtitle}
+              </p>
+            </div>
           </div>
 
           {/* Flow Hierarchy Diagram */}

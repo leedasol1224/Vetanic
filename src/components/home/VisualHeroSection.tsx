@@ -1,22 +1,22 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight } from 'lucide-react';
-import { HOMEPAGE_IMAGES } from '../../data/homepageImages';
+import { brandAssets } from '../../data/brandAssets';
 
 export const VisualHeroSection: React.FC = () => {
   return (
     <section className="relative w-full overflow-hidden bg-[#FAF7F2]">
-      {/* Full-width visual container with editorial aspect ratio */}
-      <div className="relative min-h-[580px] sm:min-h-[660px] lg:min-h-[720px] flex items-center justify-center">
-        {/* Background Lifestyle Image */}
+      {/* Full-width visual container with editorial framing for official product + pet */}
+      <div className="relative min-h-[560px] sm:min-h-[640px] lg:min-h-[720px] flex items-center justify-center">
+        {/* Background Official Product + Pet Lifestyle Image */}
         <div className="absolute inset-0 w-full h-full">
           <img
-            src={HOMEPAGE_IMAGES.heroImage.imageUrl}
-            alt={HOMEPAGE_IMAGES.heroImage.alt}
-            className="w-full h-full object-cover object-center"
+            src={brandAssets.homepage.heroProductPetImage}
+            alt="VETANIC Korean Pet Wellness Lineup with Dog and Cat"
+            className="w-full h-full object-cover object-[center_30%] sm:object-[center_40%] lg:object-center"
           />
-          {/* Subtle gradient vignette for effortless readability */}
-          <div className="absolute inset-0 bg-gradient-to-t from-charcoal/85 via-charcoal/45 to-charcoal/20 sm:bg-gradient-to-r sm:from-charcoal/80 sm:via-charcoal/40 sm:to-transparent" />
+          {/* Subtle gradient vignette for effortless readability without obscuring products or pets */}
+          <div className="absolute inset-0 bg-gradient-to-t from-charcoal/85 via-charcoal/40 to-charcoal/10 sm:bg-gradient-to-r sm:from-charcoal/80 sm:via-charcoal/40 sm:to-transparent" />
         </div>
 
         {/* Content Container */}

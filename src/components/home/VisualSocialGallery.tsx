@@ -1,7 +1,7 @@
 import React from 'react';
 import { ArrowUpRight } from 'lucide-react';
 import { InstagramIcon } from '../common/Icons';
-import { HOMEPAGE_IMAGES } from '../../data/homepageImages';
+import { brandAssets } from '../../data/brandAssets';
 
 export const VisualSocialGallery: React.FC = () => {
   return (
@@ -30,24 +30,27 @@ export const VisualSocialGallery: React.FC = () => {
           </a>
         </div>
 
-        {/* 6 Editorial Photo Grid */}
+        {/* 6 Editorial Official Product + Pet Grid */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
-          {HOMEPAGE_IMAGES.galleryImages.map((item) => (
+          {brandAssets.gallery.map((item) => (
             <div
               key={item.id}
               className="group relative aspect-square rounded-2xl sm:rounded-3xl overflow-hidden bg-white border border-[#DED7CE] shadow-xs hover:shadow-soft transition-all duration-300"
             >
               <img
                 src={item.imageUrl}
-                alt={item.caption}
+                alt={item.title}
                 className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-500"
                 loading="lazy"
               />
 
-              {/* Hover overlay with minimal caption */}
+              {/* Hover overlay with minimal official product & pet caption */}
               <div className="absolute inset-0 bg-charcoal/70 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-3.5 text-white">
-                <span className="text-[10px] font-semibold line-clamp-2 leading-tight">
-                  {item.caption}
+                <span className="text-[9px] uppercase font-bold text-[#A8B89A] tracking-wider mb-0.5">
+                  {item.category}
+                </span>
+                <span className="text-[11px] font-bold line-clamp-1 leading-tight">
+                  {item.title}
                 </span>
               </div>
             </div>

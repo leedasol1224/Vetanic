@@ -1,27 +1,37 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, ShieldCheck } from 'lucide-react';
-import { HOMEPAGE_IMAGES } from '../../data/homepageImages';
+import { ArrowRight } from 'lucide-react';
+import { brandAssets } from '../../data/brandAssets';
 
 export const VisualBrandStory: React.FC = () => {
   return (
     <section className="py-16 sm:py-24 bg-[#FAF7F2]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-white rounded-3xl sm:rounded-[2.5rem] border border-[#DED7CE] shadow-soft-lg overflow-hidden grid grid-cols-1 lg:grid-cols-12 items-center">
-          {/* Left: Brand Story Copy & CTA */}
+          {/* Left: Brand Story Copy & Co-Branding Logos */}
           <div className="lg:col-span-5 p-8 sm:p-12 lg:p-14 space-y-6 order-2 lg:order-1">
-            <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-sage-50 text-sage-800 text-xs font-bold uppercase tracking-wider border border-sage-200">
-              <ShieldCheck className="w-3.5 h-3.5 text-sage-600" />
-              <span>Korean Heritage</span>
+            {/* Clean Co-Branding Layout with Official Logos */}
+            <div className="flex items-center gap-3 pb-2 border-b border-[#DED7CE]/70">
+              <img
+                src={brandAssets.logos.vetanic}
+                alt="VETANIC"
+                className="h-6 w-auto object-contain"
+              />
+              <span className="text-charcoal-muted font-serif text-lg">×</span>
+              <img
+                src={brandAssets.logos.banryodaumLogoEn}
+                alt="Nongshim Banryodaum"
+                className="h-6 w-auto object-contain"
+              />
             </div>
 
-            <div className="space-y-2">
+            <div className="space-y-3">
               <h2 className="text-2xl sm:text-3xl lg:text-4xl font-heading font-bold text-charcoal tracking-tight leading-tight">
-                VETANIC × Nongshim Banryodaum
+                From Korea, now in Singapore.
               </h2>
 
-              <p className="text-lg sm:text-xl text-charcoal-muted font-heading font-medium">
-                Born in Korea. Now in Singapore.
+              <p className="text-sm sm:text-base text-charcoal-muted font-normal leading-relaxed">
+                VETANIC brings Nongshim Banryodaum's pet wellness range closer to pet owners in Singapore.
               </p>
             </div>
 
@@ -36,12 +46,12 @@ export const VisualBrandStory: React.FC = () => {
             </div>
           </div>
 
-          {/* Right: Brand Story Visual */}
+          {/* Right: Official Brand Story Visual */}
           <div className="lg:col-span-7 relative aspect-[4/3] sm:aspect-[16/10] lg:aspect-auto lg:h-[460px] bg-white overflow-hidden order-1 lg:order-2">
             <img
-              src={HOMEPAGE_IMAGES.brandStoryImage.imageUrl}
-              alt={HOMEPAGE_IMAGES.brandStoryImage.alt}
-              className="w-full h-full object-cover object-center"
+              src={brandAssets.homepage.brandStoryImage}
+              alt="VETANIC and Nongshim Banryodaum Korean Pet Wellness Craft"
+              className="w-full h-full object-cover object-[center_35%] lg:object-center"
               loading="lazy"
             />
           </div>

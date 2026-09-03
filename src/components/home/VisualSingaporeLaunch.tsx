@@ -1,19 +1,19 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Sparkles, ArrowRight } from 'lucide-react';
-import { HOMEPAGE_IMAGES } from '../../data/homepageImages';
+import { brandAssets } from '../../data/brandAssets';
 
 export const VisualSingaporeLaunch: React.FC = () => {
   return (
     <section className="py-16 sm:py-24 bg-[#E9E0D4]/30 border-y border-[#DED7CE]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="bg-white rounded-3xl sm:rounded-[2.5rem] border border-[#DED7CE] shadow-soft-lg overflow-hidden grid grid-cols-1 lg:grid-cols-12 items-center">
-          {/* Left: Lifestyle Scene */}
+          {/* Left: Official Product Group & Pet Scene */}
           <div className="lg:col-span-7 relative aspect-[4/3] sm:aspect-[16/10] lg:aspect-auto lg:h-[480px] bg-white overflow-hidden">
             <img
-              src={HOMEPAGE_IMAGES.singaporeLaunchImage.imageUrl}
-              alt={HOMEPAGE_IMAGES.singaporeLaunchImage.alt}
-              className="w-full h-full object-cover object-center"
+              src={brandAssets.homepage.singaporeLaunchImage}
+              alt="VETANIC Singapore Launch Lineup"
+              className="w-full h-full object-cover object-[center_35%] lg:object-center"
               loading="lazy"
             />
           </div>

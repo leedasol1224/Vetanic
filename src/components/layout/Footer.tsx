@@ -1,7 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Mail, MessageCircle, Heart, ArrowUpRight } from 'lucide-react';
-import { BRAND_CONTENT } from '../../data/content';
 import { InstagramIcon } from '../common/Icons';
 
 export const Footer: React.FC = () => {
@@ -11,18 +10,27 @@ export const Footer: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10 pb-12 border-b border-[#333333]">
           {/* Col 1: Brand & Origin */}
           <div className="md:col-span-2 space-y-4">
-            <div className="flex flex-col">
-              <span className="font-serif text-3xl font-bold tracking-tight text-white">
-                {BRAND_CONTENT.name}
-              </span>
-              <span className="text-xs text-[#A8B89A] font-medium tracking-wide">
-                Pet wellness from Korea, for companions everywhere.
+            <div className="flex flex-col space-y-2">
+              <div className="inline-block p-2 bg-white rounded-xl w-fit shadow-xs">
+                <img
+                  src="/images/brand/vetanic_logo.png"
+                  alt="VETANIC"
+                  className="h-6 w-auto object-contain"
+                />
+              </div>
+              <span className="text-xs text-[#DED7CE] font-medium tracking-wide">
+                Korean pet wellness, now in Singapore.
               </span>
             </div>
 
-            <div className="p-4 bg-[#2D2D2D] rounded-2xl border border-[#3D3D3D] max-w-lg">
+            <div className="p-4 bg-[#2D2D2D] rounded-2xl border border-[#3D3D3D] max-w-lg space-y-2">
+              <div className="flex items-center gap-2">
+                <span className="text-[10px] uppercase font-bold text-[#A8B89A] tracking-wider">
+                  Partner Brand Lineage
+                </span>
+              </div>
               <p className="text-xs text-[#DED7CE] leading-relaxed">
-                <strong>Brand Lineage:</strong> {BRAND_CONTENT.footerRelationText} Crafted with rigorous companion wellness standards from Korea.
+                Brought to Singapore in partnership with <strong>Nongshim Banryodaum</strong>. Crafted with transparent ingredients and Korean companion care standards.
               </p>
             </div>
 
