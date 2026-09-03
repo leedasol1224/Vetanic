@@ -483,18 +483,18 @@ export const PRODUCTS: Product[] = [
     id: 'soft-dental-chew',
     sku: 'VET-DNT-CHEW',
     slug: 'soft-dental-chew',
-    name: 'Soft Dental Chew',
+    name: 'Soft Dental Chew (Yogurt Flavor)',
     petType: 'dog',
     petTypeLabel: 'DOG ONLY',
     category: 'dental',
     categoryName: 'Dental Care',
     collection: 'wellness-support',
     collectionName: 'Wellness Support',
-    shortDescription: 'Pliable, gentle dental chew designed to reduce plaque buildup and freshen canine breath.',
-    packageSize: '150g',
+    shortDescription: 'Pliable, gentle yogurt-flavored dental chew jointly developed with veterinarians for daily canine plaque care.',
+    packageSize: '300g (10g × 30 sticks)',
     imageUrl: '/images/products/soft-dental-chew.png',
     galleryImages: [
-      '/images/products/soft-dental-chew.png'
+      '/images/products/soft-dental-chew/pack.jpg'
     ],
     isAvailable: true,
     displayOrder: 8,
@@ -508,27 +508,27 @@ export const PRODUCTS: Product[] = [
     details: {
       keyBenefits: [
         'Plaque & Tartar Care',
-        'Gentle Soft Texture',
-        'Parsley Breath Freshness',
-        'Gentle on Gums'
+        'Yogurt Flavor Palatability',
+        'Vet Co-Developed',
+        'Soft Pliable Texture'
       ],
       recommendedFor: [
-        'Small dogs and senior dogs with sensitive teeth or delicate gums',
-        'Dogs that reject hard, rigid dental chews',
-        'Daily oral hygiene reward after main meals'
+        'Dogs of all sizes needing daily oral hygiene and breath freshness',
+        'Small dogs and senior companions needing gentle, gum-friendly soft chews',
+        'Dogs that reject hard, unpalatable dental bones'
       ],
-      mainIngredients: ['Rice Flour', 'Tapioca Starch', 'Parsley Extract', 'Zinc Gluconate', 'Spirulina'],
-      keyIngredients: ['Rice Flour', 'Tapioca Starch', 'Parsley Extract', 'Zinc Gluconate', 'Spirulina', 'SHMP (Sodium Hexametaphosphate)'],
-      fullIngredients: 'Rice Flour, Tapioca Starch, Vegetable Glycerin, Parsley Extract, Zinc Gluconate, Spirulina Powder, Sodium Hexametaphosphate, Natural Rosemary Extract.',
-      howToFeed: 'Offer 1 chew daily as a supervised oral care reward after main meals.',
-      feedingUsageGuide: 'Offer 1 piece daily as a dental reward chew after main meals.',
-      recommendedDailyAmount: 'Small dogs (under 10kg): 1 chew daily · Dogs 10–20kg: 1–2 chews daily.',
+      mainIngredients: ['Yogurt Flavor Ferment', 'Antioxidant Oral Complex', 'Zinc Gluconate', 'Rice Flour', 'SHMP'],
+      keyIngredients: ['Yogurt Ferment / Flavor', 'Antioxidant & Oral Health Complex', 'Zinc Gluconate', 'Sodium Hexametaphosphate (SHMP)', 'Rice Flour'],
+      fullIngredients: 'Rice Flour, Tapioca Starch, Vegetable Glycerin, Natural Yogurt Flavor, Antioxidant Oral Health Complex, Zinc Gluconate, Sodium Hexametaphosphate (SHMP), Spirulina, Natural Rosemary Extract. HACCP Certified.',
+      howToFeed: 'Offer 1 chew stick daily after main meals as a delicious, supervised oral care routine.',
+      feedingUsageGuide: 'Offer 1 stick daily as a supervised dental chew after main meals.',
+      recommendedDailyAmount: 'Small dogs (under 10kg): 1 stick daily · Dogs 10–20kg: 1–2 sticks daily · Dogs over 20kg: 2 sticks daily.',
       suitablePetType: 'Dogs',
       suitableLifeStage: 'Adult dogs & puppies with permanent teeth (4+ months)',
-      packageSize: '150g (Multi-piece resealable pouch)',
+      packageSize: '300g (10g × 30 individual sticks)',
       countryOfOrigin: 'Republic of Korea',
-      storageInstructions: 'Reseal pouch securely after each use. Store in a dry, cool location away from direct sunlight.',
-      storage: 'Reseal bag securely. Store in a dry, cool location.',
+      storageInstructions: 'Store in a cool, dry place away from direct sunlight. Reseal packaging securely after each use.',
+      storage: 'Reseal box and pouch securely. Store in a dry, cool location.',
       precautions: [
         'Not recommended for young puppies under 4 months.',
         'Always supervise chewing to ensure your dog does not gulp large unchewed pieces.'
@@ -603,18 +603,21 @@ export const PRODUCTS: Product[] = [
     id: 'freeze-dried-vegetables',
     sku: 'VET-TRT-VEG',
     slug: 'freeze-dried-vegetables',
-    name: 'Freeze-Dried Vegetables',
+    name: '100% Korean Freeze-Dried Vegetables',
     petType: 'both',
     petTypeLabel: 'DOG + CAT',
     category: 'treats',
     categoryName: 'Healthy Treats',
     collection: 'treats',
     collectionName: 'Treats',
-    shortDescription: 'Nutrient-rich, low-calorie vegetable topper crafted with 100% Korean-grown vegetables.',
-    packageSize: '50g',
+    shortDescription: 'Nutrient-rich, low-calorie 4-veggie topper crafted with 100% Korean-grown agricultural produce.',
+    packageSize: '60g',
     imageUrl: '/images/products/freeze-dried-vegetables.png',
     galleryImages: [
-      '/images/products/freeze-dried-vegetables.png'
+      '/images/products/freeze-dried-vegetables/pack.png',
+      '/images/products/freeze-dried-vegetables/cutting_board_scene.jpg',
+      '/images/products/freeze-dried-vegetables/plate_scene.jpg',
+      '/images/products/freeze-dried-vegetables/picking_cube.jpg'
     ],
     isAvailable: true,
     displayOrder: 10,
@@ -627,28 +630,28 @@ export const PRODUCTS: Product[] = [
     bundleOfferText: 'Bundle discount: 2 for SGD 32.00 · 3 for SGD 45.00',
     details: {
       keyBenefits: [
-        '100% Korean Vegetables',
-        'Low-Temperature Freeze-Dried',
-        'Nutrient Meal Topper',
-        'Dogs + Cats'
+        '100% Korean Farm Produce',
+        'Freeze-Dried 4-Veggie Mix',
+        'Pure Dietary Fiber Topper',
+        'HACCP Certified Quality'
       ],
       recommendedFor: [
-        'Dogs and cats needing extra dietary fiber and natural micronutrients',
+        'Dogs and cats benefiting from extra natural dietary fiber and micronutrients',
         'Pets on weight-management diets seeking ultra-low-calorie crunchy treats',
-        'Selective eaters that enjoy added meal texture and natural garden aroma'
+        'Selective eaters that enjoy colorful garden aroma and texture over kibble'
       ],
-      mainIngredients: ['Korean Sweet Potato', 'Korean Pumpkin', 'Korean Cabbage', 'Korean Purple Sweet Potato', 'Korean Carrot'],
-      keyIngredients: ['Assorted Korean Freeze-Dried Vegetables (Sweet Potato, Pumpkin, Cabbage, Purple Sweet Potato, Carrot)'],
-      fullIngredients: '100% Freeze-Dried Korean Sweet Potato, Korean Pumpkin, Korean Cabbage, Korean Purple Sweet Potato, Korean Carrot. Zero additives, zero grains, zero preservatives.',
-      howToFeed: 'Sprinkle crispy cubes directly over kibble or wet food as a topper, or rehydrate with warm water for 2 minutes into a soft garden puree mixer.',
-      feedingUsageGuide: 'Serve as a crunchy snack or rehydrate with warm water as a wholesome meal mixer.',
-      recommendedDailyAmount: 'Small pets (under 5kg): 1–2 teaspoons daily · Medium pets (5–15kg): 1–2 tablespoons daily · Large pets (>15kg): 2–3 tablespoons daily.',
+      mainIngredients: ['Korean Sweet Potato', 'Korean Pumpkin', 'Korean Cabbage', 'Korean Purple Sweet Potato'],
+      keyIngredients: ['100% Korean Sweet Potato', '100% Korean Pumpkin', '100% Korean Cabbage', '100% Korean Purple Sweet Potato'],
+      fullIngredients: '100% Freeze-Dried Korean Produce: Korean Sweet Potato, Korean Pumpkin, Korean Cabbage, Korean Purple Sweet Potato. 100% plant-based, zero meat, zero grains, zero artificial additives, zero preservatives.',
+      howToFeed: 'Sprinkle crispy cubes directly over kibble or wet food as a topper, or rehydrate in warm water for 1–2 minutes into a soft vegetable puree mixer.',
+      feedingUsageGuide: 'Serve as a crunchy meal topper or rehydrate with warm water as a wholesome mixer.',
+      recommendedDailyAmount: 'Small pets (under 5kg): 1–2 teaspoons (3–5 cubes) daily · Medium pets (5–15kg): 1–2 tablespoons (6–10 cubes) daily · Large pets (>15kg): 2–3 tablespoons (11–15 cubes) daily.',
       suitablePetType: 'Dogs & Cats',
       suitableLifeStage: 'All life stages (3+ months)',
-      packageSize: '50g (Resealable tub/jar)',
+      packageSize: '60g (Clear airtight jar)',
       countryOfOrigin: 'Republic of Korea',
-      storageInstructions: 'Keep tightly sealed in moisture-proof packaging away from humid areas. Reseal immediately after use to maintain crisp texture.',
-      storage: 'Store in a dry location. Reseal immediately.',
+      storageInstructions: 'Keep tightly sealed in moisture-proof container away from humid areas. Reseal immediately after each use to maintain crisp texture.',
+      storage: 'Store in a dry location. Reseal jar lid immediately.',
       precautions: [
         'Store in a dry location. Reseal immediately after each use to maintain crisp texture.'
       ]
