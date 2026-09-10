@@ -3,8 +3,9 @@ export type TemplateType =
   | 'partially_available'
   | 'out_of_stock'
   | 'payment_received'
-  | 'ready_for_collection'
+  | 'preparing_for_delivery'
   | 'out_for_delivery'
+  | 'order_delivered'
   | 'custom';
 
 export type CommunicationChannel = 'WhatsApp' | 'Email' | 'Telegram' | 'Instagram' | 'SMS' | 'Other';

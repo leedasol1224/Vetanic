@@ -11,7 +11,6 @@ const ALL_STATUSES: Array<'All' | OrderStatus> = [
   'Awaiting Payment',
   'Paid',
   'Preparing',
-  'Ready for Collection',
   'Out for Delivery',
   'Completed',
   'Cancelled'
@@ -53,8 +52,6 @@ export const AdminOrdersPage: React.FC = () => {
         return 'bg-emerald-50 text-emerald-800 border-emerald-200';
       case 'Preparing':
         return 'bg-orange-50 text-orange-800 border-orange-200';
-      case 'Ready for Collection':
-        return 'bg-teal-50 text-teal-800 border-teal-200';
       case 'Out for Delivery':
         return 'bg-indigo-50 text-indigo-800 border-indigo-200';
       case 'Completed':
@@ -266,10 +263,8 @@ export const AdminOrdersPage: React.FC = () => {
 
                     {/* Delivery Method */}
                     <td className="py-4 px-4 whitespace-nowrap text-[11px]">
-                      {order.delivery.deliveryMethod === 'self_collection' ? (
-                        <span className="text-sage-800 font-medium">Self-collection @ Novena</span>
-                      ) : order.delivery.deliveryMethod === 'same_day' ? (
-                        <span className="text-orange-700 font-semibold">Same-day Delivery</span>
+                      {order.delivery.deliveryMethod === 'express' || order.delivery.deliveryMethod === 'same_day' ? (
+                        <span className="text-orange-700 font-semibold">Express Delivery</span>
                       ) : (
                         <span className="text-charcoal font-medium">Standard Delivery</span>
                       )}

@@ -30,8 +30,9 @@ const TEMPLATE_OPTIONS: Array<{ type: TemplateType; label: string }> = [
   { type: 'partially_available', label: '2. Partially Available' },
   { type: 'out_of_stock', label: '3. Out of Stock' },
   { type: 'payment_received', label: '4. Payment Received' },
-  { type: 'ready_for_collection', label: '5. Ready for Collection' },
-  { type: 'out_for_delivery', label: '6. Out for Delivery' }
+  { type: 'preparing_for_delivery', label: '5. Order Preparing / Preparing for Delivery' },
+  { type: 'out_for_delivery', label: '6. Order Out for Delivery' },
+  { type: 'order_delivered', label: '7. Order Delivered' }
 ];
 
 export const CustomerResponseSection: React.FC<CustomerResponseSectionProps> = ({ order }) => {

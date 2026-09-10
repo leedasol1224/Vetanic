@@ -20,7 +20,6 @@ const ORDER_STATUS_OPTIONS: OrderStatus[] = [
   'Awaiting Payment',
   'Paid',
   'Preparing',
-  'Ready for Collection',
   'Out for Delivery',
   'Completed',
   'Cancelled'

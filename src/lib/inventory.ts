@@ -9,8 +9,18 @@ import {
 } from '../types/inventory';
 import { OrderRecord } from '../types/order';
 
-const INVENTORY_MOVEMENTS_STORAGE_KEY = 'vetanic_inventory_movements_v2';
+const INVENTORY_MOVEMENTS_STORAGE_KEY = 'vetanic_inventory_movements_v3';
 const PRODUCT_THRESHOLDS_STORAGE_KEY = 'vetanic_product_thresholds_v1';
+
+// Purge legacy demo movements if present in browser storage
+if (typeof window !== 'undefined' && window.localStorage) {
+  try {
+    localStorage.removeItem('vetanic_inventory_movements_v1');
+    localStorage.removeItem('vetanic_inventory_movements_v2');
+  } catch {
+    // Ignore storage errors
+  }
+}
 
 /**
  * Load low stock thresholds from storage
@@ -294,7 +304,7 @@ export function getProductSalesSummary(
   orders: OrderRecord[],
   filter?: { fromDate?: string; toDate?: string }
 ): ProductSalesSummary[] {
-  // Only count Paid, Preparing, Ready for Collection, Out for Delivery, Completed
+  // Only count Paid, Preparing, Out for Delivery, Completed
   const eligibleOrders = orders.filter((o) => {
     if (o.status === 'Cancelled' || o.status === 'Pending Confirmation' || o.status === 'Awaiting Payment') {
       return false;
@@ -468,52 +478,6 @@ function seedInitialInventoryMovements(): InventoryMovement[] {
       reason: 'Initial stock intake for Singapore launch',
       internalNote: 'Singapore Pet Festival & launch batch inventory'
     });
-  });
-
-  // Seed sample stock received & sale records for demo
-  movements.push({
-    id: `mvt-demo-sale-1`,
-    productId: 'fresh-omega-3-premium',
-    productName: 'Fresh Omega-3 Premium',
-    sku: 'VET-OMG-PREM',
-    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 25).toISOString(),
-    movementType: 'Sale',
-    quantityChange: -3,
-    stockBefore: 30,
-    stockAfter: 27,
-    orderReference: 'VET-2026-6210',
-    reason: 'Sale from Order VET-2026-6210',
-    internalNote: 'Samantha Wong (PayNow verified)'
-  });
-
-  movements.push({
-    id: `mvt-demo-sale-2`,
-    productId: 'sweet-potato-pumpkin-treats',
-    productName: 'Sweet Potato & Pumpkin Treats',
-    sku: 'VET-TRT-PUMP',
-    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 25).toISOString(),
-    movementType: 'Sale',
-    quantityChange: -1,
-    stockBefore: 50,
-    stockAfter: 49,
-    orderReference: 'VET-2026-6210',
-    reason: 'Sale from Order VET-2026-6210',
-    internalNote: 'Samantha Wong (PayNow verified)'
-  });
-
-  movements.push({
-    id: `mvt-demo-sale-3`,
-    productId: 'urena-clear',
-    productName: 'Urena Clear',
-    sku: 'VET-CAT-UREN',
-    createdAt: new Date(Date.now() - 1000 * 60 * 60 * 70).toISOString(),
-    movementType: 'Sale',
-    quantityChange: -3,
-    stockBefore: 20,
-    stockAfter: 17,
-    orderReference: 'VET-2026-4882',
-    reason: 'Sale from Order VET-2026-4882',
-    internalNote: 'Karen Ng (Completed collection)'
   });
 
   try {

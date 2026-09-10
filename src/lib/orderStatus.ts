@@ -53,7 +53,6 @@ export function mapToCustomerStatus(internalStatus: OrderStatus | string): Custo
 
     case 'Paid':
     case 'Preparing':
-    case 'Ready for Collection':
     case 'Out for Delivery':
       return {
         customerStatus: 'Preparing for Delivery',

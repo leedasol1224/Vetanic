@@ -2,13 +2,22 @@ import { AdminNotification } from '../types/notification';
 import { OrderRecord } from '../types/order';
 import { isSupabaseConfigured, supabase } from './supabase';
 
-const NOTIFICATIONS_STORAGE_KEY = 'vetanic_admin_notifications_v1';
+const NOTIFICATIONS_STORAGE_KEY = 'vetanic_admin_notifications_v2';
+
+// Purge legacy demo notifications if present in browser storage
+if (typeof window !== 'undefined' && window.localStorage) {
+  try {
+    localStorage.removeItem('vetanic_admin_notifications_v1');
+  } catch {
+    // Ignore storage errors
+  }
+}
 
 export function getAdminNotifications(): AdminNotification[] {
   try {
     const raw = localStorage.getItem(NOTIFICATIONS_STORAGE_KEY);
     if (!raw) {
-      return seedInitialNotificationsIfEmpty();
+      return [];
     }
     return JSON.parse(raw);
   } catch (e) {
@@ -136,39 +145,3 @@ ${orderAdminLink}
   }
 }
 
-function seedInitialNotificationsIfEmpty(): AdminNotification[] {
-  const initial: AdminNotification[] = [
-    {
-      id: 'notif-seed-1',
-      orderId: 'demo-101',
-      orderReference: 'VET-2026-8192',
-      customerName: 'Chloe Tan',
-      totalAmount: 62.90,
-      itemCount: 3,
-      createdAt: new Date(Date.now() - 1000 * 60 * 45).toISOString(),
-      read: false,
-      type: 'new_order',
-      message: 'Chloe Tan placed order VET-2026-8192 (3 items · SGD 62.90)'
-    },
-    {
-      id: 'notif-seed-2',
-      orderId: 'demo-102',
-      orderReference: 'VET-2026-7451',
-      customerName: 'Marcus Lim',
-      totalAmount: 62.90,
-      itemCount: 2,
-      createdAt: new Date(Date.now() - 1000 * 60 * 180).toISOString(),
-      read: true,
-      type: 'new_order',
-      message: 'Marcus Lim placed order VET-2026-7451 (2 items · SGD 62.90)'
-    }
-  ];
-
-  try {
-    localStorage.setItem(NOTIFICATIONS_STORAGE_KEY, JSON.stringify(initial));
-  } catch (e) {
-    console.error('Failed to seed sample notifications', e);
-  }
-
-  return initial;
-}

@@ -159,36 +159,42 @@ S$${finalTotal}
 Delivery Method:
 ${formatDeliverySummary(order)}
 
-We'll update you again once your order is ready for collection or delivery.`;
-    }
-
-    case 'ready_for_collection': {
-      return `Hi ${customerName}! Your VETANIC order ${orderRef} is ready for collection 🐾
-
-Collection:
-Novena MRT (Near Passenger Service Counter / Exit B)
-
-Contact for collection:
-+65 8921 5432 / @vetanic.sg
-
-Please let us know approximately when you plan to collect your order.
+We'll update you again once your order is on the way.
 
 Thank you!`;
     }
 
+    case 'preparing_for_delivery': {
+      return `Hi ${customerName}! Your VETANIC order ${orderRef} is now being prepared 🐾
+
+We'll update you again once your order is out for delivery.
+
+Thank you for your order!`;
+    }
+
     case 'out_for_delivery': {
       const address = order.delivery.deliveryAddress
-        ? `${order.delivery.deliveryAddress}, Singapore ${order.delivery.postalCode || ''}`
+        ? `${order.delivery.deliveryAddress}${order.delivery.postalCode ? `, Singapore ${order.delivery.postalCode}` : ''}`
         : 'Address on file';
 
       return `Hi ${customerName}! Your VETANIC order ${orderRef} is on the way 🐾
 
-Delivery Address:
+Delivery address:
 ${address}
 
-We'll let you know if there are any updates.
+We'll let you know once your order has been delivered.
 
-Thank you for your order!`;
+Thank you!`;
+    }
+
+    case 'order_delivered': {
+      return `Hi ${customerName}! Your VETANIC order ${orderRef} has been delivered 🐾
+
+We hope your companion enjoys their VETANIC products.
+
+If you have any questions, feel free to reach us on Instagram @vetanic_global.
+
+Thank you for choosing VETANIC!`;
     }
 
     default:

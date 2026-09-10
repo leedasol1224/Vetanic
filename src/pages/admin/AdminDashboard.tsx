@@ -69,8 +69,6 @@ export const AdminDashboard: React.FC = () => {
         return 'bg-emerald-50 text-emerald-800 border-emerald-200';
       case 'Preparing':
         return 'bg-orange-50 text-orange-800 border-orange-200';
-      case 'Ready for Collection':
-        return 'bg-teal-50 text-teal-800 border-teal-200';
       case 'Out for Delivery':
         return 'bg-indigo-50 text-indigo-800 border-indigo-200';
       case 'Completed':
