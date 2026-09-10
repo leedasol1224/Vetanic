@@ -215,7 +215,7 @@ export const AdminOrderDetailPage: React.FC = () => {
 
                 <div className="flex justify-between">
                   <span className="text-[#6F6A65]">
-                    Delivery ({order.delivery.deliveryMethod === 'self_collection' ? 'Self-collection' : 'Standard Delivery'}):
+                    Delivery ({order.delivery.deliveryMethod === 'express' ? 'Express Delivery' : 'Standard Delivery'}):
                   </span>
                   <span>
                     {order.pricing.deliveryFee === 0 ? 'FREE' : `SGD ${order.pricing.deliveryFee.toFixed(2)}`}
@@ -224,7 +224,7 @@ export const AdminOrderDetailPage: React.FC = () => {
 
                 <div className="flex justify-between font-serif font-bold text-base pt-3 border-t border-[#DED7CE] text-[#222222]">
                   <span>Final Total:</span>
-                  <span className="text-[#9E2328]">SGD {order.pricing.estimatedTotal.toFixed(2)}</span>
+                  <span className="text-[#BE3A34]">SGD {order.pricing.estimatedTotal.toFixed(2)}</span>
                 </div>
               </div>
             )}
@@ -233,7 +233,7 @@ export const AdminOrderDetailPage: React.FC = () => {
           {/* Section: Delivery & Fulfillment Arrangements */}
           <div className="bg-white rounded-3xl border border-[#DED7CE] shadow-soft p-6 sm:p-7 space-y-4">
             <h2 className="text-base font-serif font-bold text-[#222222] flex items-center gap-2">
-              <Truck className="w-4 h-4 text-[#9E2328]" />
+              <Truck className="w-4 h-4 text-[#BE3A34]" />
               <span>Delivery & Fulfillment Arrangements</span>
             </h2>
 
@@ -243,11 +243,9 @@ export const AdminOrderDetailPage: React.FC = () => {
                   Delivery Method
                 </span>
                 <span className="font-bold text-[#222222] text-sm">
-                  {order.delivery.deliveryMethod === 'self_collection'
-                    ? 'Self-collection @ Novena MRT'
-                    : order.delivery.deliveryMethod === 'same_day'
-                    ? 'Same-day Express Delivery'
-                    : 'Standard Local Delivery'}
+                  {order.delivery.deliveryMethod === 'express' || order.delivery.deliveryMethod === 'same_day'
+                    ? 'Express Delivery'
+                    : 'Standard Delivery'}
                 </span>
               </div>
 

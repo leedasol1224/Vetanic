@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useOrder } from '../context/OrderContext';
 import { OrderItemRow } from '../components/order/OrderItemRow';
 import { OrderSuccessView } from '../components/order/OrderSuccessView';
@@ -18,7 +18,6 @@ import {
   Truck, 
   CreditCard, 
   ShieldCheck, 
-  Info, 
   AlertCircle, 
   Send, 
   Sparkles,
@@ -26,8 +25,10 @@ import {
   Tag
 } from 'lucide-react';
 import { getProductPricing } from '../lib/pricing';
+import { saveGuestSession } from '../lib/guestOrderLookup';
 
 export const OrderPage: React.FC = () => {
+  const navigate = useNavigate();
   const { 
     items, 
     updateQuantity, 
@@ -127,15 +128,13 @@ export const OrderPage: React.FC = () => {
       return;
     }
 
-    if (deliveryMethod !== 'self_collection') {
-      if (!deliveryAddress.trim()) {
-        setErrorMessage('Please provide your delivery address including unit number.');
-        return;
-      }
-      if (!postalCode.trim()) {
-        setErrorMessage('Please provide your Singapore postal code.');
-        return;
-      }
+    if (!deliveryAddress.trim()) {
+      setErrorMessage('Please provide your delivery address including unit number.');
+      return;
+    }
+    if (!postalCode.trim()) {
+      setErrorMessage('Please provide your Singapore postal code.');
+      return;
     }
 
     if (!ackStock || !ackAllergy || !ackWellness) {
@@ -160,8 +159,8 @@ export const OrderPage: React.FC = () => {
       },
       delivery: {
         deliveryMethod,
-        deliveryAddress: deliveryMethod !== 'self_collection' ? deliveryAddress.trim() : undefined,
-        postalCode: deliveryMethod !== 'self_collection' ? postalCode.trim() : undefined
+        deliveryAddress: deliveryAddress.trim(),
+        postalCode: postalCode.trim()
       },
       paymentPreference,
       acknowledgements: {
@@ -185,8 +184,9 @@ export const OrderPage: React.FC = () => {
 
     try {
       setIsSubmitting(true);
-      await submitOrder(submissionPayload);
-      window.scrollTo({ top: 0, behavior: 'smooth' });
+      const order = await submitOrder(submissionPayload);
+      saveGuestSession(order.orderReference);
+      navigate(`/order/success/${order.orderReference}`);
     } catch (err) {
       console.error('Order submission error:', err);
       setErrorMessage('Failed to submit order request. Please try again.');
@@ -448,7 +448,7 @@ export const OrderPage: React.FC = () => {
                 How would you like to receive your order? <span className="text-brand-600">*</span>
               </label>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <label
                   className={`flex flex-col justify-between p-4 rounded-2xl border text-xs cursor-pointer transition-all ${
                     deliveryMethod === 'standard'
@@ -465,7 +465,7 @@ export const OrderPage: React.FC = () => {
                       onChange={() => setDeliveryMethod('standard')}
                       className="text-brand-600 focus:ring-brand-600"
                     />
-                    <span className="font-bold">Standard Local Delivery</span>
+                    <span className="font-bold">Standard Delivery</span>
                   </div>
                   <span className="text-[11px] text-charcoal-muted ml-5">
                     {pricingSummary.isFreeDeliveryUnlocked ? (
@@ -478,7 +478,7 @@ export const OrderPage: React.FC = () => {
 
                 <label
                   className={`flex flex-col justify-between p-4 rounded-2xl border text-xs cursor-pointer transition-all ${
-                    deliveryMethod === 'self_collection'
+                    deliveryMethod === 'express'
                       ? 'border-brand-600 bg-brand-50/80 text-charcoal ring-1 ring-brand-600 font-bold'
                       : 'border-[#DED7CE] hover:bg-[#FAF7F2] text-charcoal'
                   }`}
@@ -487,84 +487,52 @@ export const OrderPage: React.FC = () => {
                     <input
                       type="radio"
                       name="deliveryMethod"
-                      value="self_collection"
-                      checked={deliveryMethod === 'self_collection'}
-                      onChange={() => setDeliveryMethod('self_collection')}
+                      value="express"
+                      checked={deliveryMethod === 'express'}
+                      onChange={() => setDeliveryMethod('express')}
                       className="text-brand-600 focus:ring-brand-600"
                     />
-                    <span className="font-bold">Self-collection</span>
+                    <span className="font-bold">Express Delivery</span>
                   </div>
                   <span className="text-[11px] text-charcoal-muted ml-5">
-                    @ Novena MRT (FREE)
-                  </span>
-                </label>
-
-                <label
-                  className={`flex flex-col justify-between p-4 rounded-2xl border text-xs cursor-pointer transition-all ${
-                    deliveryMethod === 'same_day'
-                      ? 'border-brand-600 bg-brand-50/80 text-charcoal ring-1 ring-brand-600 font-bold'
-                      : 'border-[#DED7CE] hover:bg-[#FAF7F2] text-charcoal'
-                  }`}
-                >
-                  <div className="flex items-center gap-2 mb-1">
-                    <input
-                      type="radio"
-                      name="deliveryMethod"
-                      value="same_day"
-                      checked={deliveryMethod === 'same_day'}
-                      onChange={() => setDeliveryMethod('same_day')}
-                      className="text-brand-600 focus:ring-brand-600"
-                    />
-                    <span className="font-bold">Same-day Delivery</span>
-                  </div>
-                  <span className="text-[11px] text-charcoal-muted ml-5">
-                    Express dispatch (+SGD 15.00)
+                    Faster delivery option (+SGD 9.00)
                   </span>
                 </label>
               </div>
 
-              {/* Conditional Address Fields */}
-              {deliveryMethod !== 'self_collection' ? (
-                <div className="pt-4 space-y-4 animate-soft-in">
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                    <div className="sm:col-span-2">
-                      <label className="block text-xs font-bold text-charcoal uppercase tracking-wider mb-1.5">
-                        Delivery Address <span className="text-brand-600">*</span>
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        value={deliveryAddress}
-                        onChange={(e) => setDeliveryAddress(e.target.value)}
-                        placeholder="Please include your block, street & unit number (e.g. #08-12)"
-                        className="w-full text-sm px-4 py-2.5 rounded-xl border border-[#DED7CE] focus:outline-none focus:ring-2 focus:ring-brand-600 focus:border-brand-600 bg-[#FAF7F2]"
-                      />
-                    </div>
+              {/* Delivery Address Fields */}
+              <div className="pt-2 space-y-4 animate-soft-in">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <div className="sm:col-span-2">
+                    <label className="block text-xs font-bold text-charcoal uppercase tracking-wider mb-1.5">
+                      Delivery Address <span className="text-brand-600">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={deliveryAddress}
+                      onChange={(e) => setDeliveryAddress(e.target.value)}
+                      placeholder="Please include your block, street & unit number (e.g. #08-12)"
+                      className="w-full text-sm px-4 py-2.5 rounded-xl border border-[#DED7CE] focus:outline-none focus:ring-2 focus:ring-brand-600 focus:border-brand-600 bg-[#FAF7F2]"
+                    />
+                  </div>
 
-                    <div>
-                      <label className="block text-xs font-bold text-charcoal uppercase tracking-wider mb-1.5">
-                        Postal Code <span className="text-brand-600">*</span>
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        maxLength={6}
-                        value={postalCode}
-                        onChange={(e) => setPostalCode(e.target.value)}
-                        placeholder="e.g. 307683"
-                        className="w-full text-sm px-4 py-2.5 rounded-xl border border-[#DED7CE] focus:outline-none focus:ring-2 focus:ring-brand-600 focus:border-brand-600 bg-[#FAF7F2]"
-                      />
-                    </div>
+                  <div>
+                    <label className="block text-xs font-bold text-charcoal uppercase tracking-wider mb-1.5">
+                      Postal Code <span className="text-brand-600">*</span>
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      maxLength={6}
+                      value={postalCode}
+                      onChange={(e) => setPostalCode(e.target.value)}
+                      placeholder="e.g. 307683"
+                      className="w-full text-sm px-4 py-2.5 rounded-xl border border-[#DED7CE] focus:outline-none focus:ring-2 focus:ring-brand-600 focus:border-brand-600 bg-[#FAF7F2]"
+                    />
                   </div>
                 </div>
-              ) : (
-                <div className="p-4 bg-[#FAF7F2] rounded-2xl border border-[#DED7CE] text-xs text-charcoal flex items-start gap-2.5">
-                  <Info className="w-4 h-4 text-brand-600 flex-shrink-0 mt-0.5" />
-                  <span>
-                    Self-collection point: <strong>Novena MRT Station</strong>. Our team will coordinate the exact meetup schedule with you after stock confirmation.
-                  </span>
-                </div>
-              )}
+              </div>
             </div>
           </section>
 

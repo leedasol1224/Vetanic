@@ -38,13 +38,10 @@ export function formatPaymentInstructions(order: OrderRecord): string {
 }
 
 export function formatDeliverySummary(order: OrderRecord): string {
-  if (order.delivery.deliveryMethod === 'self_collection') {
-    return 'Self-collection @ Novena MRT (Exit B passenger service counter)';
+  if (order.delivery.deliveryMethod === 'express' || order.delivery.deliveryMethod === 'same_day') {
+    return `Express Delivery to: ${order.delivery.deliveryAddress || ''} (S${order.delivery.postalCode || ''})`;
   }
-  if (order.delivery.deliveryMethod === 'same_day') {
-    return `Same-day Express Delivery to: ${order.delivery.deliveryAddress || ''} (S${order.delivery.postalCode || ''})`;
-  }
-  return `Standard Local Delivery to: ${order.delivery.deliveryAddress || ''} (S${order.delivery.postalCode || ''})`;
+  return `Standard Delivery to: ${order.delivery.deliveryAddress || ''} (S${order.delivery.postalCode || ''})`;
 }
 
 export function generateOrderResponse(type: TemplateType, params: TemplateParams): string {

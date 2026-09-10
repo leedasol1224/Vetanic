@@ -4,11 +4,7 @@ import { useOrder } from '../../context/OrderContext';
 import { Link } from 'react-router-dom';
 
 export const DeliveryProgressBar: React.FC = () => {
-  const { pricingSummary, deliveryMethod } = useOrder();
-
-  if (deliveryMethod === 'self_collection') {
-    return null;
-  }
+  const { pricingSummary } = useOrder();
 
   const { productTotal, isFreeDeliveryUnlocked, freeDeliveryThresholdDelta, upsellMessages } = pricingSummary;
   const progressPercent = Math.min(100, Math.round((productTotal / 50.00) * 100));

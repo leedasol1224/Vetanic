@@ -1,6 +1,7 @@
 import { OrderItem, DeliveryMethod, PricingSummary } from '../types/order';
 import { Product } from '../types/product';
 import { SEPTEMBER_2026_LAUNCH_PROMOTION, isLaunchPromoActive } from '../config/promotions';
+import { DELIVERY_CONFIG } from './delivery';
 
 export interface ProductPriceInfo {
   regularPrice: number;
@@ -153,19 +154,17 @@ export function calculateOrderPricing(
   const bundleDiscount = Number(Math.max(0, productSubtotal - productTotal).toFixed(2));
   const savingsAmount = Number(Math.max(0, regularSubtotal - productTotal).toFixed(2));
 
-  // Delivery calculations
-  const threshold = SEPTEMBER_2026_LAUNCH_PROMOTION.freeDeliveryThreshold;
+  // Delivery calculations (Standard vs Express)
+  const threshold = DELIVERY_CONFIG.freeThreshold;
   const isFreeDeliveryUnlocked = productTotal >= threshold;
   const freeDeliveryThresholdDelta = Number(Math.max(0, threshold - productTotal).toFixed(2));
 
   let deliveryFee = 0;
-  if (deliveryMethod === 'self_collection') {
-    deliveryFee = 0;
-  } else if (deliveryMethod === 'same_day') {
-    deliveryFee = SEPTEMBER_2026_LAUNCH_PROMOTION.sameDayDeliveryFee;
+  if (deliveryMethod === 'express' || deliveryMethod === 'same_day') {
+    deliveryFee = DELIVERY_CONFIG.options.express.baseFee;
   } else {
     // Standard Local Delivery
-    deliveryFee = isFreeDeliveryUnlocked ? 0 : SEPTEMBER_2026_LAUNCH_PROMOTION.standardDeliveryFee;
+    deliveryFee = isFreeDeliveryUnlocked ? 0 : DELIVERY_CONFIG.options.standard.baseFee;
   }
 
   const estimatedTotal = Number((productTotal + deliveryFee).toFixed(2));
@@ -189,12 +188,10 @@ export function calculateOrderPricing(
 
   // Free delivery message
   let freeDeliveryMessage = '';
-  if (deliveryMethod !== 'self_collection') {
-    if (isFreeDeliveryUnlocked) {
-      freeDeliveryMessage = "You've unlocked free local delivery!";
-    } else if (productTotal > 0) {
-      freeDeliveryMessage = `Add SGD ${freeDeliveryThresholdDelta.toFixed(2)} more to enjoy free local delivery.`;
-    }
+  if (isFreeDeliveryUnlocked) {
+    freeDeliveryMessage = "You've unlocked free standard local delivery!";
+  } else if (productTotal > 0) {
+    freeDeliveryMessage = `Add SGD ${freeDeliveryThresholdDelta.toFixed(2)} more to enjoy free standard delivery.`;
   }
 
   return {

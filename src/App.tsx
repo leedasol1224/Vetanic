@@ -15,6 +15,8 @@ import { AboutPage } from './pages/AboutPage';
 import { ProductsPage } from './pages/ProductsPage';
 import { ProductDetailPage } from './pages/ProductDetailPage';
 import { OrderPage } from './pages/OrderPage';
+import { OrderSuccessPage } from './pages/OrderSuccessPage';
+import { MyOrdersPage } from './pages/MyOrdersPage';
 import { ContactPage } from './pages/ContactPage';
 
 import { BusinessLoginPage } from './pages/admin/BusinessLoginPage';
@@ -74,6 +76,9 @@ function App() {
               <Route path="/products" element={<ProductsPage />} />
               <Route path="/products/:id" element={<ProductDetailPage />} />
               <Route path="/order" element={<OrderPage />} />
+              <Route path="/order/success/:reference" element={<OrderSuccessPage />} />
+              <Route path="/my-orders" element={<MyOrdersPage />} />
+              <Route path="/my-orders/:reference" element={<MyOrdersPage />} />
               <Route path="/contact" element={<ContactPage />} />
               <Route path="*" element={<HomePage />} />
             </Route>

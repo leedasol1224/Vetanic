@@ -240,9 +240,20 @@ export const CartDrawer: React.FC = () => {
                 <button
                   type="button"
                   onClick={closeCartDrawer}
-                  className="w-full text-center text-xs font-semibold text-charcoal-muted hover:text-charcoal py-2 rounded-xl transition-colors"
+                  className="w-full text-center text-xs font-semibold text-charcoal-muted hover:text-charcoal py-1.5 rounded-xl transition-colors"
                 >
                   Continue Shopping
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    closeCartDrawer();
+                    navigate('/my-orders');
+                  }}
+                  className="w-full text-center text-[11px] font-medium text-charcoal-muted hover:text-brand-600 transition-colors pt-1"
+                >
+                  Already ordered? Track with <strong>My Orders →</strong>
                 </button>
               </div>
             </div>

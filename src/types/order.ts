@@ -7,7 +7,7 @@ export interface OrderItem {
 
 export type ContactMethod = 'WhatsApp' | 'Telegram' | 'Instagram DM' | 'SMS';
 export type CustomerType = 'new' | 'existing';
-export type DeliveryMethod = 'standard' | 'self_collection' | 'same_day';
+export type DeliveryMethod = 'standard' | 'express' | 'self_collection' | 'same_day';
 export type PaymentMethod = 'paynow' | 'bank_transfer';
 export type ReferralSource = 'Singapore Pet Festival' | 'Instagram' | 'Friend / Referral' | 'Other';
 

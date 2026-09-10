@@ -9,20 +9,21 @@
      VETANIC OFFICIAL BRAND DESIGN TOKENS
      ========================================================================== */
 
-  /* Primary Brand: VETANIC Deep Red */
-  --color-brand-primary: #9E2328;
-  --color-brand-primary-hover: #841C21;
-  --color-brand-50: #FBF2F2;
-  --color-brand-100: #F6E3E4;
-  --color-brand-200: #ECC7C9;
-  --color-brand-300: #DE9FA2;
-  --color-brand-400: #CC6F74;
-  --color-brand-500: #B5454B;
-  --color-brand-600: #9E2328; /* Primary */
-  --color-brand-700: #841C21; /* Hover */
-  --color-brand-800: #6C161A;
-  --color-brand-900: #551215;
-  --color-brand-950: #330709;
+  /* Primary Brand: Banryodaum & VETANIC Red (#BE3A34) */
+  --color-primary: #BE3A34;
+  --color-brand-primary: #BE3A34;
+  --color-brand-primary-hover: #A02D28;
+  --color-brand-50: #FDF5F5;
+  --color-brand-100: #FCE8E7;
+  --color-brand-200: #F8D3D1;
+  --color-brand-300: #F1B2AF;
+  --color-brand-400: #E5837E;
+  --color-brand-500: #D45650;
+  --color-brand-600: #BE3A34; /* Primary */
+  --color-brand-700: #A02D28; /* Hover */
+  --color-brand-800: #842622;
+  --color-brand-900: #6E2421;
+  --color-brand-950: #3C0F0D;
 
   /* Wellness Accent: Sage Green */
   --color-sage-accent: #A8B89A;
@@ -52,12 +53,12 @@
   /* Borders & Dividers */
   --color-border-main: #DED7CE;  /* Subtle Beige Border */
   --color-border-subtle: #EFEAE2;
-  --color-border-focus: #9E2328;
+  --color-border-focus: #BE3A34;
 
   /* Promotional Badges */
-  --color-promo-badge: #9E2328;
-  --color-promo-badge-bg: #FBF2F2;
-  --color-promo-badge-border: #ECC7C9;
+  --color-promo-badge: #BE3A34;
+  --color-promo-badge-bg: #FDF5F5;
+  --color-promo-badge-border: #F8D3D1;
 }
 
 body {

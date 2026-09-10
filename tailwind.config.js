@@ -8,17 +8,17 @@ export default {
     extend: {
       colors: {
         brand: {
-          50: 'var(--color-brand-50, #FBF2F2)',
-          100: 'var(--color-brand-100, #F6E3E4)',
-          200: 'var(--color-brand-200, #ECC7C9)',
-          300: 'var(--color-brand-300, #DE9FA2)',
-          400: 'var(--color-brand-400, #CC6F74)',
-          500: 'var(--color-brand-500, #B5454B)',
-          600: 'var(--color-brand-600, #9E2328)',
-          700: 'var(--color-brand-700, #841C21)',
-          800: 'var(--color-brand-800, #6C161A)',
-          900: 'var(--color-brand-900, #551215)',
-          950: 'var(--color-brand-950, #330709)',
+          50: 'var(--color-brand-50, #FDF5F5)',
+          100: 'var(--color-brand-100, #FCE8E7)',
+          200: 'var(--color-brand-200, #F8D3D1)',
+          300: 'var(--color-brand-300, #F1B2AF)',
+          400: 'var(--color-brand-400, #E5837E)',
+          500: 'var(--color-brand-500, #D45650)',
+          600: 'var(--color-brand-600, #BE3A34)',
+          700: 'var(--color-brand-700, #A02D28)',
+          800: 'var(--color-brand-800, #842622)',
+          900: 'var(--color-brand-900, #6E2421)',
+          950: 'var(--color-brand-950, #3C0F0D)',
         },
         sage: {
           50: 'var(--color-sage-50, #F6F8F4)',

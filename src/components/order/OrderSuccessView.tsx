@@ -12,13 +12,13 @@ export const OrderSuccessView: React.FC<OrderSuccessViewProps> = ({ order, onRes
   const getDeliveryLabel = (method: string) => {
     switch (method) {
       case 'standard':
-        return 'Standard Local Delivery';
-      case 'self_collection':
-        return 'Self-collection @ Novena MRT';
+        return 'Standard Delivery';
+      case 'express':
+        return 'Express Delivery';
       case 'same_day':
-        return 'Same-day Delivery';
+        return 'Express Delivery';
       default:
-        return method;
+        return 'Standard Delivery';
     }
   };
 
