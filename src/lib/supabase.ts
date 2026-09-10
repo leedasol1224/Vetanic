@@ -125,7 +125,69 @@ export async function submitOrderRequest(orderData: OrderSubmission): Promise<Or
   const totalCount = orderData.items.reduce((sum, item) => sum + item.quantity, 0);
 
   if (isSupabaseConfigured && supabase) {
-    // 1. Insert order record
+    // 1. Try atomic PostgreSQL RPC first
+    try {
+      const { data: rpcData, error: rpcError } = await supabase.rpc('submit_customer_order', {
+        p_customer: {
+          fullName: orderData.customer.fullName,
+          email: orderData.customer.email,
+          contactNumber: orderData.customer.contactNumber,
+          telegramHandle: orderData.customer.telegramHandle || null,
+          instagramAccount: orderData.customer.instagramAccount || null,
+          preferredContact: orderData.customer.preferredContact,
+          customerType: orderData.customer.customerType
+        },
+        p_delivery: {
+          deliveryMethod: orderData.delivery.deliveryMethod,
+          deliveryAddress: orderData.delivery.deliveryAddress || '',
+          postalCode: orderData.delivery.postalCode || ''
+        },
+        p_payment_preference: orderData.paymentPreference,
+        p_referral_source: orderData.referralSource,
+        p_other_referral: orderData.otherReferralSource || null,
+        p_items: orderData.items.map((item) => ({
+          productId: item.productId,
+          productName: item.productName,
+          packageSize: item.packageSize,
+          quantity: item.quantity,
+          unitPrice: item.unitPrice || 0
+        })),
+        p_pricing: orderData.pricing || null
+      });
+
+      if (!rpcError && rpcData && rpcData.success) {
+        const createdRecord: OrderRecord = {
+          ...orderData,
+          id: rpcData.order_id,
+          orderReference: rpcData.order_reference,
+          createdAt: rpcData.created_at || new Date().toISOString(),
+          status: 'Pending Confirmation',
+          totalItemCount: rpcData.total_item_count || totalCount,
+          internalNotes: '',
+          inventoryDeducted: false,
+          inventoryRestored: false
+        };
+
+        // Cache locally
+        try {
+          const localOrders = getOrders();
+          localOrders.unshift(createdRecord);
+          saveOrdersToStorage(localOrders);
+        } catch {
+          // Non-critical local storage error
+        }
+
+        return createdRecord;
+      }
+
+      if (rpcError) {
+        console.warn('submit_customer_order RPC failed, attempting direct table insert fallback:', rpcError);
+      }
+    } catch (rpcEx) {
+      console.warn('RPC execution exception, trying direct insert fallback:', rpcEx);
+    }
+
+    // 2. Direct table insert fallback
     const { data: orderRow, error: orderError } = await supabase
       .from('orders')
       .insert({
@@ -144,7 +206,7 @@ export async function submitOrderRequest(orderData: OrderSubmission): Promise<Or
         referral_source: orderData.referralSource,
         other_referral_source: orderData.otherReferralSource || null,
         acknowledgement: true,
-        status: 'Pending Confirmation',
+        status: 'pending_confirmation',
         pricing: orderData.pricing || null,
         total_item_count: totalCount,
         internal_notes: '',
@@ -159,7 +221,7 @@ export async function submitOrderRequest(orderData: OrderSubmission): Promise<Or
       throw new Error(`Order insertion failed: ${orderError?.message || 'Unknown database error'}`);
     }
 
-    // 2. Insert order items
+    // Insert order items
     if (orderData.items.length > 0) {
       const orderItemsPayload = orderData.items.map((item) => ({
         order_id: orderRow.id,
@@ -176,7 +238,6 @@ export async function submitOrderRequest(orderData: OrderSubmission): Promise<Or
 
       if (itemsError) {
         console.error('Supabase order items insert failed:', itemsError);
-        // Attempt clean up of dangling order record
         await supabase.from('orders').delete().eq('id', orderRow.id);
         throw new Error(`Order items insertion failed: ${itemsError.message}`);
       }

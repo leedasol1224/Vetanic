@@ -1,7 +1,7 @@
 import { OrderRecord } from '../types/order';
-import { getOrders, saveOrdersToStorage } from './storage';
+import { getOrders } from './storage';
 import { mapToCustomerStatus, CustomerStatusInfo } from './orderStatus';
-import { supabase, isSupabaseConfigured, mapDbRowToOrderRecord } from './supabase';
+import { supabase, isSupabaseConfigured } from './supabase';
 
 export interface CustomerOrderView {
   id: string;
@@ -165,7 +165,47 @@ export async function lookupGuestOrder(
   }
 
   try {
-    // 1. Check local storage / mock orders
+    // 1. If Supabase configured, call secure SECURITY DEFINER RPC
+    if (isSupabaseConfigured && supabase) {
+      try {
+        const { data: rpcData, error: rpcError } = await supabase.rpc('lookup_guest_order', {
+          p_order_reference: cleanRef,
+          p_contact_number: cleanDigits
+        });
+
+        if (!rpcError && rpcData && rpcData.success && rpcData.order) {
+          clearRateLimit();
+          saveGuestSession(cleanRef);
+          return {
+            success: true,
+            order: {
+              id: rpcData.order.id,
+              orderReference: rpcData.order.orderReference,
+              createdAt: rpcData.order.createdAt,
+              customerName: rpcData.order.customerName,
+              customerMobileMasked: rpcData.order.contactNumberMasked,
+              deliveryMethod: rpcData.order.deliveryMethod === 'express' ? 'Express Delivery' : 'Standard Delivery',
+              deliveryAddressMasked: rpcData.order.deliveryAddressMasked,
+              postalCode: rpcData.order.postalCode,
+              paymentPreference: rpcData.order.paymentPreference === 'paynow' ? 'PayNow' : 'Bank Transfer',
+              items: (rpcData.order.items || []).map((it: { productId: string; productName: string; packageSize: string; quantity: number; unitPrice: number }) => ({
+                productId: it.productId,
+                productName: it.productName,
+                packageSize: it.packageSize,
+                quantity: it.quantity,
+                unitPrice: Number(it.unitPrice) || 0
+              })),
+              pricing: rpcData.order.pricing,
+              statusInfo: mapToCustomerStatus(rpcData.order.status)
+            }
+          };
+        }
+      } catch (rpcEx) {
+        console.warn('RPC lookup error:', rpcEx);
+      }
+    }
+
+    // 2. Check local storage / mock orders cache
     const allOrders = getOrders();
     const matched = allOrders.find((o) => {
       const matchesRef = o.orderReference.toUpperCase() === cleanRef || o.id === cleanRef;
@@ -180,44 +220,6 @@ export async function lookupGuestOrder(
         success: true,
         order: sanitizeToCustomerOrder(matched)
       };
-    }
-
-    // 2. If Supabase configured, perform exact match query
-    if (isSupabaseConfigured && supabase) {
-      const { data, error } = await supabase
-        .from('orders')
-        .select(`
-          *,
-          order_items (*)
-        `)
-        .eq('order_reference', cleanRef)
-        .maybeSingle();
-
-      if (!error && data) {
-        const phoneDigits = normalizePhoneDigits(data.contact_number || '');
-        if (phoneDigits === cleanDigits) {
-          clearRateLimit();
-          saveGuestSession(cleanRef);
-          
-          const orderRec = mapDbRowToOrderRecord(data);
-          
-          // Cache in local storage
-          try {
-            const currentOrders = getOrders();
-            if (!currentOrders.some(o => o.id === orderRec.id || o.orderReference === orderRec.orderReference)) {
-              currentOrders.unshift(orderRec);
-              saveOrdersToStorage(currentOrders);
-            }
-          } catch {
-            // Ignore cache error
-          }
-
-          return {
-            success: true,
-            order: sanitizeToCustomerOrder(orderRec)
-          };
-        }
-      }
     }
 
     // Failed attempt
