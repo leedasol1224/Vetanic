@@ -5,12 +5,13 @@ import { PRODUCTS } from '../../data/products';
 import { PetBadge } from '../common/Badge';
 import { useOrder } from '../../context/OrderContext';
 import { getProductPricing } from '../../lib/pricing';
+import { sortProductsByStockAvailability, getProductStock } from '../../lib/inventory';
 
 export const VisualShopProducts: React.FC = () => {
   const [selectedPetFilter, setSelectedPetFilter] = useState<'all' | 'dog' | 'cat'>('all');
   const { addToOrder, updateQuantity, getItemQuantity } = useOrder();
 
-  // Filter 4 featured products based on pet type
+  // Filter 4 featured products based on pet type and sort in-stock first
   const displayProducts = useMemo(() => {
     let filtered = PRODUCTS;
     if (selectedPetFilter === 'dog') {
@@ -18,7 +19,8 @@ export const VisualShopProducts: React.FC = () => {
     } else if (selectedPetFilter === 'cat') {
       filtered = PRODUCTS.filter((p) => p.petType === 'cat' || p.petType === 'both');
     }
-    return filtered.slice(0, 4);
+    const sorted = sortProductsByStockAvailability(filtered);
+    return sorted.slice(0, 4);
   }, [selectedPetFilter]);
 
   return (
@@ -78,6 +80,8 @@ export const VisualShopProducts: React.FC = () => {
           {displayProducts.map((product) => {
             const pricing = getProductPricing(product);
             const currentQuantity = getItemQuantity(product.id);
+            const stock = getProductStock(product.id);
+            const inStock = stock > 0 && product.isAvailable !== false;
 
             return (
               <div
@@ -102,7 +106,7 @@ export const VisualShopProducts: React.FC = () => {
                       <PetBadge type={product.petType} size="sm" />
                     </div>
 
-                    {!product.isAvailable && (
+                    {!inStock && (
                       <div className="absolute top-3.5 right-3.5 bg-charcoal/80 text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider shadow-sm">
                         Sold Out
                       </div>
@@ -135,7 +139,7 @@ export const VisualShopProducts: React.FC = () => {
 
                 {/* Inline Quantity Control Bar */}
                 <div className="p-5 pt-0 mt-auto">
-                  {!product.isAvailable ? (
+                  {!inStock ? (
                     <button
                       type="button"
                       disabled
@@ -148,6 +152,7 @@ export const VisualShopProducts: React.FC = () => {
                       type="button"
                       onClick={(e) => {
                         e.preventDefault();
+                        if (!inStock) return;
                         addToOrder(product, 1);
                       }}
                       className="w-full inline-flex items-center justify-center gap-1.5 py-2.5 px-4 text-xs font-bold rounded-xl bg-brand-600 hover:bg-brand-700 text-white transition-all shadow-sm hover:shadow active:scale-[0.99]"

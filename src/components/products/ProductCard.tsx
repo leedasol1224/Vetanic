@@ -5,6 +5,7 @@ import { Product } from '../../types/product';
 import { PetBadge } from '../common/Badge';
 import { useOrder } from '../../context/OrderContext';
 import { getProductPricing } from '../../lib/pricing';
+import { getProductStock } from '../../lib/inventory';
 
 interface ProductCardProps {
   product: Product;
@@ -13,18 +14,22 @@ interface ProductCardProps {
 export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const { addToOrder, updateQuantity, getItemQuantity } = useOrder();
 
+  const stock = getProductStock(product.id);
+  const inStock = stock > 0 && product.isAvailable !== false;
   const currentQuantity = getItemQuantity(product.id);
   const pricing = getProductPricing(product);
 
   const handleAddInitial = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    if (!inStock) return;
     addToOrder(product, 1);
   };
 
   const handleIncrement = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    if (!inStock) return;
     updateQuantity(product.id, currentQuantity + 1);
   };
 
@@ -56,7 +61,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
           </div>
 
           {/* Sold Out Badge or In-Order Pill */}
-          {!product.isAvailable ? (
+          {!inStock ? (
             <div className="absolute top-3.5 right-3.5 bg-charcoal/80 text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider shadow-sm">
               Sold Out
             </div>
@@ -111,7 +116,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
       {/* Dynamic Action Button Bar */}
       <div className="p-5 pt-0 mt-auto">
-        {!product.isAvailable ? (
+        {!inStock ? (
           <button
             type="button"
             disabled

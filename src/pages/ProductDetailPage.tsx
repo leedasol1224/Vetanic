@@ -23,12 +23,15 @@ import { useOrder } from '../context/OrderContext';
 import { getProductPricing } from '../lib/pricing';
 import { ProductCard } from '../components/products/ProductCard';
 import { GeneralFaqSection } from '../components/products/GeneralFaqSection';
+import { getProductStock } from '../lib/inventory';
 
 export const ProductDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const { addToOrder, updateQuantity, getItemQuantity, openCartDrawer } = useOrder();
 
   const product = PRODUCTS.find((p) => p.id === id || p.slug === id);
+  const stock = product ? getProductStock(product.id) : 0;
+  const inStock = stock > 0 && product?.isAvailable !== false;
 
   // Selected image thumbnail index
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
@@ -83,11 +86,12 @@ export const ProductDetailPage: React.FC = () => {
   ).slice(0, 3);
 
   const handleAddInitial = () => {
-    if (!product.isAvailable) return;
+    if (!inStock) return;
     addToOrder(product, 1);
   };
 
   const handleIncrement = () => {
+    if (!inStock) return;
     updateQuantity(product.id, currentQuantity + 1);
   };
 
@@ -137,7 +141,7 @@ export const ProductDetailPage: React.FC = () => {
                 </div>
 
                 {/* Sold Out Badge */}
-                {!product.isAvailable && (
+                {!inStock && (
                   <div className="absolute top-4 right-4 bg-charcoal/85 text-white text-xs font-bold px-3.5 py-1 rounded-full uppercase tracking-wider shadow-sm">
                     Sold Out
                   </div>
@@ -217,7 +221,7 @@ export const ProductDetailPage: React.FC = () => {
 
               {/* Quantity Selector & Order Interaction */}
               <div className="pt-2">
-                {!product.isAvailable ? (
+                {!inStock ? (
                   <div className="p-4 bg-[#FAF7F2] rounded-2xl border border-[#DED7CE] text-center space-y-1">
                     <span className="text-sm font-bold text-charcoal block">Currently Sold Out</span>
                     <p className="text-xs text-charcoal-muted">

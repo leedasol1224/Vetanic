@@ -4,6 +4,7 @@ import { OrderItem, OrderSubmission, OrderRecord, DeliveryMethod, PricingSummary
 import { getSavedCart, saveCart, clearCart } from '../lib/storage';
 import { submitOrderRequest } from '../lib/supabase';
 import { calculateOrderPricing } from '../lib/pricing';
+import { isProductInStock } from '../lib/inventory';
 
 interface OrderContextType {
   items: OrderItem[];
@@ -56,7 +57,7 @@ export const OrderProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   }, [items, deliveryMethod]);
 
   const addToOrder = (product: Product, quantity: number = 1) => {
-    if (quantity <= 0 || !product.isAvailable) return;
+    if (quantity <= 0 || !product.isAvailable || !isProductInStock(product.id)) return;
 
     setItems((prevItems) => {
       const existingIndex = prevItems.findIndex((item) => item.product.id === product.id);

@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { PRODUCTS } from '../data/products';
 import { ProductCard } from '../components/products/ProductCard';
 import { ProductFilters } from '../components/products/ProductFilters';
 import { PetType, ProductCategory } from '../types/product';
 import { Sparkles, RotateCcw } from 'lucide-react';
+import { sortProductsByStockAvailability } from '../lib/inventory';
 
 export const ProductsPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -57,21 +58,25 @@ export const ProductsPage: React.FC = () => {
     setSearchParams({});
   };
 
-  // Filter products
-  const filteredProducts = PRODUCTS.filter((product) => {
-    // Pet filter
-    if (selectedPet !== 'all') {
-      if (selectedPet === 'dog' && product.petType === 'cat') return false;
-      if (selectedPet === 'cat' && product.petType === 'dog') return false;
-    }
+  // Filter & sort products (in-stock first, sold-out at the bottom)
+  const displayedProducts = useMemo(() => {
+    const filtered = PRODUCTS.filter((product) => {
+      // Pet filter
+      if (selectedPet !== 'all') {
+        if (selectedPet === 'dog' && product.petType === 'cat') return false;
+        if (selectedPet === 'cat' && product.petType === 'dog') return false;
+      }
 
-    // Category filter
-    if (selectedCategory !== 'all') {
-      if (product.category !== selectedCategory) return false;
-    }
+      // Category filter
+      if (selectedCategory !== 'all') {
+        if (product.category !== selectedCategory) return false;
+      }
 
-    return true;
-  });
+      return true;
+    });
+
+    return sortProductsByStockAvailability(filtered);
+  }, [selectedPet, selectedCategory]);
 
   return (
     <main className="flex-1 bg-[#FAF7F2] py-12 md:py-16">
@@ -105,7 +110,7 @@ export const ProductsPage: React.FC = () => {
         {/* Active Filter Pill Counter */}
         <div className="flex items-center justify-between mb-6 text-xs text-charcoal-muted font-medium">
           <div>
-            Showing <strong className="text-charcoal font-bold">{filteredProducts.length}</strong> of {PRODUCTS.length} products
+            Showing <strong className="text-charcoal font-bold">{displayedProducts.length}</strong> of {PRODUCTS.length} products
             {(selectedPet !== 'all' || selectedCategory !== 'all') && (
               <span className="ml-2 text-brand-600 font-semibold">(Filtered)</span>
             )}
@@ -123,9 +128,9 @@ export const ProductsPage: React.FC = () => {
         </div>
 
         {/* Products Grid */}
-        {filteredProducts.length > 0 ? (
+        {displayedProducts.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredProducts.map((product) => (
+            {displayedProducts.map((product) => (
               <ProductCard key={product.id} product={product} />
             ))}
           </div>

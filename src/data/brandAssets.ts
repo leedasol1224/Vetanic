@@ -57,8 +57,8 @@ export const brandAssets: BrandAssetConfig = {
     heroProductPetImage: '/images/lifestyle/hero_product_pet.jpg',
     // 2. LARGE LIFESTYLE BANNER — Official Cat with Complete Vital / Hairball Care stick
     lifestyleProductPetImage: '/images/lifestyle/lifestyle_product_pet.jpg',
-    // 3. SINGAPORE LAUNCH — Official product range with Dog
-    singaporeLaunchImage: '/images/lifestyle/singapore_launch_official.jpg',
+    // 3. SINGAPORE LAUNCH — Official high-resolution cat with Hairball Care stick
+    singaporeLaunchImage: '/images/lifestyle/cat_hairball_lifestyle.jpg',
     // 4. BRAND STORY — Official Korean formulation craft & packaging
     brandStoryImage: '/images/brand/brand_story_official.jpg',
   },

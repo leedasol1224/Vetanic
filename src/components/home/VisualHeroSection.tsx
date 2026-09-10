@@ -22,7 +22,7 @@ export const VisualHeroSection: React.FC = () => {
         {/* Content Container */}
         <div className="relative max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-32 flex flex-col justify-end sm:justify-center items-start text-white">
           <div className="max-w-xl space-y-4 sm:space-y-6">
-            <span className="inline-block text-[11px] uppercase tracking-widest font-bold text-[#E9E0D4] bg-white/15 backdrop-blur-md px-3.5 py-1 rounded-full border border-white/20">
+            <span className="inline-block text-[11px] uppercase tracking-wider font-extrabold text-[#BE3A34] bg-[#FAF7F2]/95 backdrop-blur-md px-3.5 py-1 rounded-full border border-[#DED7CE] shadow-xs">
               Korean Pet Wellness
             </span>
 

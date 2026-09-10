@@ -157,6 +157,50 @@ export function getProductInventory(productId: string): ProductInventory | undef
 }
 
 /**
+ * Get current stock count for a product
+ */
+export function getProductStock(productId: string): number {
+  const inv = getProductInventory(productId);
+  return inv ? inv.currentStock : 0;
+}
+
+/**
+ * Check if a product is currently in stock
+ */
+export function isProductInStock(productId: string): boolean {
+  const inv = getProductInventory(productId);
+  if (!inv) return true;
+  return inv.currentStock > 0;
+}
+
+/**
+ * Sort products dynamically: in-stock first, sold-out at the bottom.
+ * Preserves natural display order within each group.
+ */
+export function sortProductsByStockAvailability<T extends { id: string; displayOrder?: number; isAvailable?: boolean }>(
+  products: T[]
+): T[] {
+  const inStockList: T[] = [];
+  const outOfStockList: T[] = [];
+
+  for (const product of products) {
+    const stock = getProductStock(product.id);
+    const inStock = stock > 0 && product.isAvailable !== false;
+    if (inStock) {
+      inStockList.push(product);
+    } else {
+      outOfStockList.push(product);
+    }
+  }
+
+  // Preserve existing displayOrder within each group
+  inStockList.sort((a, b) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0));
+  outOfStockList.sort((a, b) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0));
+
+  return [...inStockList, ...outOfStockList];
+}
+
+/**
  * Append a manual stock adjustment to the ledger
  */
 export function addStockMovement(data: {
