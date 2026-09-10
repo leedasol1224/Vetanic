@@ -8,7 +8,7 @@ export type TemplateType =
   | 'order_delivered'
   | 'custom';
 
-export type CommunicationChannel = 'WhatsApp' | 'Email' | 'Telegram' | 'Instagram' | 'SMS' | 'Other';
+export type CommunicationChannel = 'WhatsApp' | 'Email' | 'Instagram' | 'SMS' | 'Other';
 
 export interface CommunicationLog {
   id: string;

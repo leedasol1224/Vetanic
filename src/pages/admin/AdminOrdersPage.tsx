@@ -275,7 +275,7 @@ export const AdminOrdersPage: React.FC = () => {
 
                     {/* Delivery Method */}
                     <td className="py-4 px-4 whitespace-nowrap text-[11px]">
-                      {order.delivery.deliveryMethod === 'express' || order.delivery.deliveryMethod === 'same_day' ? (
+                      {order.delivery.deliveryMethod === 'express' ? (
                         <span className="text-orange-700 font-semibold">Express Delivery</span>
                       ) : (
                         <span className="text-charcoal font-medium">Standard Delivery</span>

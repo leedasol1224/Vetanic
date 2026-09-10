@@ -269,7 +269,7 @@ export const AdminOrderDetailPage: React.FC = () => {
                   Delivery Method
                 </span>
                 <span className="font-bold text-[#222222] text-sm">
-                  {order.delivery.deliveryMethod === 'express' || order.delivery.deliveryMethod === 'same_day'
+                  {order.delivery.deliveryMethod === 'express'
                     ? 'Express Delivery'
                     : 'Standard Delivery'}
                 </span>
@@ -334,13 +334,6 @@ export const AdminOrderDetailPage: React.FC = () => {
                   {order.customer.preferredContact}
                 </span>
               </div>
-
-              {order.customer.telegramHandle && (
-                <div>
-                  <span className="text-[10px] text-[#6F6A65] uppercase font-bold block">Telegram</span>
-                  <span className="font-medium text-[#222222]">{order.customer.telegramHandle}</span>
-                </div>
-              )}
 
               {order.customer.instagramAccount && (
                 <div>

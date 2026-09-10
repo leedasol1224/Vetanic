@@ -38,7 +38,7 @@ export function formatPaymentInstructions(order: OrderRecord): string {
 }
 
 export function formatDeliverySummary(order: OrderRecord): string {
-  if (order.delivery.deliveryMethod === 'express' || order.delivery.deliveryMethod === 'same_day') {
+  if (order.delivery.deliveryMethod === 'express') {
     return `Express Delivery to: ${order.delivery.deliveryAddress || ''} (S${order.delivery.postalCode || ''})`;
   }
   return `Standard Delivery to: ${order.delivery.deliveryAddress || ''} (S${order.delivery.postalCode || ''})`;

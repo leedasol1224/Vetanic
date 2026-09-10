@@ -45,7 +45,6 @@ export const OrderPage: React.FC = () => {
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [contactNumber, setContactNumber] = useState('');
-  const [telegramHandle, setTelegramHandle] = useState('');
   const [instagramAccount, setInstagramAccount] = useState('');
   const [preferredContact, setPreferredContact] = useState<ContactMethod>('WhatsApp');
   const [customerType, setCustomerType] = useState<CustomerType>('new');
@@ -158,7 +157,6 @@ export const OrderPage: React.FC = () => {
         fullName: fullName.trim(),
         email: email.trim(),
         contactNumber: contactNumber.trim(),
-        telegramHandle: telegramHandle.trim() || undefined,
         instagramAccount: instagramAccount.trim() || undefined,
         preferredContact,
         customerType
@@ -320,7 +318,7 @@ export const OrderPage: React.FC = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-bold text-charcoal uppercase tracking-wider mb-1.5">
                     Contact Number <span className="text-brand-600">*</span>
@@ -331,19 +329,6 @@ export const OrderPage: React.FC = () => {
                     value={contactNumber}
                     onChange={(e) => setContactNumber(e.target.value)}
                     placeholder="e.g. +65 9123 4567"
-                    className="w-full text-sm px-4 py-2.5 rounded-xl border border-[#DED7CE] focus:outline-none focus:ring-2 focus:ring-brand-600 focus:border-brand-600 bg-[#FAF7F2]"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-xs font-bold text-charcoal uppercase tracking-wider mb-1.5">
-                    Telegram Handle <span className="text-xs text-charcoal-muted font-normal">(Optional)</span>
-                  </label>
-                  <input
-                    type="text"
-                    value={telegramHandle}
-                    onChange={(e) => setTelegramHandle(e.target.value)}
-                    placeholder="e.g. @racheltan"
                     className="w-full text-sm px-4 py-2.5 rounded-xl border border-[#DED7CE] focus:outline-none focus:ring-2 focus:ring-brand-600 focus:border-brand-600 bg-[#FAF7F2]"
                   />
                 </div>
@@ -367,8 +352,8 @@ export const OrderPage: React.FC = () => {
                 <label className="block text-xs font-bold text-charcoal uppercase tracking-wider mb-2">
                   Preferred Contact Method <span className="text-brand-600">*</span>
                 </label>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2.5">
-                  {(['WhatsApp', 'Telegram', 'Instagram DM', 'SMS'] as ContactMethod[]).map((method) => (
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                  {(['WhatsApp', 'Instagram DM', 'SMS'] as ContactMethod[]).map((method) => (
                     <label
                       key={method}
                       className={`flex items-center gap-2 p-3 rounded-xl border text-xs font-semibold cursor-pointer transition-all ${

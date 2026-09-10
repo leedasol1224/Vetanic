@@ -5,9 +5,9 @@ export interface OrderItem {
   quantity: number;
 }
 
-export type ContactMethod = 'WhatsApp' | 'Telegram' | 'Instagram DM' | 'SMS';
+export type ContactMethod = 'WhatsApp' | 'Instagram DM' | 'SMS';
 export type CustomerType = 'new' | 'existing';
-export type DeliveryMethod = 'standard' | 'express' | 'same_day';
+export type DeliveryMethod = 'standard' | 'express';
 export type PaymentMethod = 'paynow' | 'bank_transfer';
 export type ReferralSource = 'Singapore Pet Festival' | 'Instagram' | 'Friend / Referral' | 'Other';
 
@@ -25,7 +25,6 @@ export interface CustomerDetails {
   fullName: string;
   email: string;
   contactNumber: string;
-  telegramHandle?: string;
   instagramAccount?: string;
   preferredContact: ContactMethod;
   customerType: CustomerType;

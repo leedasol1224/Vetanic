@@ -92,7 +92,7 @@ export async function sendBusinessEmailNotification(order: OrderRecord): Promise
 
   const subject = `New VETANIC Order — ${order.orderReference}`;
   const itemsText = order.items.map((i) => `• ${i.productName} × ${i.quantity} (SGD ${(i.unitPrice * i.quantity).toFixed(2)})`).join('\n');
-  const deliveryText = order.delivery.deliveryMethod === 'express' || order.delivery.deliveryMethod === 'same_day'
+  const deliveryText = order.delivery.deliveryMethod === 'express'
     ? `Express Delivery (${order.delivery.deliveryAddress || 'Address on file'}, S${order.delivery.postalCode || ''})`
     : `Standard Delivery (${order.delivery.deliveryAddress || 'Address on file'}, S${order.delivery.postalCode || ''})`;
 

@@ -4,7 +4,6 @@ import {
   Copy, 
   Check, 
   Mail, 
-  Send, 
   History, 
   Clock, 
   User, 
@@ -142,8 +141,7 @@ export const CustomerResponseSection: React.FC<CustomerResponseSectionProps> = (
 
   const handleManualLog = () => {
     let channel: CommunicationChannel = 'WhatsApp';
-    if (order.customer.preferredContact === 'Telegram') channel = 'Telegram';
-    else if (order.customer.preferredContact === 'Instagram DM') channel = 'Instagram';
+    if (order.customer.preferredContact === 'Instagram DM') channel = 'Instagram';
     else if (order.customer.preferredContact === 'SMS') channel = 'SMS';
 
     logCommunication(channel, 'Logged');
@@ -329,34 +327,20 @@ export const CustomerResponseSection: React.FC<CustomerResponseSectionProps> = (
           </button>
         </div>
 
-        {/* Telegram / Instagram Profile Shortcut if available */}
-        {(order.customer.telegramHandle || order.customer.instagramAccount) && (
+        {/* Instagram Profile Shortcut if available */}
+        {order.customer.instagramAccount && (
           <div className="flex items-center gap-2 pt-2 text-xs">
-            <span className="text-[#6F6A65] font-semibold">Social Handles:</span>
-            {order.customer.telegramHandle && (
-              <a
-                href={`https://t.me/${order.customer.telegramHandle.replace('@', '')}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => logCommunication('Telegram', 'Sent')}
-                className="inline-flex items-center gap-1 bg-[#0088cc]/10 text-[#0088cc] px-2.5 py-1 rounded-lg border border-[#0088cc]/20 font-semibold hover:bg-[#0088cc]/20"
-              >
-                <Send className="w-3 h-3" />
-                <span>Open {order.customer.telegramHandle}</span>
-              </a>
-            )}
-            {order.customer.instagramAccount && (
-              <a
-                href={`https://instagram.com/${order.customer.instagramAccount.replace('@', '')}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={() => logCommunication('Instagram', 'Sent')}
-                className="inline-flex items-center gap-1 bg-[#E1306C]/10 text-[#E1306C] px-2.5 py-1 rounded-lg border border-[#E1306C]/20 font-semibold hover:bg-[#E1306C]/20"
-              >
-                <InstagramIcon className="w-3 h-3" />
-                <span>Open {order.customer.instagramAccount}</span>
-              </a>
-            )}
+            <span className="text-[#6F6A65] font-semibold">Social Handle:</span>
+            <a
+              href={`https://instagram.com/${order.customer.instagramAccount.replace('@', '')}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              onClick={() => logCommunication('Instagram', 'Sent')}
+              className="inline-flex items-center gap-1 bg-[#E1306C]/10 text-[#E1306C] px-2.5 py-1 rounded-lg border border-[#E1306C]/20 font-semibold hover:bg-[#E1306C]/20"
+            >
+              <InstagramIcon className="w-3 h-3" />
+              <span>Open {order.customer.instagramAccount}</span>
+            </a>
           </div>
         )}
       </div>

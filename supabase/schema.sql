@@ -1,8 +1,9 @@
 -- =========================================================================
 -- VETANIC SINGAPORE: PRODUCTION SUPABASE DATABASE SCHEMA & MIGRATION
--- Revision: 2026-09-10 (Production Hardened)
--- Purpose: Strict RLS security, transactional RPC order creation, secure guest
---          lookup, exact product catalogue, canonical snake_case statuses,
+-- Revision: 2026-09-10 (Production Hardened - v3)
+-- Purpose: Strict RLS security (zero direct anon INSERT/SELECT on orders),
+--          hardened SECURITY DEFINER RPCs with safe search_path, server-side
+--          order input & consent validation, no product seed in migration,
 --          zero fake staff, zero invented stock.
 -- =========================================================================
 
@@ -10,7 +11,7 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
 -- -------------------------------------------------------------------------
--- 2. PRODUCTS TABLE
+-- 2. PRODUCTS TABLE (Schema only; Storefront uses app catalogue until migrated)
 -- -------------------------------------------------------------------------
 CREATE TABLE IF NOT EXISTS public.products (
     id TEXT PRIMARY KEY,
@@ -39,9 +40,8 @@ CREATE TABLE IF NOT EXISTS public.orders (
     customer_name TEXT NOT NULL,
     email TEXT NOT NULL,
     contact_number TEXT NOT NULL,
-    telegram_handle TEXT,
     instagram_account TEXT,
-    preferred_contact TEXT NOT NULL CHECK (preferred_contact IN ('WhatsApp', 'Telegram', 'Instagram DM', 'SMS')),
+    preferred_contact TEXT NOT NULL CHECK (preferred_contact IN ('WhatsApp', 'Instagram DM', 'SMS')),
     customer_type TEXT NOT NULL CHECK (customer_type IN ('new', 'existing')),
     delivery_method TEXT NOT NULL CHECK (delivery_method IN ('standard', 'express')),
     delivery_address TEXT NOT NULL,
@@ -49,7 +49,7 @@ CREATE TABLE IF NOT EXISTS public.orders (
     payment_method TEXT NOT NULL CHECK (payment_method IN ('paynow', 'bank_transfer')),
     referral_source TEXT NOT NULL,
     other_referral_source TEXT,
-    acknowledgement BOOLEAN DEFAULT true,
+    acknowledgement BOOLEAN NOT NULL DEFAULT true,
     status TEXT NOT NULL DEFAULT 'pending_confirmation' CHECK (
         status IN (
             'pending_confirmation',
@@ -185,12 +185,17 @@ CREATE INDEX IF NOT EXISTS idx_inventory_movements_created ON public.inventory_m
 CREATE INDEX IF NOT EXISTS idx_admin_notif_created ON public.admin_notifications(created_at DESC);
 CREATE INDEX IF NOT EXISTS idx_comm_logs_order ON public.communication_logs(order_id);
 CREATE INDEX IF NOT EXISTS idx_enquiries_created ON public.enquiries(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_admin_users_auth ON public.admin_users(auth_user_id);
 
 -- -------------------------------------------------------------------------
 -- 11. SECURITY DEFINER HELPER: IS ACTIVE ADMIN
 -- -------------------------------------------------------------------------
 CREATE OR REPLACE FUNCTION public.is_active_admin()
-RETURNS BOOLEAN AS $$
+RETURNS BOOLEAN
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public, pg_temp
+AS $$
 BEGIN
     RETURN EXISTS (
         SELECT 1 FROM public.admin_users
@@ -198,7 +203,10 @@ BEGIN
           AND active = true
     );
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$;
+
+REVOKE ALL ON FUNCTION public.is_active_admin() FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.is_active_admin() TO authenticated;
 
 -- -------------------------------------------------------------------------
 -- 12. ROW LEVEL SECURITY (RLS) POLICIES
@@ -226,8 +234,8 @@ CREATE POLICY "Admin manage products"
     USING (public.is_active_admin())
     WITH CHECK (public.is_active_admin());
 
--- ORDERS: Strict security. Public anon CANNOT list/select/update orders.
--- Authenticated admins can perform full management.
+-- ORDERS: Strict security. ZERO direct anonymous SELECT/INSERT/UPDATE/DELETE.
+-- Public orders are submitted strictly through the controlled submit_customer_order() RPC.
 DROP POLICY IF EXISTS "Public select orders" ON public.orders;
 DROP POLICY IF EXISTS "Public update orders" ON public.orders;
 DROP POLICY IF EXISTS "Public insert orders" ON public.orders;
@@ -239,13 +247,7 @@ CREATE POLICY "Admin full access orders"
     USING (public.is_active_admin())
     WITH CHECK (public.is_active_admin());
 
--- Fallback direct INSERT for public orders (if not calling submit RPC)
-CREATE POLICY "Public insert orders"
-    ON public.orders FOR INSERT
-    TO anon, authenticated
-    WITH CHECK (true);
-
--- ORDER ITEMS: Public anon CANNOT list/select/update.
+-- ORDER ITEMS: Strict security. ZERO direct anonymous SELECT/INSERT/UPDATE/DELETE.
 DROP POLICY IF EXISTS "Public select order items" ON public.order_items;
 DROP POLICY IF EXISTS "Public update order items" ON public.order_items;
 DROP POLICY IF EXISTS "Public insert order items" ON public.order_items;
@@ -256,11 +258,6 @@ CREATE POLICY "Admin full access order items"
     TO authenticated
     USING (public.is_active_admin())
     WITH CHECK (public.is_active_admin());
-
-CREATE POLICY "Public insert order items"
-    ON public.order_items FOR INSERT
-    TO anon, authenticated
-    WITH CHECK (true);
 
 -- INVENTORY MOVEMENTS: Strictly admin only. No public access.
 DROP POLICY IF EXISTS "Public access inventory movements" ON public.inventory_movements;
@@ -324,9 +321,14 @@ CREATE OR REPLACE FUNCTION public.submit_customer_order(
     p_referral_source TEXT,
     p_other_referral TEXT,
     p_items JSONB,
-    p_pricing JSONB
+    p_pricing JSONB,
+    p_acknowledgement BOOLEAN
 )
-RETURNS JSONB AS $$
+RETURNS JSONB
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public, pg_temp
+AS $$
 DECLARE
     v_order_id UUID;
     v_order_ref TEXT;
@@ -337,35 +339,116 @@ DECLARE
     v_total_items INT := 0;
     v_item_qty INT;
     v_item_price NUMERIC;
+    v_cust_name TEXT;
+    v_cust_email TEXT;
+    v_cust_phone TEXT;
+    v_pref_contact TEXT;
+    v_cust_type TEXT;
+    v_deliv_method TEXT;
+    v_deliv_addr TEXT;
+    v_postal TEXT;
+    v_est_total NUMERIC;
 BEGIN
-    -- 1. Generate unique human-readable order reference
+    -- 1. Input Validation: Explicit Consent / Acknowledgements
+    IF p_acknowledgement IS NOT TRUE THEN
+        RAISE EXCEPTION 'Customer must accept order acknowledgements and policy terms to submit an order.';
+    END IF;
+
+    -- 2. Input Validation: Customer Details
+    IF p_customer IS NULL THEN
+        RAISE EXCEPTION 'Customer details payload is required.';
+    END IF;
+
+    v_cust_name := TRIM(COALESCE(p_customer->>'fullName', ''));
+    IF LENGTH(v_cust_name) < 2 THEN
+        RAISE EXCEPTION 'Customer full name is required (minimum 2 characters).';
+    END IF;
+
+    v_cust_email := TRIM(COALESCE(p_customer->>'email', ''));
+    IF NOT (v_cust_email ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$') THEN
+        RAISE EXCEPTION 'A valid email address is required.';
+    END IF;
+
+    v_cust_phone := TRIM(COALESCE(p_customer->>'contactNumber', ''));
+    IF LENGTH(REGEXP_REPLACE(v_cust_phone, '\D', '', 'g')) < 8 THEN
+        RAISE EXCEPTION 'A valid contact number with at least 8 digits is required.';
+    END IF;
+
+    v_pref_contact := COALESCE(p_customer->>'preferredContact', '');
+    IF v_pref_contact NOT IN ('WhatsApp', 'Instagram DM', 'SMS') THEN
+        RAISE EXCEPTION 'Invalid preferred contact method. Allowed: WhatsApp, Instagram DM, SMS.';
+    END IF;
+
+    v_cust_type := COALESCE(p_customer->>'customerType', '');
+    IF v_cust_type NOT IN ('new', 'existing') THEN
+        RAISE EXCEPTION 'Invalid customer type. Allowed: new, existing.';
+    END IF;
+
+    -- 3. Input Validation: Delivery Details
+    IF p_delivery IS NULL THEN
+        RAISE EXCEPTION 'Delivery details payload is required.';
+    END IF;
+
+    v_deliv_method := COALESCE(p_delivery->>'deliveryMethod', '');
+    IF v_deliv_method NOT IN ('standard', 'express') THEN
+        RAISE EXCEPTION 'Delivery method must be standard or express.';
+    END IF;
+
+    v_deliv_addr := TRIM(COALESCE(p_delivery->>'deliveryAddress', ''));
+    IF LENGTH(v_deliv_addr) < 5 THEN
+        RAISE EXCEPTION 'Delivery address is required (minimum 5 characters).';
+    END IF;
+
+    v_postal := TRIM(COALESCE(p_delivery->>'postalCode', ''));
+    IF NOT (v_postal ~ '^[0-9]{6}$') THEN
+        RAISE EXCEPTION 'A valid 6-digit Singapore postal code is required.';
+    END IF;
+
+    -- 4. Input Validation: Payment Preference
+    IF p_payment_preference NOT IN ('paynow', 'bank_transfer') THEN
+        RAISE EXCEPTION 'Payment method must be paynow or bank_transfer.';
+    END IF;
+
+    -- 5. Input Validation: Order Items (Sanity & Payload bounds)
+    IF p_items IS NULL OR jsonb_array_length(p_items) = 0 THEN
+        RAISE EXCEPTION 'Cannot submit order with empty items list.';
+    END IF;
+
+    IF jsonb_array_length(p_items) > 50 THEN
+        RAISE EXCEPTION 'Order item limit exceeded (maximum 50 items per order).';
+    END IF;
+
+    FOR v_item IN SELECT * FROM jsonb_array_elements(p_items) LOOP
+        IF v_item->>'productId' IS NULL OR TRIM(v_item->>'productId') = '' THEN
+            RAISE EXCEPTION 'Each order item must specify a valid productId.';
+        END IF;
+
+        IF v_item->>'quantity' IS NULL OR NOT (v_item->>'quantity' ~ '^[1-9][0-9]*$') THEN
+            RAISE EXCEPTION 'Item quantity must be a positive integer.';
+        END IF;
+
+        v_item_qty := (v_item->>'quantity')::INT;
+        IF v_item_qty < 1 OR v_item_qty > 100 THEN
+            RAISE EXCEPTION 'Item quantity per line must be between 1 and 100.';
+        END IF;
+
+        v_total_items := v_total_items + v_item_qty;
+    END LOOP;
+
+    -- 6. Generate unique human-readable order reference
     v_order_ref := 'VET-' || v_year || '-' || v_rand_num::TEXT;
-    
-    -- Ensure reference uniqueness in edge case of collision
     WHILE EXISTS (SELECT 1 FROM public.orders WHERE order_reference = v_order_ref) LOOP
         v_rand_num := FLOOR(1000 + RANDOM() * 9000)::INT;
         v_order_ref := 'VET-' || v_year || '-' || v_rand_num::TEXT;
     END LOOP;
 
-    -- 2. Validate items
-    IF p_items IS NULL OR jsonb_array_length(p_items) = 0 THEN
-        RAISE EXCEPTION 'Cannot submit order with empty items list.';
-    END IF;
-
-    -- Calculate total item count
-    FOR v_item IN SELECT * FROM jsonb_array_elements(p_items) LOOP
-        v_item_qty := COALESCE((v_item->>'quantity')::INT, 1);
-        v_total_items := v_total_items + v_item_qty;
-    END LOOP;
-
-    -- 3. Insert primary orders record (Pending Confirmation, no stock deduction)
+    -- 7. Insert primary orders record (Status: pending_confirmation)
     INSERT INTO public.orders (
         order_reference,
         created_at,
         customer_name,
         email,
         contact_number,
-        telegram_handle,
         instagram_account,
         preferred_contact,
         customer_type,
@@ -385,18 +468,17 @@ BEGIN
     ) VALUES (
         v_order_ref,
         v_created_at,
-        TRIM(p_customer->>'fullName'),
-        TRIM(p_customer->>'email'),
-        TRIM(p_customer->>'contactNumber'),
-        NULLIF(TRIM(p_customer->>'telegramHandle'), ''),
+        v_cust_name,
+        v_cust_email,
+        v_cust_phone,
         NULLIF(TRIM(p_customer->>'instagramAccount'), ''),
-        p_customer->>'preferredContact',
-        p_customer->>'customerType',
-        p_delivery->>'deliveryMethod',
-        TRIM(p_delivery->>'deliveryAddress'),
-        TRIM(p_delivery->>'postalCode'),
+        v_pref_contact,
+        v_cust_type,
+        v_deliv_method,
+        v_deliv_addr,
+        v_postal,
         p_payment_preference,
-        p_referral_source,
+        COALESCE(p_referral_source, 'Other'),
         NULLIF(TRIM(p_other_referral), ''),
         true,
         'pending_confirmation',
@@ -408,10 +490,10 @@ BEGIN
     )
     RETURNING id INTO v_order_id;
 
-    -- 4. Insert all order items atomically
+    -- 8. Insert all order items atomically
     FOR v_item IN SELECT * FROM jsonb_array_elements(p_items) LOOP
-        v_item_qty := COALESCE((v_item->>'quantity')::INT, 1);
-        v_item_price := COALESCE((v_item->>'unitPrice')::NUMERIC, 0.00);
+        v_item_qty := (v_item->>'quantity')::INT;
+        v_item_price := COALESCE(NULLIF(v_item->>'unitPrice', '')::NUMERIC, 0.00);
 
         INSERT INTO public.order_items (
             order_id,
@@ -423,16 +505,17 @@ BEGIN
             created_at
         ) VALUES (
             v_order_id,
-            v_item->>'productId',
-            v_item->>'productName',
-            COALESCE(v_item->>'packageSize', ''),
+            TRIM(v_item->>'productId'),
+            COALESCE(TRIM(v_item->>'productName'), 'Product Item'),
+            COALESCE(TRIM(v_item->>'packageSize'), ''),
             v_item_qty,
             v_item_price,
             v_created_at
         );
     END LOOP;
 
-    -- 5. Create internal admin notification row
+    -- 9. Create internal admin notification row
+    v_est_total := COALESCE(NULLIF(p_pricing->>'estimatedTotal', '')::NUMERIC, 0.00);
     INSERT INTO public.admin_notifications (
         order_id,
         order_reference,
@@ -446,16 +529,16 @@ BEGIN
     ) VALUES (
         v_order_id,
         v_order_ref,
-        TRIM(p_customer->>'fullName'),
-        COALESCE((p_pricing->>'estimatedTotal')::NUMERIC, 0.00),
+        v_cust_name,
+        v_est_total,
         v_total_items,
         false,
         'new_order',
-        TRIM(p_customer->>'fullName') || ' placed order ' || v_order_ref,
+        v_cust_name || ' placed order ' || v_order_ref || ' (' || v_total_items::TEXT || ' items)',
         v_created_at
     );
 
-    -- 6. Return response payload
+    -- 10. Return success response payload
     RETURN jsonb_build_object(
         'success', true,
         'order_id', v_order_id,
@@ -465,9 +548,10 @@ BEGIN
         'total_item_count', v_total_items
     );
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$;
 
-GRANT EXECUTE ON FUNCTION public.submit_customer_order TO anon, authenticated;
+REVOKE ALL ON FUNCTION public.submit_customer_order(JSONB, JSONB, TEXT, TEXT, TEXT, JSONB, JSONB, BOOLEAN) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.submit_customer_order(JSONB, JSONB, TEXT, TEXT, TEXT, JSONB, JSONB, BOOLEAN) TO anon, authenticated;
 
 -- -------------------------------------------------------------------------
 -- 14. SECURE GUEST RPC: LOOKUP GUEST ORDER (Requires Reference + Contact Match)
@@ -476,15 +560,22 @@ CREATE OR REPLACE FUNCTION public.lookup_guest_order(
     p_order_reference TEXT,
     p_contact_number TEXT
 )
-RETURNS JSONB AS $$
+RETURNS JSONB
+LANGUAGE plpgsql
+SECURITY DEFINER
+SET search_path = public, pg_temp
+AS $$
 DECLARE
     v_order RECORD;
     v_items JSONB;
-    v_clean_ref TEXT := UPPER(TRIM(p_order_reference));
-    v_clean_phone TEXT := REGEXP_REPLACE(TRIM(p_contact_number), '\D', '', 'g');
+    v_clean_ref TEXT := UPPER(TRIM(COALESCE(p_order_reference, '')));
+    v_clean_phone TEXT := REGEXP_REPLACE(TRIM(COALESCE(p_contact_number, '')), '\D', '', 'g');
 BEGIN
-    IF v_clean_ref IS NULL OR v_clean_ref = '' OR v_clean_phone IS NULL OR v_clean_phone = '' THEN
-        RETURN jsonb_build_object('success', false, 'error', 'Invalid reference or contact number.');
+    IF v_clean_ref = '' OR v_clean_phone = '' THEN
+        RETURN jsonb_build_object(
+            'success', false,
+            'error', 'We could not find an order matching those details. Please verify your reference and mobile number.'
+        );
     END IF;
 
     -- Extract last 8 digits for Singapore phone matching
@@ -539,169 +630,7 @@ BEGIN
         )
     );
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$;
 
-GRANT EXECUTE ON FUNCTION public.lookup_guest_order TO anon, authenticated;
-
--- -------------------------------------------------------------------------
--- 15. INITIAL CATALOGUE SEED (Derived Exactly From Current Website Products)
--- -------------------------------------------------------------------------
-INSERT INTO public.products (id, name, slug, sku, pet_type, category, short_description, package_size, image_url, regular_price, launch_price, is_available, display_order)
-VALUES
-    (
-        'fresh-omega-3-mini',
-        'Fresh Omega-3 Mini',
-        'fresh-omega-3-mini',
-        'VET-OMG-MINI',
-        'both',
-        'skin-coat',
-        'Pure, German KD Pharma rTG Omega-3 oil (119.5mg EPA+DHA) in an easy-to-swallow 1.0 cm mini capsule.',
-        '9.06g (151mg × 60 capsules)',
-        '/images/products/fresh-omega-3-mini.png',
-        24.90,
-        22.90,
-        true,
-        1
-    ),
-    (
-        'joint-support',
-        'Joint Support ver 2.0',
-        'joint-support',
-        'VET-JNT-SUPP',
-        'dog',
-        'joint-care',
-        'Meat-free sweet potato puree formula with Boswellia, OptiMSM, Lilium extract, and NAG for dual joint & cartilage care in dogs.',
-        '150g (10g × 15 sticks)',
-        '/images/products/joint-support.png',
-        24.90,
-        22.90,
-        true,
-        2
-    ),
-    (
-        'probiotics',
-        'Postbiotics for Dog Digestion',
-        'probiotics',
-        'VET-DIG-PROB',
-        'dog',
-        'digestion',
-        '5-strain patented lactic acid bacteria + 3rd generation heat-treated postbiotics puree for comprehensive canine gut flora support.',
-        '150g (10g × 15 sticks)',
-        '/images/products/probiotics.png',
-        24.90,
-        22.90,
-        true,
-        3
-    ),
-    (
-        'clear-eyes',
-        'Clear Eyes & Tear Stain Care',
-        'clear-eyes',
-        'VET-EYE-CARE',
-        'dog',
-        'eye-care',
-        'Veterinary-curated dual eye & liver support puree with FloraGLO Lutein, Bilberry, Milk Thistle, and Astaxanthin.',
-        '150g (10g × 15 sticks)',
-        '/images/products/clear-eyes.png',
-        34.90,
-        32.90,
-        true,
-        4
-    ),
-    (
-        'urena-clear',
-        'Urena Clear (Cat Urinary & Kidney)',
-        'urena-clear',
-        'VET-CAT-UREN',
-        'cat',
-        'kidney-urinary',
-        'Meat-free, high-moisture Korean purple sweet potato puree with Cranberry, D-Mannose, GABA, and Chitosan for feline renal and urinary health.',
-        '150g (10g × 15 sticks)',
-        '/images/products/urena-clear.png',
-        34.90,
-        32.90,
-        true,
-        5
-    ),
-    (
-        'hairball-care',
-        'Hairball Care Puree Paste',
-        'hairball-care',
-        'VET-CAT-HAIR',
-        'cat',
-        'hairball',
-        'Dietary fiber paste with Oat Fiber, Psyllium Husk, FOS, and LPL2 postbiotics for smooth feline digestive transit.',
-        '84g (14g × 6 sticks)',
-        '/images/products/hairball-care.png',
-        34.90,
-        32.90,
-        true,
-        6
-    ),
-    (
-        'fresh-omega-3-premium',
-        'Fresh Omega-3 Premium',
-        'fresh-omega-3-premium',
-        'VET-OMG-PREM',
-        'both',
-        'skin-coat',
-        'High-potency German KD Pharma rTG fish oil (480mg EPA+DHA) formulated for medium & large companion animals.',
-        '36.24g (604mg × 60 capsules)',
-        '/images/products/fresh-omega-3-premium.png',
-        34.90,
-        32.90,
-        true,
-        7
-    ),
-    (
-        'soft-dental-chew',
-        'Soft Dental Chew (Yogurt Flavor)',
-        'soft-dental-chew',
-        'VET-DNT-CHEW',
-        'dog',
-        'dental',
-        'Pliable, gentle yogurt-flavored dental chew jointly developed with veterinarians for daily canine plaque care.',
-        '300g (10g × 30 sticks)',
-        '/images/products/soft-dental-chew.png',
-        34.90,
-        32.90,
-        true,
-        8
-    ),
-    (
-        'sweet-potato-pumpkin-treats',
-        'Paju''s Sweet Potato & Pumpkin Treats',
-        'sweet-potato-pumpkin-treats',
-        'VET-TRT-PUMP',
-        'dog',
-        'treats',
-        'Naturally delicious, meat-free oven-baked reward snacks made with 100% Korean agricultural produce from Paju.',
-        '90g',
-        '/images/products/sweet-potato-pumpkin-treats.png',
-        13.90,
-        11.90,
-        true,
-        9
-    ),
-    (
-        'freeze-dried-vegetables',
-        '100% Korean Freeze-Dried Vegetables',
-        'freeze-dried-vegetables',
-        'VET-TRT-VEG',
-        'both',
-        'treats',
-        'Nutrient-rich, low-calorie 4-veggie topper crafted with 100% Korean-grown agricultural produce.',
-        '60g',
-        '/images/products/freeze-dried-vegetables.png',
-        18.90,
-        16.90,
-        true,
-        10
-    )
-ON CONFLICT (id) DO UPDATE SET
-    name = EXCLUDED.name,
-    sku = EXCLUDED.sku,
-    regular_price = EXCLUDED.regular_price,
-    launch_price = EXCLUDED.launch_price,
-    is_available = EXCLUDED.is_available,
-    display_order = EXCLUDED.display_order;
+REVOKE ALL ON FUNCTION public.lookup_guest_order(TEXT, TEXT) FROM PUBLIC;
+GRANT EXECUTE ON FUNCTION public.lookup_guest_order(TEXT, TEXT) TO anon, authenticated;

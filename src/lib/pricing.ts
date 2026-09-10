@@ -160,7 +160,7 @@ export function calculateOrderPricing(
   const freeDeliveryThresholdDelta = Number(Math.max(0, threshold - productTotal).toFixed(2));
 
   let deliveryFee = 0;
-  if (deliveryMethod === 'express' || deliveryMethod === 'same_day') {
+  if (deliveryMethod === 'express') {
     deliveryFee = DELIVERY_CONFIG.options.express.baseFee;
   } else {
     // Standard Local Delivery

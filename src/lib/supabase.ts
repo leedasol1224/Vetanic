@@ -3,8 +3,7 @@ import { OrderSubmission, OrderRecord, OrderStatus, DeliveryMethod, ContactMetho
 import { ContactEnquiry } from '../types/enquiry';
 import { AdminNotification } from '../types/notification';
 import { CommunicationLog } from '../types/communication';
-import { saveLocalOrder, saveLocalEnquiry, generateOrderReference, getOrders, saveOrdersToStorage } from './storage';
-import { createOrderNotification } from './notifications';
+import { saveLocalOrder, saveLocalEnquiry, getOrders, saveOrdersToStorage } from './storage';
 import { deductOrderStockOnPayment, restoreOrderStockOnCancellation } from './inventory';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
@@ -28,7 +27,6 @@ interface DbOrderRow {
   customer_name: string;
   email: string;
   contact_number: string;
-  telegram_handle?: string | null;
   instagram_account?: string | null;
   preferred_contact: string;
   customer_type: string;
@@ -85,7 +83,6 @@ export function mapDbRowToOrderRecord(row: DbOrderRow): OrderRecord {
       fullName: row.customer_name,
       email: row.email,
       contactNumber: row.contact_number,
-      telegramHandle: row.telegram_handle || undefined,
       instagramAccount: row.instagram_account || undefined,
       preferredContact: row.preferred_contact as ContactMethod,
       customerType: row.customer_type as CustomerType
@@ -121,8 +118,12 @@ export function mapDbRowToOrderRecord(row: DbOrderRow): OrderRecord {
  * presenting a fake success screen to the customer.
  */
 export async function submitOrderRequest(orderData: OrderSubmission): Promise<OrderRecord> {
-  const orderRef = generateOrderReference();
   const totalCount = orderData.items.reduce((sum, item) => sum + item.quantity, 0);
+  const isAcknowledged = Boolean(
+    orderData.acknowledgements?.stockAvailabilityConfirmed &&
+    orderData.acknowledgements?.petAllergyChecked &&
+    orderData.acknowledgements?.wellnessSupplementAcknowledged
+  );
 
   if (isSupabaseConfigured && supabase) {
     // 1. Try atomic PostgreSQL RPC first
@@ -132,7 +133,6 @@ export async function submitOrderRequest(orderData: OrderSubmission): Promise<Or
           fullName: orderData.customer.fullName,
           email: orderData.customer.email,
           contactNumber: orderData.customer.contactNumber,
-          telegramHandle: orderData.customer.telegramHandle || null,
           instagramAccount: orderData.customer.instagramAccount || null,
           preferredContact: orderData.customer.preferredContact,
           customerType: orderData.customer.customerType
@@ -152,7 +152,8 @@ export async function submitOrderRequest(orderData: OrderSubmission): Promise<Or
           quantity: item.quantity,
           unitPrice: item.unitPrice || 0
         })),
-        p_pricing: orderData.pricing || null
+        p_pricing: orderData.pricing || null,
+        p_acknowledgement: isAcknowledged
       });
 
       if (!rpcError && rpcData && rpcData.success) {
@@ -181,97 +182,13 @@ export async function submitOrderRequest(orderData: OrderSubmission): Promise<Or
       }
 
       if (rpcError) {
-        console.warn('submit_customer_order RPC failed, attempting direct table insert fallback:', rpcError);
+        console.error('submit_customer_order RPC error:', rpcError);
+        throw new Error(rpcError.message || 'Order submission rejected by database');
       }
-    } catch (rpcEx) {
-      console.warn('RPC execution exception, trying direct insert fallback:', rpcEx);
+    } catch (rpcEx: unknown) {
+      console.error('RPC execution exception:', rpcEx);
+      throw rpcEx;
     }
-
-    // 2. Direct table insert fallback
-    const { data: orderRow, error: orderError } = await supabase
-      .from('orders')
-      .insert({
-        order_reference: orderRef,
-        customer_name: orderData.customer.fullName,
-        email: orderData.customer.email,
-        contact_number: orderData.customer.contactNumber,
-        telegram_handle: orderData.customer.telegramHandle || null,
-        instagram_account: orderData.customer.instagramAccount || null,
-        preferred_contact: orderData.customer.preferredContact,
-        customer_type: orderData.customer.customerType,
-        delivery_method: orderData.delivery.deliveryMethod,
-        delivery_address: orderData.delivery.deliveryAddress || null,
-        postal_code: orderData.delivery.postalCode || null,
-        payment_method: orderData.paymentPreference,
-        referral_source: orderData.referralSource,
-        other_referral_source: orderData.otherReferralSource || null,
-        acknowledgement: true,
-        status: 'pending_confirmation',
-        pricing: orderData.pricing || null,
-        total_item_count: totalCount,
-        internal_notes: '',
-        inventory_deducted: false,
-        inventory_restored: false
-      })
-      .select('id, created_at')
-      .single();
-
-    if (orderError || !orderRow) {
-      console.error('Supabase order insert failed:', orderError);
-      throw new Error(`Order insertion failed: ${orderError?.message || 'Unknown database error'}`);
-    }
-
-    // Insert order items
-    if (orderData.items.length > 0) {
-      const orderItemsPayload = orderData.items.map((item) => ({
-        order_id: orderRow.id,
-        product_id: item.productId,
-        product_name: item.productName,
-        package_size: item.packageSize,
-        quantity: item.quantity,
-        unit_price: item.unitPrice || 0
-      }));
-
-      const { error: itemsError } = await supabase
-        .from('order_items')
-        .insert(orderItemsPayload);
-
-      if (itemsError) {
-        console.error('Supabase order items insert failed:', itemsError);
-        await supabase.from('orders').delete().eq('id', orderRow.id);
-        throw new Error(`Order items insertion failed: ${itemsError.message}`);
-      }
-    }
-
-    const createdRecord: OrderRecord = {
-      ...orderData,
-      id: orderRow.id,
-      orderReference: orderRef,
-      createdAt: orderRow.created_at || new Date().toISOString(),
-      status: 'Pending Confirmation',
-      totalItemCount: totalCount,
-      internalNotes: '',
-      inventoryDeducted: false,
-      inventoryRestored: false
-    };
-
-    // Cache locally
-    try {
-      const localOrders = getOrders();
-      localOrders.unshift(createdRecord);
-      saveOrdersToStorage(localOrders);
-    } catch {
-      // Non-critical local storage error
-    }
-
-    // Trigger Admin Notification in the background
-    try {
-      createOrderNotification(createdRecord);
-    } catch (notifErr) {
-      console.warn('Background notification error (non-fatal):', notifErr);
-    }
-
-    return createdRecord;
   }
 
   // Fallback to local storage only if Supabase is completely unconfigured (offline / local demo)
