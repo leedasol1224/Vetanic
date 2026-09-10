@@ -1,7 +1,6 @@
 import React from 'react';
 import { FileText, ArrowLeft } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { InstagramIcon } from '../components/common/Icons';
 import { POLICY_CONFIG } from '../data/legalPolicies';
 
 export const TermsPolicyPage: React.FC = () => {
@@ -295,18 +294,31 @@ export const TermsPolicyPage: React.FC = () => {
               <span>Contact</span>
             </h2>
             <p>
-              For questions regarding an order or these Terms & Conditions, contact:
+              For questions regarding your order or these Terms & Conditions:
             </p>
-            <div>
-              <a
-                href={POLICY_CONFIG.contactInstagramUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2.5 bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs uppercase tracking-wider py-3.5 px-6 rounded-2xl shadow-sm transition-all"
-              >
-                <InstagramIcon className="w-4 h-4 text-white" />
-                <span>Instagram: {POLICY_CONFIG.contactInstagramHandle}</span>
-              </a>
+
+            <div className="p-4 rounded-2xl bg-[#FAF7F2] border border-[#DED7CE] text-xs space-y-2.5">
+              <div className="flex items-center gap-2">
+                <strong className="text-charcoal w-20">Email:</strong>
+                <a
+                  href={`mailto:${POLICY_CONFIG.businessEmail}`}
+                  className="text-brand-600 font-bold hover:underline"
+                >
+                  {POLICY_CONFIG.businessEmail}
+                </a>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <strong className="text-charcoal w-20">Instagram:</strong>
+                <a
+                  href={POLICY_CONFIG.contactInstagramUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-brand-600 font-bold hover:underline"
+                >
+                  {POLICY_CONFIG.contactInstagramHandle}
+                </a>
+              </div>
             </div>
           </section>
 

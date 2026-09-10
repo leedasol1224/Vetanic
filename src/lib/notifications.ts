@@ -77,16 +77,14 @@ export function createOrderNotification(order: OrderRecord): AdminNotification {
  * Failures are safely isolated so customer orders never fail.
  */
 export async function sendBusinessEmailNotification(order: OrderRecord): Promise<{ success: boolean; error?: string }> {
-  const businessEmail = import.meta.env.VITE_BUSINESS_NOTIFICATION_EMAIL || 'orders@vetanic.sg';
+  const businessEmail = import.meta.env.VITE_BUSINESS_NOTIFICATION_EMAIL || 'vetanicsg@gmail.com';
   const appBaseUrl = typeof window !== 'undefined' ? window.location.origin : 'https://vetanic.vercel.app';
   const orderAdminLink = `${appBaseUrl}/business/orders/${order.id}`;
 
   const subject = `New VETANIC Order — ${order.orderReference}`;
   const itemsText = order.items.map((i) => `• ${i.productName} × ${i.quantity} (SGD ${(i.unitPrice * i.quantity).toFixed(2)})`).join('\n');
-  const deliveryText = order.delivery.deliveryMethod === 'self_collection'
-    ? 'Self-collection @ Novena MRT'
-    : order.delivery.deliveryMethod === 'same_day'
-    ? `Same-day Delivery (${order.delivery.deliveryAddress || 'Address on file'})`
+  const deliveryText = order.delivery.deliveryMethod === 'express' || order.delivery.deliveryMethod === 'same_day'
+    ? `Express Delivery (${order.delivery.deliveryAddress || 'Address on file'}, S${order.delivery.postalCode || ''})`
     : `Standard Delivery (${order.delivery.deliveryAddress || 'Address on file'}, S${order.delivery.postalCode || ''})`;
 
   const emailBody = `New order received.

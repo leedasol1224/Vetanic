@@ -1,7 +1,6 @@
 import React from 'react';
 import { ArrowLeft, Lock } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { InstagramIcon } from '../components/common/Icons';
 import { POLICY_CONFIG } from '../data/legalPolicies';
 
 export const PrivacyPolicyPage: React.FC = () => {
@@ -270,26 +269,43 @@ export const PrivacyPolicyPage: React.FC = () => {
             </p>
           </section>
 
-          {/* 14. Contact */}
+          {/* 14. Contact Us */}
           <section className="space-y-4 pt-6">
             <h2 className="text-base sm:text-lg font-serif font-bold text-charcoal flex items-center gap-2">
               <span className="text-brand-600 font-mono text-sm">14.</span>
-              <span>Contact</span>
+              <span>Contact Us</span>
             </h2>
             <p>
-              For privacy-related questions or requests, contact:
+              For questions, requests or concerns regarding your personal data or this Privacy Policy, please contact us at:
             </p>
-            <div>
-              <a
-                href={POLICY_CONFIG.contactInstagramUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2.5 bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs uppercase tracking-wider py-3.5 px-6 rounded-2xl shadow-sm transition-all"
-              >
-                <InstagramIcon className="w-4 h-4 text-white" />
-                <span>Instagram: {POLICY_CONFIG.contactInstagramHandle}</span>
-              </a>
+
+            <div className="p-4 rounded-2xl bg-[#FAF7F2] border border-[#DED7CE] text-xs space-y-2.5">
+              <div className="flex items-center gap-2">
+                <strong className="text-charcoal w-20">Email:</strong>
+                <a
+                  href={`mailto:${POLICY_CONFIG.businessEmail}`}
+                  className="text-brand-600 font-bold hover:underline"
+                >
+                  {POLICY_CONFIG.businessEmail}
+                </a>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <strong className="text-charcoal w-20">Instagram:</strong>
+                <a
+                  href={POLICY_CONFIG.contactInstagramUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-brand-600 font-bold hover:underline"
+                >
+                  {POLICY_CONFIG.contactInstagramHandle}
+                </a>
+              </div>
             </div>
+
+            <p className="text-xs text-charcoal-muted leading-relaxed">
+              For privacy-related requests involving access, correction, withdrawal of consent or personal information, please contact us via email so the request can be properly verified and documented.
+            </p>
           </section>
 
         </div>

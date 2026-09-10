@@ -1,7 +1,6 @@
 import React from 'react';
 import { ArrowLeft, RotateCcw } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { InstagramIcon } from '../components/common/Icons';
 import { POLICY_CONFIG } from '../data/legalPolicies';
 
 export const ReturnsPolicyPage: React.FC = () => {
@@ -152,32 +151,44 @@ export const ReturnsPolicyPage: React.FC = () => {
             </h2>
             
             <p>
-              Reach out to our customer care team on Instagram direct message:
+              Customers may request assistance through:
             </p>
 
+            <div className="p-4 rounded-2xl bg-[#FAF7F2] border border-[#DED7CE] text-xs space-y-2.5">
+              <div className="flex items-center gap-2">
+                <strong className="text-charcoal w-20">Instagram:</strong>
+                <a
+                  href={POLICY_CONFIG.contactInstagramUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-brand-600 font-bold hover:underline"
+                >
+                  {POLICY_CONFIG.contactInstagramHandle}
+                </a>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <strong className="text-charcoal w-20">Email:</strong>
+                <a
+                  href={`mailto:${POLICY_CONFIG.businessEmail}`}
+                  className="text-brand-600 font-bold hover:underline"
+                >
+                  {POLICY_CONFIG.businessEmail}
+                </a>
+              </div>
+            </div>
+
             <div className="p-5 rounded-2xl bg-[#FAF7F2] border border-[#DED7CE] space-y-3">
-              <div className="font-bold text-charcoal">Please provide:</div>
+              <div className="font-bold text-charcoal text-xs">For a return or exchange request, please provide:</div>
               <ul className="space-y-1.5 text-xs text-charcoal-muted list-disc list-inside">
                 <li>Order Reference (e.g. VET-2026-0048)</li>
                 <li>Product concerned</li>
-                <li>Reason for the request</li>
-                <li>Photographs where the product is incorrect, damaged or defective</li>
+                <li>Reason for request</li>
+                <li>Relevant photographs where the product is incorrect, damaged or defective</li>
               </ul>
             </div>
 
-            <div className="pt-2">
-              <a
-                href={POLICY_CONFIG.contactInstagramUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2.5 bg-brand-600 hover:bg-brand-700 text-white font-bold text-xs uppercase tracking-wider py-3.5 px-6 rounded-2xl shadow-sm transition-all"
-              >
-                <InstagramIcon className="w-4 h-4 text-white" />
-                <span>Contact {POLICY_CONFIG.contactInstagramHandle}</span>
-              </a>
-            </div>
-
-            <p className="text-xs text-charcoal-muted italic">
+            <p className="text-xs text-charcoal-muted italic pt-1">
               Please contact us before arranging a return. Unauthorised returns may not be accepted.
             </p>
           </section>
