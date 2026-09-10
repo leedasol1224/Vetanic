@@ -8,7 +8,7 @@ export const BusinessLoginPage: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [email, setEmail] = useState('admin@vetanic.sg');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
@@ -97,7 +97,7 @@ export const BusinessLoginPage: React.FC = () => {
                   required
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="admin@vetanic.sg"
+                  placeholder="e.g. admin@vetanic.sg"
                   className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-[#DED7CE] bg-[#FAF7F2] text-xs font-medium text-[#222222] focus:outline-none focus:ring-2 focus:ring-[#9E2328] focus:border-[#9E2328] transition-all"
                 />
               </div>
@@ -147,17 +147,6 @@ export const BusinessLoginPage: React.FC = () => {
               )}
             </button>
           </form>
-
-          {/* Quick Staff Helper */}
-          <div className="pt-4 border-t border-[#DED7CE]/80 text-[11px] text-[#6F6A65] space-y-1.5 bg-[#FAF7F2] p-3.5 rounded-2xl">
-            <div className="font-bold text-[#222222] flex items-center gap-1.5">
-              <ShieldCheck className="w-3.5 h-3.5 text-[#9E2328]" />
-              <span>Internal Operations Key</span>
-            </div>
-            <p className="leading-relaxed">
-              Default staff credentials: <code className="bg-white px-1.5 py-0.5 rounded border border-[#DED7CE] text-[#9E2328] font-bold">admin@vetanic.sg</code> with password <code className="bg-white px-1.5 py-0.5 rounded border border-[#DED7CE] text-[#9E2328] font-bold">vetanic2026</code>.
-            </p>
-          </div>
         </div>
       </div>
 
