@@ -1,125 +1,78 @@
 import { defineConfig, loadEnv } from 'vite';
 import react from '@vitejs/plugin-react';
-import crypto from 'crypto';
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
 
+  // Propagate env vars to process.env for api handlers in dev mode
+  Object.entries(env).forEach(([k, v]) => {
+    if (!process.env[k]) process.env[k] = v;
+  });
+
   return {
     plugins: [
       react(),
       {
-        name: 'admin-auth-dev-server',
+        name: 'admin-api-dev-server',
         configureServer(server) {
-          server.middlewares.use((req, res, next) => {
-            if (req.url && req.url.startsWith('/api/admin-auth')) {
-              const configuredPassword = env.ADMIN_ACCESS_PASSWORD || process.env.ADMIN_ACCESS_PASSWORD || 'doridori';
-              const sessionSecret = env.ADMIN_SESSION_SECRET || configuredPassword || 'vetanic_dev_secret';
+          server.middlewares.use(async (req, res, next) => {
+            if (req.url && req.url.startsWith('/api/')) {
+              const urlPath = req.url.split('?')[0];
+              const queryStr = req.url.includes('?') ? req.url.split('?')[1] : '';
+              const query = Object.fromEntries(new URLSearchParams(queryStr));
 
-              res.setHeader('Content-Type', 'application/json');
-
-              if (req.method === 'GET') {
-                const authHeader = req.headers.authorization || '';
-                const token = authHeader.startsWith('Bearer ') ? authHeader.substring(7).trim() : '';
-
-                if (!token) {
-                  res.statusCode = 401;
-                  res.end(JSON.stringify({ valid: false, error: 'No session token provided' }));
-                  return;
-                }
-
-                try {
-                  const parts = token.split('.');
-                  if (parts.length === 3) {
-                    const [header, body, sig] = parts;
-                    const expectedSig = crypto.createHmac('sha256', sessionSecret).update(`${header}.${body}`).digest('base64url');
-                    if (crypto.timingSafeEqual(Buffer.from(sig), Buffer.from(expectedSig))) {
-                      const payload = JSON.parse(Buffer.from(body, 'base64url').toString('utf8'));
-                      if (!payload.exp || payload.exp >= Math.floor(Date.now() / 1000)) {
-                        res.statusCode = 200;
-                        res.end(JSON.stringify({
-                          valid: true,
-                          user: {
-                            id: payload.sub || 'admin',
-                            name: payload.name || 'VETANIC Admin',
-                            email: payload.email || 'admin@vetanic.sg',
-                            role: payload.role || 'Owner',
-                            active: true
-                          }
-                        }));
-                        return;
-                      }
-                    }
-                  }
-                } catch {
-                  // ignore
-                }
-
-                res.statusCode = 401;
-                res.end(JSON.stringify({ valid: false, error: 'Session expired or invalid' }));
-                return;
+              let handlerModule = null;
+              if (urlPath === '/api/admin-auth') {
+                handlerModule = await import('./api/admin-auth.js');
+              } else if (urlPath === '/api/admin-orders') {
+                handlerModule = await import('./api/admin-orders.js');
+              } else if (urlPath === '/api/admin-inventory') {
+                handlerModule = await import('./api/admin-inventory.js');
+              } else if (urlPath === '/api/admin-notifications') {
+                handlerModule = await import('./api/admin-notifications.js');
+              } else if (urlPath === '/api/admin-communications') {
+                handlerModule = await import('./api/admin-communications.js');
               }
 
-              if (req.method === 'POST') {
-                let bodyStr = '';
-                req.on('data', chunk => { bodyStr += chunk; });
-                req.on('end', () => {
+              if (handlerModule && handlerModule.default) {
+                let body: unknown = {};
+                if (['POST', 'PUT', 'PATCH'].includes(req.method || '')) {
+                  const buffers: Buffer[] = [];
+                  for await (const chunk of req) {
+                    buffers.push(typeof chunk === 'string' ? Buffer.from(chunk) : chunk);
+                  }
+                  const rawBody = Buffer.concat(buffers).toString('utf8');
                   try {
-                    const body = JSON.parse(bodyStr || '{}');
-                    const inputPassword = body?.password;
-
-                    if (!inputPassword || typeof inputPassword !== 'string') {
-                      res.statusCode = 400;
-                      res.end(JSON.stringify({ success: false, error: 'Password is required' }));
-                      return;
-                    }
-
-                    if (inputPassword.trim() !== configuredPassword.trim()) {
-                      res.statusCode = 401;
-                      res.end(JSON.stringify({ success: false, error: 'Incorrect password. Access denied.' }));
-                      return;
-                    }
-
-                    const nowSec = Math.floor(Date.now() / 1000);
-                    const expSec = nowSec + 8 * 3600;
-                    const tokenPayload = {
-                      sub: 'admin',
-                      name: 'VETANIC Admin',
-                      email: 'admin@vetanic.sg',
-                      role: 'Owner',
-                      iat: nowSec,
-                      exp: expSec
-                    };
-
-                    const header = Buffer.from(JSON.stringify({ alg: 'HS256', typ: 'JWT' })).toString('base64url');
-                    const payloadB64 = Buffer.from(JSON.stringify(tokenPayload)).toString('base64url');
-                    const signature = crypto.createHmac('sha256', sessionSecret).update(`${header}.${payloadB64}`).digest('base64url');
-                    const token = `${header}.${payloadB64}.${signature}`;
-
-                    res.statusCode = 200;
-                    res.end(JSON.stringify({
-                      success: true,
-                      token,
-                      user: {
-                        id: 'admin',
-                        name: 'VETANIC Admin',
-                        email: 'admin@vetanic.sg',
-                        role: 'Owner',
-                        active: true
-                      }
-                    }));
+                    body = JSON.parse(rawBody || '{}');
                   } catch {
-                    res.statusCode = 500;
-                    res.end(JSON.stringify({ success: false, error: 'Server error parsing request' }));
+                    body = rawBody;
+                  }
+                }
+
+                const mockReq = Object.assign(req, { query, body });
+                const mockRes = Object.assign(res, {
+                  status(code: number) {
+                    res.statusCode = code;
+                    return mockRes;
+                  },
+                  json(data: unknown) {
+                    res.setHeader('Content-Type', 'application/json');
+                    res.end(JSON.stringify(data));
+                    return mockRes;
                   }
                 });
-                return;
-              }
 
-              res.statusCode = 405;
-              res.end(JSON.stringify({ error: 'Method Not Allowed' }));
-              return;
+                try {
+                  await handlerModule.default(mockReq, mockRes);
+                  return;
+                } catch (handlerErr) {
+                  console.error('API Dev Server Error:', handlerErr);
+                  res.statusCode = 500;
+                  res.end(JSON.stringify({ success: false, error: String(handlerErr) }));
+                  return;
+                }
+              }
             }
             next();
           });

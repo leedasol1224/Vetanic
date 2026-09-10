@@ -1,6 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { AdminUser, AdminRole } from '../types/auth';
-import { supabase, isSupabaseConfigured } from '../lib/supabase';
 
 interface AuthContextType {
   user: AdminUser | null;
@@ -11,7 +10,6 @@ interface AuthContextType {
   hasRole: (roles: AdminRole[]) => boolean;
 }
 
-const TOKEN_STORAGE_KEY = 'vetanic_admin_token_v1';
 const USER_STORAGE_KEY = 'vetanic_admin_user_v1';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -20,23 +18,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<AdminUser | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  // Initialize and verify session token on mount
+  // Initialize and verify HttpOnly session cookie on mount
   useEffect(() => {
     let isMounted = true;
 
     const initAuth = async () => {
-      const storedToken = sessionStorage.getItem(TOKEN_STORAGE_KEY);
       const storedUser = sessionStorage.getItem(USER_STORAGE_KEY);
 
-      if (!storedToken) {
-        if (isMounted) {
-          setUser(null);
-          setIsLoading(false);
-        }
-        return;
-      }
-
-      // If user cached in sessionStorage, set state while validating
       if (storedUser) {
         try {
           setUser(JSON.parse(storedUser));
@@ -48,9 +36,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       try {
         const response = await fetch('/api/admin-auth', {
           method: 'GET',
-          headers: {
-            Authorization: `Bearer ${storedToken}`
-          }
+          credentials: 'include'
         });
 
         if (response.ok) {
@@ -60,12 +46,10 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             sessionStorage.setItem(USER_STORAGE_KEY, JSON.stringify(data.user));
           } else if (isMounted) {
             setUser(null);
-            sessionStorage.removeItem(TOKEN_STORAGE_KEY);
             sessionStorage.removeItem(USER_STORAGE_KEY);
           }
         } else if (isMounted) {
           setUser(null);
-          sessionStorage.removeItem(TOKEN_STORAGE_KEY);
           sessionStorage.removeItem(USER_STORAGE_KEY);
         }
       } catch (err) {
@@ -88,6 +72,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       const response = await fetch('/api/admin-auth', {
         method: 'POST',
+        credentials: 'include',
         headers: {
           'Content-Type': 'application/json'
         },
@@ -113,24 +98,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         createdAt: new Date().toISOString()
       };
 
-      if (data.token) {
-        sessionStorage.setItem(TOKEN_STORAGE_KEY, data.token);
-      }
       sessionStorage.setItem(USER_STORAGE_KEY, JSON.stringify(adminUser));
       setUser(adminUser);
-
-      // If server authenticated with Supabase, set Supabase auth session client-side
-      if (data.supabaseSession && isSupabaseConfigured && supabase) {
-        try {
-          await supabase.auth.setSession({
-            access_token: data.supabaseSession.access_token,
-            refresh_token: data.supabaseSession.refresh_token
-          });
-        } catch (sbErr) {
-          console.warn('Supabase setSession notice:', sbErr);
-        }
-      }
-
       setIsLoading(false);
       return { success: true };
     } catch (err: unknown) {
@@ -141,15 +110,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const logout = async (): Promise<void> => {
-    if (isSupabaseConfigured && supabase) {
-      try {
-        await supabase.auth.signOut();
-      } catch (e) {
-        // ignore
-      }
+    try {
+      await fetch('/api/admin-auth', {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ action: 'logout' })
+      });
+    } catch {
+      // ignore
     }
+
     setUser(null);
-    sessionStorage.removeItem(TOKEN_STORAGE_KEY);
     sessionStorage.removeItem(USER_STORAGE_KEY);
     localStorage.removeItem('vetanic_admin_auth_v1');
   };

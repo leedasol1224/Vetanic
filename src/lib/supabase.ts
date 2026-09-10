@@ -16,6 +16,7 @@ export const isSupabaseConfigured = Boolean(
   !supabaseUrl.includes('placeholder')
 );
 
+// Public client used for public storefront operations (order submission & guest order lookup)
 export const supabase: SupabaseClient | null = isSupabaseConfigured
   ? createClient(supabaseUrl, supabasePublishableKey)
   : null;
@@ -113,7 +114,7 @@ export function mapDbRowToOrderRecord(row: DbOrderRow): OrderRecord {
 }
 
 /**
- * Submit an order with atomic insertion into Supabase.
+ * Submit an order with atomic insertion into Supabase (Customer Storefront).
  * If Supabase is configured and insertion fails, an error is thrown to prevent
  * presenting a fake success screen to the customer.
  */
@@ -126,7 +127,6 @@ export async function submitOrderRequest(orderData: OrderSubmission): Promise<Or
   );
 
   if (isSupabaseConfigured && supabase) {
-    // 1. Try atomic PostgreSQL RPC first
     try {
       const { data: rpcData, error: rpcError } = await supabase.rpc('submit_customer_order', {
         p_customer: {
@@ -169,13 +169,13 @@ export async function submitOrderRequest(orderData: OrderSubmission): Promise<Or
           inventoryRestored: false
         };
 
-        // Cache locally
+        // Cache locally for resilient browsing
         try {
           const localOrders = getOrders();
           localOrders.unshift(createdRecord);
           saveOrdersToStorage(localOrders);
         } catch {
-          // Non-critical local storage error
+          // Non-critical
         }
 
         return createdRecord;
@@ -191,75 +191,55 @@ export async function submitOrderRequest(orderData: OrderSubmission): Promise<Or
     }
   }
 
-  // Fallback to local storage only if Supabase is completely unconfigured (offline / local demo)
+  // Fallback to local storage only if Supabase is completely unconfigured (offline dev)
   return saveLocalOrder(orderData);
 }
 
 /**
- * Fetch all orders directly from Supabase (authoritative source of truth),
- * ordered by created_at DESC.
+ * Fetch all orders via secure Serverless Admin API (authoritative source of truth).
  */
 export async function fetchOrdersFromDb(): Promise<OrderRecord[]> {
-  if (isSupabaseConfigured && supabase) {
-    try {
-      const { data, error } = await supabase
-        .from('orders')
-        .select(`
-          *,
-          order_items (*)
-        `)
-        .order('created_at', { ascending: false });
+  try {
+    const res = await fetch('/api/admin-orders', {
+      method: 'GET',
+      credentials: 'include'
+    });
 
-      if (error) {
-        console.error('Failed to fetch orders from Supabase:', error);
-        return getOrders();
-      }
-
-      if (data) {
-        const records = data.map((row) => mapDbRowToOrderRecord(row as DbOrderRow));
-        // Keep local cache synced
+    if (res.ok) {
+      const result = await res.json();
+      if (result.success && Array.isArray(result.data)) {
+        const records = result.data.map((row: DbOrderRow) => mapDbRowToOrderRecord(row));
         saveOrdersToStorage(records);
         return records;
       }
-    } catch (err) {
-      console.error('Error querying Supabase orders:', err);
-      return getOrders();
     }
+  } catch (err) {
+    console.warn('Admin API orders fetch notice:', err);
   }
 
   return getOrders();
 }
 
 /**
- * Fetch a single order by ID or orderReference from Supabase.
+ * Fetch a single order by ID or orderReference via secure Serverless Admin API.
  */
 export async function fetchOrderByIdFromDb(idOrRef: string): Promise<OrderRecord | undefined> {
   if (!idOrRef) return undefined;
 
-  if (isSupabaseConfigured && supabase) {
-    try {
-      const isUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(idOrRef);
-      let query = supabase
-        .from('orders')
-        .select(`
-          *,
-          order_items (*)
-        `);
+  try {
+    const res = await fetch(`/api/admin-orders?id=${encodeURIComponent(idOrRef)}`, {
+      method: 'GET',
+      credentials: 'include'
+    });
 
-      if (isUuid) {
-        query = query.or(`id.eq.${idOrRef},order_reference.eq.${idOrRef}`);
-      } else {
-        query = query.eq('order_reference', idOrRef);
+    if (res.ok) {
+      const result = await res.json();
+      if (result.success && result.data) {
+        return mapDbRowToOrderRecord(result.data as DbOrderRow);
       }
-
-      const { data, error } = await query.maybeSingle();
-
-      if (!error && data) {
-        return mapDbRowToOrderRecord(data as DbOrderRow);
-      }
-    } catch (err) {
-      console.error('Error fetching single order from Supabase:', err);
     }
+  } catch (err) {
+    console.warn('Admin API single order fetch notice:', err);
   }
 
   const localOrders = getOrders();
@@ -267,10 +247,9 @@ export async function fetchOrderByIdFromDb(idOrRef: string): Promise<OrderRecord
 }
 
 /**
- * Update order status in Supabase and sync local inventory state.
+ * Update order status via secure Serverless Admin API.
  */
 export async function updateOrderStatusInDb(idOrRef: string, newStatus: OrderStatus): Promise<boolean> {
-  // First load current order
   const order = await fetchOrderByIdFromDb(idOrRef);
   if (!order) return false;
 
@@ -278,7 +257,7 @@ export async function updateOrderStatusInDb(idOrRef: string, newStatus: OrderSta
     status: newStatus
   };
 
-  // 1. Order transitioned to Paid -> deduct stock
+  // Stock deduction tracking
   if (newStatus === 'Paid' && !order.inventoryDeducted) {
     deductOrderStockOnPayment(order);
     updates.inventory_deducted = true;
@@ -287,7 +266,6 @@ export async function updateOrderStatusInDb(idOrRef: string, newStatus: OrderSta
     order.inventoryDeductedAt = updates.inventory_deducted_at as string;
   }
 
-  // 2. Order transitioned to Cancelled after stock was already deducted -> restore stock
   if (newStatus === 'Cancelled' && order.inventoryDeducted && !order.inventoryRestored) {
     restoreOrderStockOnCancellation(order);
     updates.inventory_restored = true;
@@ -296,19 +274,23 @@ export async function updateOrderStatusInDb(idOrRef: string, newStatus: OrderSta
     order.inventoryRestoredAt = updates.inventory_restored_at as string;
   }
 
-  if (isSupabaseConfigured && supabase) {
-    try {
-      const { error } = await supabase
-        .from('orders')
-        .update(updates)
-        .or(`id.eq.${order.id},order_reference.eq.${order.orderReference}`);
-
-      if (error) {
-        console.error('Failed to update order status in Supabase:', error);
-      }
-    } catch (err) {
-      console.error('Supabase update order status error:', err);
-    }
+  try {
+    await fetch('/api/admin-orders', {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        action: 'update_status',
+        id: order.id,
+        orderReference: order.orderReference,
+        status: newStatus,
+        updates
+      })
+    });
+  } catch (err) {
+    console.warn('Admin API update status notice:', err);
   }
 
   // Update local cache
@@ -328,29 +310,31 @@ export async function updateOrderStatusInDb(idOrRef: string, newStatus: OrderSta
       saveOrdersToStorage(orders);
     }
   } catch (e) {
-    console.error('Failed to update status in local storage cache', e);
+    console.error('Failed to update status in local cache', e);
   }
 
   return true;
 }
 
 /**
- * Update order internal notes in Supabase.
+ * Update order internal notes via secure Serverless Admin API.
  */
 export async function updateOrderInternalNotesInDb(idOrRef: string, notes: string): Promise<boolean> {
-  if (isSupabaseConfigured && supabase) {
-    try {
-      const { error } = await supabase
-        .from('orders')
-        .update({ internal_notes: notes })
-        .or(`id.eq.${idOrRef},order_reference.eq.${idOrRef}`);
-
-      if (error) {
-        console.error('Failed to update internal notes in Supabase:', error);
-      }
-    } catch (err) {
-      console.error('Supabase update internal notes error:', err);
-    }
+  try {
+    await fetch('/api/admin-orders', {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        action: 'update_notes',
+        id: idOrRef,
+        notes
+      })
+    });
+  } catch (err) {
+    console.warn('Admin API update internal notes notice:', err);
   }
 
   // Update local storage cache
@@ -369,19 +353,19 @@ export async function updateOrderInternalNotesInDb(idOrRef: string, notes: strin
 }
 
 /**
- * Fetch communication logs for an order from Supabase
+ * Fetch communication logs via secure Serverless Admin API.
  */
 export async function fetchCommunicationLogsFromDb(orderId: string): Promise<CommunicationLog[]> {
-  if (isSupabaseConfigured && supabase) {
-    try {
-      const { data, error } = await supabase
-        .from('communication_logs')
-        .select('*')
-        .or(`order_id.eq.${orderId},order_reference.eq.${orderId}`)
-        .order('created_at', { ascending: false });
+  try {
+    const res = await fetch(`/api/admin-communications?orderId=${encodeURIComponent(orderId)}`, {
+      method: 'GET',
+      credentials: 'include'
+    });
 
-      if (!error && data) {
-        return data.map((d) => ({
+    if (res.ok) {
+      const result = await res.json();
+      if (result.success && Array.isArray(result.data)) {
+        return result.data.map((d: any) => ({
           id: d.id,
           orderId: d.order_id,
           orderReference: d.order_reference,
@@ -393,16 +377,16 @@ export async function fetchCommunicationLogsFromDb(orderId: string): Promise<Com
           status: d.status
         }));
       }
-    } catch (err) {
-      console.error('Failed to fetch communication logs from Supabase:', err);
     }
+  } catch (err) {
+    console.warn('Admin API communication logs fetch notice:', err);
   }
 
   return [];
 }
 
 /**
- * Save communication log to Supabase
+ * Save communication log via secure Serverless Admin API.
  */
 export async function saveCommunicationLogInDb(
   logData: Omit<CommunicationLog, 'id' | 'createdAt'>
@@ -413,48 +397,44 @@ export async function saveCommunicationLogInDb(
     createdAt: new Date().toISOString()
   };
 
-  if (isSupabaseConfigured && supabase) {
-    try {
-      const { data, error } = await supabase
-        .from('communication_logs')
-        .insert({
-          order_id: logData.orderId,
-          order_reference: logData.orderReference,
-          template_type: logData.templateType,
-          channel: logData.channel,
-          message: logData.message,
-          admin_user: logData.adminUser,
-          status: logData.status || 'Sent'
-        })
-        .select('id, created_at')
-        .single();
+  try {
+    const res = await fetch('/api/admin-communications', {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(logData)
+    });
 
-      if (!error && data) {
-        newLog.id = data.id;
-        newLog.createdAt = data.created_at;
+    if (res.ok) {
+      const result = await res.json();
+      if (result.success && result.data) {
+        newLog.id = result.data.id;
+        newLog.createdAt = result.data.created_at;
       }
-    } catch (err) {
-      console.error('Failed to save communication log to Supabase:', err);
     }
+  } catch (err) {
+    console.warn('Admin API save communication log notice:', err);
   }
 
   return newLog;
 }
 
 /**
- * Fetch admin notifications from Supabase
+ * Fetch admin notifications via secure Serverless Admin API.
  */
 export async function fetchAdminNotificationsFromDb(): Promise<AdminNotification[]> {
-  if (isSupabaseConfigured && supabase) {
-    try {
-      const { data, error } = await supabase
-        .from('admin_notifications')
-        .select('*')
-        .order('created_at', { ascending: false })
-        .limit(50);
+  try {
+    const res = await fetch('/api/admin-notifications', {
+      method: 'GET',
+      credentials: 'include'
+    });
 
-      if (!error && data) {
-        return data.map((d) => ({
+    if (res.ok) {
+      const result = await res.json();
+      if (result.success && Array.isArray(result.data)) {
+        return result.data.map((d: any) => ({
           id: d.id,
           orderId: d.order_id,
           orderReference: d.order_reference,
@@ -467,27 +447,29 @@ export async function fetchAdminNotificationsFromDb(): Promise<AdminNotification
           message: `${d.customer_name} placed order ${d.order_reference} (${d.item_count} items · SGD ${Number(d.total_amount).toFixed(2)})`
         }));
       }
-    } catch (err) {
-      console.error('Failed to fetch admin notifications from Supabase:', err);
     }
+  } catch (err) {
+    console.warn('Admin API notifications fetch notice:', err);
   }
 
   return [];
 }
 
 /**
- * Mark notification as read in Supabase
+ * Mark notification as read via secure Serverless Admin API.
  */
 export async function markNotificationReadInDb(id: string): Promise<void> {
-  if (isSupabaseConfigured && supabase) {
-    try {
-      await supabase
-        .from('admin_notifications')
-        .update({ read: true })
-        .eq('id', id);
-    } catch (err) {
-      console.error('Failed to mark notification read in Supabase:', err);
-    }
+  try {
+    await fetch('/api/admin-notifications', {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ action: 'mark_read', id })
+    });
+  } catch (err) {
+    console.warn('Admin API mark notification read notice:', err);
   }
 }
 
@@ -527,18 +509,19 @@ export async function submitContactEnquiry(enquiry: Omit<ContactEnquiry, 'id' | 
 }
 
 /**
- * Fetch inventory movements from Supabase
+ * Fetch inventory movements via secure Serverless Admin API.
  */
 export async function fetchInventoryMovementsFromDb(): Promise<import('../types/inventory').InventoryMovement[]> {
-  if (isSupabaseConfigured && supabase) {
-    try {
-      const { data, error } = await supabase
-        .from('inventory_movements')
-        .select('*')
-        .order('created_at', { ascending: false });
+  try {
+    const res = await fetch('/api/admin-inventory', {
+      method: 'GET',
+      credentials: 'include'
+    });
 
-      if (!error && data) {
-        return data.map((d) => ({
+    if (res.ok) {
+      const result = await res.json();
+      if (result.success && Array.isArray(result.data)) {
+        return result.data.map((d: any) => ({
           id: d.id,
           productId: d.product_id,
           productName: d.product_name,
@@ -555,38 +538,28 @@ export async function fetchInventoryMovementsFromDb(): Promise<import('../types/
           adminUser: d.admin_user
         }));
       }
-    } catch (err) {
-      console.error('Failed to fetch inventory movements from Supabase:', err);
     }
+  } catch (err) {
+    console.warn('Admin API inventory movements fetch notice:', err);
   }
 
   return [];
 }
 
 /**
- * Save inventory movement to Supabase
+ * Save inventory movement via secure Serverless Admin API.
  */
 export async function saveInventoryMovementToDb(movement: import('../types/inventory').InventoryMovement): Promise<void> {
-  if (isSupabaseConfigured && supabase) {
-    try {
-      await supabase.from('inventory_movements').insert({
-        product_id: movement.productId,
-        product_name: movement.productName,
-        sku: movement.sku,
-        movement_type: movement.movementType,
-        quantity_change: movement.quantityChange,
-        stock_before: movement.stockBefore,
-        stock_after: movement.stockAfter,
-        order_id: movement.orderId || null,
-        order_reference: movement.orderReference || null,
-        reason: movement.reason,
-        internal_note: movement.internalNote || null,
-        admin_user: movement.adminUser || 'VETANIC Admin'
-      });
-    } catch (err) {
-      console.error('Failed to save inventory movement to Supabase:', err);
-    }
+  try {
+    await fetch('/api/admin-inventory', {
+      method: 'POST',
+      credentials: 'include',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(movement)
+    });
+  } catch (err) {
+    console.warn('Admin API save inventory movement notice:', err);
   }
 }
-
-
