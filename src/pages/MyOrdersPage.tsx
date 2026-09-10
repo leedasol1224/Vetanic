@@ -9,12 +9,12 @@ import {
   AlertCircle
 } from 'lucide-react';
 import { InstagramIcon } from '../components/common/Icons';
-import { lookupGuestOrder, isGuestSessionVerified, CustomerOrderView } from '../lib/guestOrderLookup';
+import { lookupGuestOrder, isGuestSessionVerified, CustomerOrderView, sanitizeToCustomerOrder } from '../lib/guestOrderLookup';
 import { CUSTOMER_STATUS_STAGES } from '../lib/orderStatus';
 import { PRODUCTS } from '../data/products';
 import { brandAssets } from '../data/brandAssets';
 import { getOrderById } from '../lib/storage';
-import { sanitizeToCustomerOrder } from '../lib/guestOrderLookup';
+import { fetchOrderByIdFromDb } from '../lib/supabase';
 
 export const MyOrdersPage: React.FC = () => {
   const { reference } = useParams<{ reference?: string }>();
@@ -28,16 +28,26 @@ export const MyOrdersPage: React.FC = () => {
 
   // Auto-verify if already authenticated in this session or coming directly from order success
   useEffect(() => {
+    let isMounted = true;
     if (reference) {
       setOrderRefInput(reference);
       if (isGuestSessionVerified(reference)) {
-        // Fast-track load from storage
+        // Fast-track load from storage or Supabase
         const raw = getOrderById(reference);
         if (raw) {
           setOrderData(sanitizeToCustomerOrder(raw));
+        } else {
+          fetchOrderByIdFromDb(reference).then((dbOrder) => {
+            if (isMounted && dbOrder) {
+              setOrderData(sanitizeToCustomerOrder(dbOrder));
+            }
+          });
         }
       }
     }
+    return () => {
+      isMounted = false;
+    };
   }, [reference]);
 
   const handleLookup = async (e: React.FormEvent) => {

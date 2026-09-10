@@ -1,7 +1,7 @@
 import { OrderRecord } from '../types/order';
-import { getOrders, getOrderById } from './storage';
+import { getOrders, saveOrdersToStorage } from './storage';
 import { mapToCustomerStatus, CustomerStatusInfo } from './orderStatus';
-import { supabase, isSupabaseConfigured } from './supabase';
+import { supabase, isSupabaseConfigured, mapDbRowToOrderRecord } from './supabase';
 
 export interface CustomerOrderView {
   id: string;
@@ -186,23 +186,36 @@ export async function lookupGuestOrder(
     if (isSupabaseConfigured && supabase) {
       const { data, error } = await supabase
         .from('orders')
-        .select('*')
+        .select(`
+          *,
+          order_items (*)
+        `)
         .eq('order_reference', cleanRef)
-        .single();
+        .maybeSingle();
 
       if (!error && data) {
-        const phoneDigits = normalizePhoneDigits(data.customer_phone || '');
+        const phoneDigits = normalizePhoneDigits(data.contact_number || '');
         if (phoneDigits === cleanDigits) {
           clearRateLimit();
           saveGuestSession(cleanRef);
-          // Return sanitized
-          const orderRec = getOrderById(data.id) || matched;
-          if (orderRec) {
-            return {
-              success: true,
-              order: sanitizeToCustomerOrder(orderRec)
-            };
+          
+          const orderRec = mapDbRowToOrderRecord(data);
+          
+          // Cache in local storage
+          try {
+            const currentOrders = getOrders();
+            if (!currentOrders.some(o => o.id === orderRec.id || o.orderReference === orderRec.orderReference)) {
+              currentOrders.unshift(orderRec);
+              saveOrdersToStorage(currentOrders);
+            }
+          } catch {
+            // Ignore cache error
           }
+
+          return {
+            success: true,
+            order: sanitizeToCustomerOrder(orderRec)
+          };
         }
       }
     }

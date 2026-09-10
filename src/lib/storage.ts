@@ -65,6 +65,14 @@ export function getOrders(): OrderRecord[] {
   }
 }
 
+export function saveOrdersToStorage(orders: OrderRecord[]): void {
+  try {
+    localStorage.setItem(ORDERS_STORAGE_KEY, JSON.stringify(orders));
+  } catch (e) {
+    console.error('Failed to save orders to storage', e);
+  }
+}
+
 export function getOrderById(id: string): OrderRecord | undefined {
   const allOrders = getOrders();
   return allOrders.find((o) => o.id === id || o.orderReference === id);

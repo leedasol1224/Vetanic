@@ -15,18 +15,27 @@ import {
   Boxes,
   AlertTriangle
 } from 'lucide-react';
+import { fetchOrdersFromDb } from '../../lib/supabase';
 import { getOrders } from '../../lib/storage';
 import { getProductInventoryList } from '../../lib/inventory';
 import { OrderRecord, OrderStatus } from '../../types/order';
 import { ProductInventory } from '../../types/inventory';
 
 export const AdminDashboard: React.FC = () => {
-  const [orders, setOrders] = useState<OrderRecord[]>([]);
-  const [inventory, setInventory] = useState<ProductInventory[]>([]);
+  const [orders, setOrders] = useState<OrderRecord[]>(() => getOrders());
+  const [inventory, setInventory] = useState<ProductInventory[]>(() => getProductInventoryList());
 
   useEffect(() => {
-    setOrders(getOrders());
-    setInventory(getProductInventoryList());
+    let isMounted = true;
+    fetchOrdersFromDb().then((liveOrders) => {
+      if (isMounted) {
+        setOrders(liveOrders);
+        setInventory(getProductInventoryList());
+      }
+    });
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   // Compute metrics

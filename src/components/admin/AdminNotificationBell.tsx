@@ -2,16 +2,26 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Bell, ShoppingBag, CheckCheck, Clock } from 'lucide-react';
 import { getAdminNotifications, markNotificationAsRead, markAllNotificationsAsRead } from '../../lib/notifications';
+import { fetchAdminNotificationsFromDb, markNotificationReadInDb } from '../../lib/supabase';
 import { AdminNotification } from '../../types/notification';
 
 export const AdminNotificationBell: React.FC = () => {
-  const [notifications, setNotifications] = useState<AdminNotification[]>([]);
+  const [notifications, setNotifications] = useState<AdminNotification[]>(() => getAdminNotifications());
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
 
-  const loadNotifications = () => {
-    setNotifications(getAdminNotifications());
+  const loadNotifications = async () => {
+    const localNotifs = getAdminNotifications();
+    setNotifications(localNotifs);
+    try {
+      const liveNotifs = await fetchAdminNotificationsFromDb();
+      if (liveNotifs && liveNotifs.length > 0) {
+        setNotifications(liveNotifs);
+      }
+    } catch {
+      // Keep local notifications
+    }
   };
 
   useEffect(() => {
@@ -35,8 +45,9 @@ export const AdminNotificationBell: React.FC = () => {
 
   const unreadCount = notifications.filter((n) => !n.read).length;
 
-  const handleNotificationClick = (item: AdminNotification) => {
+  const handleNotificationClick = async (item: AdminNotification) => {
     markNotificationAsRead(item.id);
+    await markNotificationReadInDb(item.id);
     loadNotifications();
     setIsOpen(false);
     navigate(`/business/orders/${item.orderId}`);
@@ -45,6 +56,7 @@ export const AdminNotificationBell: React.FC = () => {
   const handleMarkAllRead = (e: React.MouseEvent) => {
     e.stopPropagation();
     markAllNotificationsAsRead();
+    notifications.forEach((n) => markNotificationReadInDb(n.id));
     loadNotifications();
   };
 

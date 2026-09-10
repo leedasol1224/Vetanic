@@ -7,18 +7,27 @@ import {
   FileSpreadsheet, 
   ArrowLeft
 } from 'lucide-react';
+import { fetchOrdersFromDb } from '../../lib/supabase';
 import { getOrders } from '../../lib/storage';
 import { getProductSalesSummary, exportToExcel } from '../../lib/inventory';
 import { OrderRecord } from '../../types/order';
 
 export const AdminInventorySalesPage: React.FC = () => {
-  const [orders, setOrders] = useState<OrderRecord[]>([]);
+  const [orders, setOrders] = useState<OrderRecord[]>(() => getOrders());
   const [datePreset, setDatePreset] = useState<'all' | 'today' | '7days' | 'month' | 'custom'>('all');
   const [customFromDate, setCustomFromDate] = useState<string>('');
   const [customToDate, setCustomToDate] = useState<string>('');
 
   useEffect(() => {
-    setOrders(getOrders());
+    let isMounted = true;
+    fetchOrdersFromDb().then((liveOrders) => {
+      if (isMounted) {
+        setOrders(liveOrders);
+      }
+    });
+    return () => {
+      isMounted = false;
+    };
   }, []);
 
   // Compute date range based on preset

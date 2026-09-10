@@ -9,7 +9,8 @@ import {
   User, 
   CheckCircle2
 } from 'lucide-react';
-import { getOrderById, updateOrderStatus, updateOrderInternalNotes } from '../../lib/storage';
+import { fetchOrderByIdFromDb, updateOrderStatusInDb, updateOrderInternalNotesInDb } from '../../lib/supabase';
+import { getOrderById } from '../../lib/storage';
 import { OrderRecord, OrderStatus } from '../../types/order';
 import { PRODUCTS } from '../../data/products';
 import { CustomerResponseSection } from '../../components/admin/CustomerResponseSection';
@@ -28,19 +29,35 @@ const ORDER_STATUS_OPTIONS: OrderStatus[] = [
 export const AdminOrderDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
 
-  const [order, setOrder] = useState<OrderRecord | undefined>(undefined);
-  const [currentStatus, setCurrentStatus] = useState<OrderStatus>('Pending Confirmation');
-  const [notes, setNotes] = useState('');
+  const [order, setOrder] = useState<OrderRecord | undefined>(() => id ? getOrderById(id) : undefined);
+  const [currentStatus, setCurrentStatus] = useState<OrderStatus>(() => (id && getOrderById(id)?.status) || 'Pending Confirmation');
+  const [notes, setNotes] = useState(() => (id && getOrderById(id)?.internalNotes) || '');
+  const [isLoading, setIsLoading] = useState(true);
   const [saveNotesSuccess, setSaveNotesSuccess] = useState(false);
   const [saveStatusSuccess, setSaveStatusSuccess] = useState(false);
 
-  const loadOrder = () => {
+  const loadOrder = async () => {
     if (id) {
-      const found = getOrderById(id);
-      if (found) {
-        setOrder(found);
-        setCurrentStatus(found.status);
-        setNotes(found.internalNotes || '');
+      // Check local cache first
+      const localFound = getOrderById(id);
+      if (localFound) {
+        setOrder(localFound);
+        setCurrentStatus(localFound.status);
+        setNotes(localFound.internalNotes || '');
+      }
+
+      // Fetch latest from database
+      try {
+        const liveOrder = await fetchOrderByIdFromDb(id);
+        if (liveOrder) {
+          setOrder(liveOrder);
+          setCurrentStatus(liveOrder.status);
+          setNotes(liveOrder.internalNotes || '');
+        }
+      } catch (err) {
+        console.error('Failed to load order from database:', err);
+      } finally {
+        setIsLoading(false);
       }
     }
   };
@@ -48,6 +65,14 @@ export const AdminOrderDetailPage: React.FC = () => {
   useEffect(() => {
     loadOrder();
   }, [id]);
+
+  if (isLoading && !order) {
+    return (
+      <div className="bg-white rounded-3xl p-12 border border-[#DED7CE] shadow-soft text-center space-y-3">
+        <p className="text-sm font-semibold text-charcoal">Loading order details...</p>
+      </div>
+    );
+  }
 
   if (!order) {
     return (
@@ -65,16 +90,18 @@ export const AdminOrderDetailPage: React.FC = () => {
     );
   }
 
-  const handleStatusChange = (newStatus: OrderStatus) => {
+  const handleStatusChange = async (newStatus: OrderStatus) => {
+    if (!order) return;
     setCurrentStatus(newStatus);
-    updateOrderStatus(order.id, newStatus);
+    await updateOrderStatusInDb(order.id, newStatus);
     setSaveStatusSuccess(true);
-    loadOrder();
+    await loadOrder();
     setTimeout(() => setSaveStatusSuccess(false), 2000);
   };
 
-  const handleSaveNotes = () => {
-    updateOrderInternalNotes(order.id, notes);
+  const handleSaveNotes = async () => {
+    if (!order) return;
+    await updateOrderInternalNotesInDb(order.id, notes);
     setSaveNotesSuccess(true);
     setTimeout(() => setSaveNotesSuccess(false), 2000);
   };

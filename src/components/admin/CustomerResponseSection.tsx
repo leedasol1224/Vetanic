@@ -17,6 +17,7 @@ import { OrderRecord } from '../../types/order';
 import { TemplateType, CommunicationChannel, CommunicationLog } from '../../types/communication';
 import { generateOrderResponse } from '../../lib/orderResponseTemplates';
 import { getCommunicationLogs, saveCommunicationLog } from '../../lib/storage';
+import { fetchCommunicationLogsFromDb, saveCommunicationLogInDb } from '../../lib/supabase';
 import { useAuth } from '../../context/AuthContext';
 import { InstagramIcon } from '../common/Icons';
 
@@ -45,11 +46,20 @@ export const CustomerResponseSection: React.FC<CustomerResponseSectionProps> = (
   const [editedMessage, setEditedMessage] = useState('');
   const [copySuccess, setCopySuccess] = useState(false);
   const [logSuccess, setLogSuccess] = useState(false);
-  const [logs, setLogs] = useState<CommunicationLog[]>([]);
+  const [logs, setLogs] = useState<CommunicationLog[]>(() => getCommunicationLogs(order.id));
 
   // Load existing communication logs for this order
-  const loadLogs = () => {
-    setLogs(getCommunicationLogs(order.id));
+  const loadLogs = async () => {
+    const localLogs = getCommunicationLogs(order.id);
+    setLogs(localLogs);
+    try {
+      const liveLogs = await fetchCommunicationLogsFromDb(order.id);
+      if (liveLogs && liveLogs.length > 0) {
+        setLogs(liveLogs);
+      }
+    } catch {
+      // Keep local logs
+    }
   };
 
   useEffect(() => {
@@ -86,9 +96,9 @@ export const CustomerResponseSection: React.FC<CustomerResponseSectionProps> = (
     setEditedMessage(generated);
   };
 
-  const logCommunication = (channel: CommunicationChannel, status: 'Sent' | 'Copied' | 'Logged') => {
+  const logCommunication = async (channel: CommunicationChannel, status: 'Sent' | 'Copied' | 'Logged') => {
     const adminName = user?.name || 'VETANIC Staff';
-    saveCommunicationLog({
+    const logData = {
       orderId: order.id,
       orderReference: order.orderReference,
       templateType: selectedTemplate,
@@ -96,8 +106,10 @@ export const CustomerResponseSection: React.FC<CustomerResponseSectionProps> = (
       message: editedMessage,
       adminUser: adminName,
       status
-    });
-    loadLogs();
+    };
+    saveCommunicationLog(logData);
+    await saveCommunicationLogInDb(logData);
+    await loadLogs();
   };
 
   // Copy to clipboard

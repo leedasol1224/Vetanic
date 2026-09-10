@@ -14,6 +14,7 @@ import {
   addStockMovement, 
   updateProductThreshold 
 } from '../../lib/inventory';
+import { fetchOrdersFromDb } from '../../lib/supabase';
 import { getOrders } from '../../lib/storage';
 import { ProductInventory, InventoryMovement, InventoryMovementType } from '../../types/inventory';
 import { OrderRecord } from '../../types/order';
@@ -23,7 +24,10 @@ export const AdminInventoryProductDetailPage: React.FC = () => {
 
   const [productInv, setProductInv] = useState<ProductInventory | undefined>(undefined);
   const [movements, setMovements] = useState<InventoryMovement[]>([]);
-  const [orders, setOrders] = useState<OrderRecord[]>([]);
+  const [orders, setOrders] = useState<OrderRecord[]>(() => {
+    if (!productId) return [];
+    return getOrders().filter((o) => o.items.some((i) => i.productId === productId));
+  });
 
   // Adjust Modal
   const [showAdjustModal, setShowAdjustModal] = useState(false);
@@ -36,7 +40,7 @@ export const AdminInventoryProductDetailPage: React.FC = () => {
   const [isEditingThreshold, setIsEditingThreshold] = useState(false);
   const [thresholdVal, setThresholdVal] = useState<number>(5);
 
-  const loadData = () => {
+  const loadData = async () => {
     if (!productId) return;
     const inv = getProductInventory(productId);
     setProductInv(inv);
@@ -47,8 +51,15 @@ export const AdminInventoryProductDetailPage: React.FC = () => {
     const allMovements = getInventoryMovements();
     setMovements(allMovements.filter((m) => m.productId === productId));
 
-    const allOrders = getOrders();
-    setOrders(allOrders.filter((o) => o.items.some((i) => i.productId === productId)));
+    const localOrders = getOrders();
+    setOrders(localOrders.filter((o) => o.items.some((i) => i.productId === productId)));
+
+    try {
+      const liveOrders = await fetchOrdersFromDb();
+      setOrders(liveOrders.filter((o) => o.items.some((i) => i.productId === productId)));
+    } catch {
+      // Keep local orders
+    }
   };
 
   useEffect(() => {

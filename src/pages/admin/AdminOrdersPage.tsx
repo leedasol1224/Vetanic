@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { Search, Eye, Filter, RefreshCw } from 'lucide-react';
+import { fetchOrdersFromDb } from '../../lib/supabase';
 import { getOrders } from '../../lib/storage';
 import { OrderRecord, OrderStatus } from '../../types/order';
 
@@ -18,13 +19,23 @@ const ALL_STATUSES: Array<'All' | OrderStatus> = [
 
 export const AdminOrdersPage: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
-  const [orders, setOrders] = useState<OrderRecord[]>([]);
+  const [orders, setOrders] = useState<OrderRecord[]>(() => getOrders());
   const [searchQuery, setSearchQuery] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
   const activeStatusFilter = (searchParams.get('status') || 'All') as 'All' | OrderStatus;
 
-  const loadOrders = () => {
-    setOrders(getOrders());
+  const loadOrders = async () => {
+    setIsLoading(true);
+    try {
+      const liveOrders = await fetchOrdersFromDb();
+      setOrders(liveOrders);
+    } catch (err) {
+      console.error('Failed to load orders from database:', err);
+      setOrders(getOrders());
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -115,10 +126,11 @@ export const AdminOrdersPage: React.FC = () => {
         <button
           type="button"
           onClick={loadOrders}
-          className="inline-flex items-center gap-1.5 bg-white hover:bg-[#FAF7F2] text-charcoal font-semibold text-xs px-3.5 py-2 rounded-xl border border-[#DED7CE] shadow-xs transition-colors"
+          disabled={isLoading}
+          className="inline-flex items-center gap-1.5 bg-white hover:bg-[#FAF7F2] text-charcoal font-semibold text-xs px-3.5 py-2 rounded-xl border border-[#DED7CE] shadow-xs transition-colors disabled:opacity-60 cursor-pointer"
         >
-          <RefreshCw className="w-3.5 h-3.5" />
-          <span>Refresh Orders</span>
+          <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin text-brand-600' : ''}`} />
+          <span>{isLoading ? 'Refreshing...' : 'Refresh Orders'}</span>
         </button>
       </div>
 
