@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useCallback } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useOrder } from '../context/OrderContext';
 import { OrderItemRow } from '../components/order/OrderItemRow';
@@ -22,7 +22,9 @@ import {
   Send, 
   Sparkles,
   ArrowRight,
-  Tag
+  Tag,
+  Loader2,
+  CheckCircle2
 } from 'lucide-react';
 import { getProductPricing } from '../lib/pricing';
 import { saveGuestSession } from '../lib/guestOrderLookup';
@@ -49,8 +51,69 @@ export const OrderPage: React.FC = () => {
   const [preferredContact, setPreferredContact] = useState<ContactMethod>('WhatsApp');
   const [customerType, setCustomerType] = useState<CustomerType>('new');
 
-  const [deliveryAddress, setDeliveryAddress] = useState('');
+  // Delivery Address State with Singapore OneMap Integration
   const [postalCode, setPostalCode] = useState('');
+  const [streetAddress, setStreetAddress] = useState('');
+  const [unitNumber, setUnitNumber] = useState('');
+  const [lookupStatus, setLookupStatus] = useState<'idle' | 'searching' | 'found' | 'fallback'>('idle');
+  const [lookupMessage, setLookupMessage] = useState<string | null>(null);
+
+  const lastSearchedPostal = useRef('');
+  const abortControllerRef = useRef<AbortController | null>(null);
+
+  const performPostalLookup = useCallback(async (cleanPostal: string) => {
+    if (cleanPostal.length !== 6 || cleanPostal === lastSearchedPostal.current) {
+      return;
+    }
+
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
+
+    setLookupStatus('searching');
+    setLookupMessage(null);
+
+    try {
+      const res = await fetch(`/api/onemap-search?postal=${encodeURIComponent(cleanPostal)}`, {
+        signal: controller.signal
+      });
+
+      const data = await res.json();
+      lastSearchedPostal.current = cleanPostal;
+
+      if (data && data.success && data.found && data.address) {
+        setStreetAddress(data.address);
+        setLookupStatus('found');
+        setLookupMessage(null);
+      } else {
+        setLookupStatus('fallback');
+        setLookupMessage(
+          data.message || "We couldn't find this postal code automatically. Please enter your address manually."
+        );
+      }
+    } catch (err: unknown) {
+      if ((err as Error)?.name === 'AbortError') return;
+      lastSearchedPostal.current = cleanPostal;
+      setLookupStatus('fallback');
+      setLookupMessage("We couldn't find this postal code automatically. Please enter your address manually.");
+    }
+  }, []);
+
+  const handlePostalChange = (val: string) => {
+    const clean = val.replace(/\D/g, '').slice(0, 6);
+    setPostalCode(clean);
+
+    if (clean.length === 6) {
+      performPostalLookup(clean);
+    } else {
+      if (lookupStatus !== 'idle') {
+        setLookupStatus('idle');
+        setLookupMessage(null);
+      }
+    }
+  };
 
   const [paymentPreference, setPaymentPreference] = useState<PaymentMethod>('paynow');
 
@@ -128,14 +191,21 @@ export const OrderPage: React.FC = () => {
       return;
     }
 
-    if (!deliveryAddress.trim()) {
-      setErrorMessage('Please provide your delivery address including unit number.');
+    const cleanPostal = postalCode.trim();
+    const cleanStreet = streetAddress.trim();
+    const cleanUnit = unitNumber.trim();
+
+    if (!cleanPostal || cleanPostal.length !== 6) {
+      setErrorMessage('Please enter a valid 6-digit Singapore postal code.');
       return;
     }
-    if (!postalCode.trim()) {
-      setErrorMessage('Please provide your Singapore postal code.');
+
+    if (!cleanStreet) {
+      setErrorMessage('Please provide your delivery block / street address.');
       return;
     }
+
+    const fullDeliveryAddress = cleanUnit ? `${cleanStreet}, ${cleanUnit}` : cleanStreet;
 
     if (!ackStock || !ackAllergy || !ackWellness) {
       setErrorMessage('Please check all three acknowledgements before submitting.');
@@ -163,8 +233,8 @@ export const OrderPage: React.FC = () => {
       },
       delivery: {
         deliveryMethod,
-        deliveryAddress: deliveryAddress.trim(),
-        postalCode: postalCode.trim()
+        deliveryAddress: fullDeliveryAddress,
+        postalCode: cleanPostal
       },
       paymentPreference,
       acknowledgements: {
@@ -493,37 +563,90 @@ export const OrderPage: React.FC = () => {
                 </label>
               </div>
 
-              {/* Delivery Address Fields */}
+              {/* Delivery Address Fields with Singapore OneMap Auto-Lookup */}
               <div className="pt-2 space-y-4 animate-soft-in">
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                  <div className="sm:col-span-2">
-                    <label className="block text-xs font-bold text-charcoal uppercase tracking-wider mb-1.5">
-                      Delivery Address <span className="text-brand-600">*</span>
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      value={deliveryAddress}
-                      onChange={(e) => setDeliveryAddress(e.target.value)}
-                      placeholder="Please include your block, street & unit number (e.g. #08-12)"
-                      className="w-full text-sm px-4 py-2.5 rounded-xl border border-[#DED7CE] focus:outline-none focus:ring-2 focus:ring-brand-600 focus:border-brand-600 bg-[#FAF7F2]"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold text-charcoal uppercase tracking-wider mb-1.5">
+                {/* 1. Postal Code (First) */}
+                <div>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label className="block text-xs font-bold text-charcoal uppercase tracking-wider">
                       Postal Code <span className="text-brand-600">*</span>
                     </label>
+                    {lookupStatus === 'searching' && (
+                      <span className="inline-flex items-center gap-1.5 text-xs text-brand-600 font-medium animate-pulse">
+                        <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                        Finding address...
+                      </span>
+                    )}
+                    {lookupStatus === 'found' && (
+                      <span className="inline-flex items-center gap-1 text-xs text-emerald-700 font-semibold">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600" />
+                        Address found ✓
+                      </span>
+                    )}
+                  </div>
+                  <div className="relative">
                     <input
                       type="text"
                       required
                       maxLength={6}
+                      inputMode="numeric"
+                      pattern="[0-9]*"
                       value={postalCode}
-                      onChange={(e) => setPostalCode(e.target.value)}
+                      onChange={(e) => handlePostalChange(e.target.value)}
                       placeholder="e.g. 307683"
-                      className="w-full text-sm px-4 py-2.5 rounded-xl border border-[#DED7CE] focus:outline-none focus:ring-2 focus:ring-brand-600 focus:border-brand-600 bg-[#FAF7F2]"
+                      className="w-full text-sm px-4 py-2.5 rounded-xl border border-[#DED7CE] focus:outline-none focus:ring-2 focus:ring-brand-600 focus:border-brand-600 bg-[#FAF7F2] font-mono tracking-wider"
                     />
+                    {lookupStatus === 'searching' && (
+                      <div className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-brand-600">
+                        <Loader2 className="w-4 h-4 animate-spin" />
+                      </div>
+                    )}
                   </div>
+                  {lookupStatus === 'fallback' && (
+                    <p className="mt-1.5 text-[11px] text-amber-800 bg-amber-50 border border-amber-200/70 rounded-lg px-3 py-1.5 flex items-center gap-1.5">
+                      <AlertCircle className="w-3.5 h-3.5 text-amber-600 flex-shrink-0" />
+                      <span>{lookupMessage || "We couldn't find this postal code automatically. Please enter your address manually."}</span>
+                    </p>
+                  )}
+                </div>
+
+                {/* 2. Block / Street / Building (Auto-filled & Editable) */}
+                <div>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label className="block text-xs font-bold text-charcoal uppercase tracking-wider">
+                      Block / Street / Building <span className="text-brand-600">*</span>
+                    </label>
+                    <span className="text-[11px] text-charcoal-muted">
+                      (Auto-filled, editable)
+                    </span>
+                  </div>
+                  <input
+                    type="text"
+                    required
+                    value={streetAddress}
+                    onChange={(e) => setStreetAddress(e.target.value)}
+                    placeholder="e.g. Blk 238 Thomson Road, Novena Square"
+                    className="w-full text-sm px-4 py-2.5 rounded-xl border border-[#DED7CE] focus:outline-none focus:ring-2 focus:ring-brand-600 focus:border-brand-600 bg-[#FAF7F2]"
+                  />
+                </div>
+
+                {/* 3. Unit Number (Manual) */}
+                <div>
+                  <div className="flex items-center justify-between mb-1.5">
+                    <label className="block text-xs font-bold text-charcoal uppercase tracking-wider">
+                      Unit Number
+                    </label>
+                    <span className="text-[11px] text-charcoal-muted">
+                      (e.g. #08-12, or leave blank if landed property)
+                    </span>
+                  </div>
+                  <input
+                    type="text"
+                    value={unitNumber}
+                    onChange={(e) => setUnitNumber(e.target.value)}
+                    placeholder="e.g. #08-12"
+                    className="w-full text-sm px-4 py-2.5 rounded-xl border border-[#DED7CE] focus:outline-none focus:ring-2 focus:ring-brand-600 focus:border-brand-600 bg-[#FAF7F2]"
+                  />
                 </div>
               </div>
             </div>

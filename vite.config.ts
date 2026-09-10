@@ -33,6 +33,8 @@ export default defineConfig(({ mode }) => {
                 handlerModule = await import('./api/admin-notifications.js');
               } else if (urlPath === '/api/admin-communications') {
                 handlerModule = await import('./api/admin-communications.js');
+              } else if (urlPath === '/api/onemap-search') {
+                handlerModule = await import('./api/onemap-search.js');
               }
 
               if (handlerModule && handlerModule.default) {
