@@ -6,12 +6,13 @@ interface AuthContextType {
   user: AdminUser | null;
   isAuthenticated: boolean;
   isLoading: boolean;
-  login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>;
+  login: (password: string) => Promise<{ success: boolean; error?: string }>;
   logout: () => Promise<void>;
   hasRole: (roles: AdminRole[]) => boolean;
 }
 
-const AUTH_STORAGE_KEY = 'vetanic_admin_auth_v1';
+const TOKEN_STORAGE_KEY = 'vetanic_admin_token_v1';
+const USER_STORAGE_KEY = 'vetanic_admin_user_v1';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -19,71 +20,57 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [user, setUser] = useState<AdminUser | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  // Initialize and listen to Supabase Auth session on mount
+  // Initialize and verify session token on mount
   useEffect(() => {
     let isMounted = true;
 
     const initAuth = async () => {
-      if (isSupabaseConfigured && supabase) {
-        try {
-          const { data: { session } } = await supabase.auth.getSession();
-          if (session?.user && isMounted) {
-            const { data: profile } = await supabase
-              .from('admin_users')
-              .select('*')
-              .eq('auth_user_id', session.user.id)
-              .maybeSingle();
+      const storedToken = sessionStorage.getItem(TOKEN_STORAGE_KEY);
+      const storedUser = sessionStorage.getItem(USER_STORAGE_KEY);
 
-            if (profile && profile.active) {
-              const adminUser: AdminUser = {
-                id: profile.id,
-                authUserId: session.user.id,
-                name: profile.name || session.user.email?.split('@')[0] || 'VETANIC Admin',
-                email: session.user.email || profile.email,
-                role: (profile.role as AdminRole) || 'Admin',
-                active: profile.active,
-                createdAt: profile.created_at || new Date().toISOString(),
-                lastLoginAt: new Date().toISOString()
-              };
-              setUser(adminUser);
-              localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(adminUser));
-            } else {
-              setUser(null);
-              localStorage.removeItem(AUTH_STORAGE_KEY);
-            }
-          } else if (isMounted) {
-            setUser(null);
-            localStorage.removeItem(AUTH_STORAGE_KEY);
-          }
-        } catch (err) {
-          console.error('Supabase session verification error:', err);
-          if (isMounted) setUser(null);
-        } finally {
-          if (isMounted) setIsLoading(false);
+      if (!storedToken) {
+        if (isMounted) {
+          setUser(null);
+          setIsLoading(false);
         }
+        return;
+      }
 
-        const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-          if (!isMounted) return;
-          if (event === 'SIGNED_OUT' || !session) {
-            setUser(null);
-            localStorage.removeItem(AUTH_STORAGE_KEY);
-            sessionStorage.removeItem(AUTH_STORAGE_KEY);
-          }
-        });
-
-        return () => {
-          subscription.unsubscribe();
-        };
-      } else {
-        // Fallback for unconfigured/offline dev environment only
+      // If user cached in sessionStorage, set state while validating
+      if (storedUser) {
         try {
-          const stored = localStorage.getItem(AUTH_STORAGE_KEY);
-          if (stored && isMounted) {
-            setUser(JSON.parse(stored));
-          }
+          setUser(JSON.parse(storedUser));
         } catch {
           // ignore
         }
+      }
+
+      try {
+        const response = await fetch('/api/admin-auth', {
+          method: 'GET',
+          headers: {
+            Authorization: `Bearer ${storedToken}`
+          }
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          if (data.valid && data.user && isMounted) {
+            setUser(data.user);
+            sessionStorage.setItem(USER_STORAGE_KEY, JSON.stringify(data.user));
+          } else if (isMounted) {
+            setUser(null);
+            sessionStorage.removeItem(TOKEN_STORAGE_KEY);
+            sessionStorage.removeItem(USER_STORAGE_KEY);
+          }
+        } else if (isMounted) {
+          setUser(null);
+          sessionStorage.removeItem(TOKEN_STORAGE_KEY);
+          sessionStorage.removeItem(USER_STORAGE_KEY);
+        }
+      } catch (err) {
+        console.warn('Admin session validation network notice:', err);
+      } finally {
         if (isMounted) setIsLoading(false);
       }
     };
@@ -95,70 +82,60 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     };
   }, []);
 
-  const login = async (email: string, password: string): Promise<{ success: boolean; error?: string }> => {
+  const login = async (password: string): Promise<{ success: boolean; error?: string }> => {
     setIsLoading(true);
 
     try {
-      const normalizedEmail = email.trim().toLowerCase();
+      const response = await fetch('/api/admin-auth', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ password })
+      });
 
-      if (isSupabaseConfigured && supabase) {
-        // 1. Authenticate with Supabase Auth
-        const { data, error } = await supabase.auth.signInWithPassword({
-          email: normalizedEmail,
-          password
-        });
+      const data = await response.json();
 
-        if (error || !data.user) {
-          setIsLoading(false);
-          return { 
-            success: false, 
-            error: error?.message || 'Invalid email or password. Please check your credentials.' 
-          };
-        }
-
-        // 2. Verify active authorization in public.admin_users
-        const { data: profile, error: profileErr } = await supabase
-          .from('admin_users')
-          .select('*')
-          .eq('auth_user_id', data.user.id)
-          .maybeSingle();
-
-        if (profileErr) {
-          console.error('Failed to query admin_users table:', profileErr);
-        }
-
-        if (!profile || !profile.active) {
-          await supabase.auth.signOut();
-          setIsLoading(false);
-          return {
-            success: false,
-            error: 'Authentication succeeded, but your account is not registered as an active administrator in the VETANIC database.'
-          };
-        }
-
-        // 3. Construct verified Admin session
-        const adminUser: AdminUser = {
-          id: profile.id,
-          authUserId: data.user.id,
-          name: profile.name || data.user.email?.split('@')[0] || 'VETANIC Admin',
-          email: data.user.email || profile.email,
-          role: (profile.role as AdminRole) || 'Admin',
-          active: profile.active,
-          createdAt: profile.created_at || new Date().toISOString(),
-          lastLoginAt: new Date().toISOString()
-        };
-
-        setUser(adminUser);
-        localStorage.setItem(AUTH_STORAGE_KEY, JSON.stringify(adminUser));
+      if (!response.ok || !data.success) {
         setIsLoading(false);
-        return { success: true };
+        return {
+          success: false,
+          error: data.error || 'Incorrect password. Access denied.'
+        };
+      }
+
+      const adminUser: AdminUser = data.user || {
+        id: 'admin',
+        name: 'VETANIC Admin',
+        email: 'admin@vetanic.sg',
+        role: 'Owner',
+        active: true,
+        createdAt: new Date().toISOString()
+      };
+
+      if (data.token) {
+        sessionStorage.setItem(TOKEN_STORAGE_KEY, data.token);
+      }
+      sessionStorage.setItem(USER_STORAGE_KEY, JSON.stringify(adminUser));
+      setUser(adminUser);
+
+      // If server authenticated with Supabase, set Supabase auth session client-side
+      if (data.supabaseSession && isSupabaseConfigured && supabase) {
+        try {
+          await supabase.auth.setSession({
+            access_token: data.supabaseSession.access_token,
+            refresh_token: data.supabaseSession.refresh_token
+          });
+        } catch (sbErr) {
+          console.warn('Supabase setSession notice:', sbErr);
+        }
       }
 
       setIsLoading(false);
-      return { success: false, error: 'Supabase authentication service is not configured.' };
+      return { success: true };
     } catch (err: unknown) {
       setIsLoading(false);
-      const msg = err instanceof Error ? err.message : 'Authentication failed';
+      const msg = err instanceof Error ? err.message : 'Network error verifying password.';
       return { success: false, error: msg };
     }
   };
@@ -168,12 +145,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       try {
         await supabase.auth.signOut();
       } catch (e) {
-        console.warn('Supabase sign out error:', e);
+        // ignore
       }
     }
     setUser(null);
-    localStorage.removeItem(AUTH_STORAGE_KEY);
-    sessionStorage.removeItem(AUTH_STORAGE_KEY);
+    sessionStorage.removeItem(TOKEN_STORAGE_KEY);
+    sessionStorage.removeItem(USER_STORAGE_KEY);
+    localStorage.removeItem('vetanic_admin_auth_v1');
   };
 
   const hasRole = (roles: AdminRole[]): boolean => {

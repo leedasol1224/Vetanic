@@ -20,20 +20,20 @@ export const AdminLayout: React.FC = () => {
   const { user, logout } = useAuth();
 
   const mainNavItems = [
-    { name: 'Dashboard', path: '/business/dashboard', icon: LayoutDashboard, exact: true },
-    { name: 'Orders', path: '/business/orders', icon: ShoppingBag, exact: false },
-    { name: 'Inventory', path: '/business/inventory', icon: Boxes, exact: false },
-    { name: 'Products', path: '/business/products', icon: Package, exact: true },
+    { name: 'Dashboard', path: '/business/doridori/dashboard', icon: LayoutDashboard, exact: true },
+    { name: 'Orders', path: '/business/doridori/orders', icon: ShoppingBag, exact: false },
+    { name: 'Inventory', path: '/business/doridori/inventory', icon: Boxes, exact: false },
+    { name: 'Products', path: '/business/doridori/products', icon: Package, exact: true },
   ];
 
   const inventorySubNav = [
-    { name: 'Overview', path: '/business/inventory', icon: Boxes, exact: true },
-    { name: 'Sales by Product', path: '/business/inventory/sales', icon: TrendingUp, exact: true },
-    { name: 'Stock Movements', path: '/business/inventory/movements', icon: History, exact: true },
+    { name: 'Overview', path: '/business/doridori/inventory', icon: Boxes, exact: true },
+    { name: 'Sales by Product', path: '/business/doridori/inventory/sales', icon: TrendingUp, exact: true },
+    { name: 'Stock Movements', path: '/business/doridori/inventory/movements', icon: History, exact: true },
   ];
 
   const isMainActive = (path: string, exact: boolean) => {
-    if (exact) return location.pathname === path || (path === '/business/dashboard' && location.pathname === '/business');
+    if (exact) return location.pathname === path || (path === '/business/doridori/dashboard' && location.pathname === '/business/doridori');
     return location.pathname.startsWith(path);
   };
 
@@ -41,11 +41,11 @@ export const AdminLayout: React.FC = () => {
     return location.pathname === path;
   };
 
-  const isInventorySection = location.pathname.startsWith('/business/inventory');
+  const isInventorySection = location.pathname.startsWith('/business/doridori/inventory');
 
   const handleLogout = async () => {
     await logout();
-    navigate('/business/login', { replace: true });
+    navigate('/business/doridori', { replace: true });
   };
 
   return (
@@ -56,13 +56,13 @@ export const AdminLayout: React.FC = () => {
           <div className="flex items-center justify-between h-16 gap-4">
             {/* Left: Brand + Staff Pill */}
             <div className="flex items-center gap-3 flex-shrink-0">
-              <Link to="/business/dashboard" className="flex items-center gap-2">
+              <Link to="/business/doridori/dashboard" className="flex items-center gap-2">
                 <span className="font-serif text-xl font-bold text-[#222222] tracking-tight">
                   VETANIC
                 </span>
                 <span className="inline-flex items-center gap-1 bg-[#9E2328]/10 border border-[#9E2328]/20 text-[#9E2328] text-[10px] font-bold px-2 py-0.5 rounded-full uppercase tracking-wider">
                   <ShieldCheck className="w-3 h-3 text-[#9E2328]" />
-                  Business Hub
+                  Admin Hub
                 </span>
               </Link>
             </div>
@@ -101,10 +101,10 @@ export const AdminLayout: React.FC = () => {
                 </div>
                 <div className="text-left">
                   <div className="font-bold text-[#222222] text-[11px] leading-tight">
-                    {user?.name || 'VETANIC Staff'}
+                    {user?.name || 'VETANIC Admin'}
                   </div>
                   <div className="text-[9px] text-[#6F6A65] font-semibold uppercase tracking-wider">
-                    {user?.role || 'Admin'}
+                    {user?.role || 'Owner'}
                   </div>
                 </div>
               </div>
@@ -113,7 +113,7 @@ export const AdminLayout: React.FC = () => {
               <button
                 type="button"
                 onClick={handleLogout}
-                title="Sign out of Business Hub"
+                title="Lock Admin Console"
                 className="inline-flex items-center gap-1 p-2 rounded-xl text-[#6F6A65] hover:text-[#9E2328] hover:bg-[#FAF7F2] border border-[#DED7CE] transition-colors cursor-pointer text-xs font-semibold"
               >
                 <LogOut className="w-4 h-4" />

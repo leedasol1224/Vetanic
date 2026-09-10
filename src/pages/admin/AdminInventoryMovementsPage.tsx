@@ -93,7 +93,7 @@ export const AdminInventoryMovementsPage: React.FC = () => {
         <div>
           <div className="flex items-center gap-2">
             <Link
-              to="/business/inventory"
+              to="/business/doridori/inventory"
               className="p-1.5 rounded-lg bg-white border border-[#DED7CE] text-charcoal hover:bg-[#FAF7F2]"
               title="Back to Inventory Overview"
             >
@@ -232,7 +232,7 @@ export const AdminInventoryMovementsPage: React.FC = () => {
                     {/* Product */}
                     <td className="py-3.5 px-4">
                       <Link
-                        to={`/business/inventory/${m.productId}`}
+                        to={`/business/doridori/inventory/${m.productId}`}
                         className="font-bold text-charcoal hover:text-brand-600 hover:underline block"
                       >
                         {m.productName}
@@ -277,7 +277,7 @@ export const AdminInventoryMovementsPage: React.FC = () => {
                     <td className="py-3.5 px-4 whitespace-nowrap">
                       {m.orderReference ? (
                         <Link
-                          to={`/business/orders/${m.orderId || m.orderReference}`}
+                          to={`/business/doridori/orders/${m.orderId || m.orderReference}`}
                           className="font-mono font-bold text-brand-600 hover:underline"
                         >
                           {m.orderReference}

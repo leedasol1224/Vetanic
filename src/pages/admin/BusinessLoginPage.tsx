@@ -1,24 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { Lock, Mail, ShieldCheck, ArrowLeft, Eye, EyeOff, AlertCircle } from 'lucide-react';
+import { Lock, KeyRound, ShieldCheck, ArrowLeft, Eye, EyeOff, AlertCircle } from 'lucide-react';
 
 export const BusinessLoginPage: React.FC = () => {
   const { login, isAuthenticated } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
 
-  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Determine redirect destination
-  const fromLocation = (location.state as { from?: { pathname: string } })?.from?.pathname || '/business/dashboard';
+  const fromLocation = (location.state as { from?: { pathname: string } })?.from?.pathname || '/business/doridori/dashboard';
 
   // If already authenticated, redirect immediately
-  React.useEffect(() => {
+  useEffect(() => {
     if (isAuthenticated) {
       navigate(fromLocation, { replace: true });
     }
@@ -28,19 +27,19 @@ export const BusinessLoginPage: React.FC = () => {
     e.preventDefault();
     setErrorMsg('');
 
-    if (!email.trim() || !password) {
-      setErrorMsg('Please provide both your business email and password.');
+    if (!password) {
+      setErrorMsg('Please enter the admin access password.');
       return;
     }
 
     setIsSubmitting(true);
-    const result = await login(email, password);
+    const result = await login(password);
     setIsSubmitting(false);
 
     if (result.success) {
       navigate(fromLocation, { replace: true });
     } else {
-      setErrorMsg(result.error || 'Invalid credentials. Please try again.');
+      setErrorMsg(result.error || 'Incorrect password. Access denied.');
     }
   };
 
@@ -58,21 +57,21 @@ export const BusinessLoginPage: React.FC = () => {
 
         <span className="inline-flex items-center gap-1 bg-[#9E2328]/10 text-[#9E2328] text-[10px] font-bold px-2.5 py-1 rounded-full uppercase tracking-wider">
           <ShieldCheck className="w-3 h-3" />
-          Staff Portal
+          Authorized Access Only
         </span>
       </div>
 
-      {/* Main Login Card */}
+      {/* Main Password Card */}
       <div className="max-w-md w-full mx-auto my-auto space-y-6">
         <div className="text-center space-y-2">
           <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-[#9E2328] text-white shadow-soft mb-2">
             <Lock className="w-6 h-6" />
           </div>
           <h1 className="font-serif text-3xl font-bold text-[#222222] tracking-tight">
-            VETANIC Business
+            VETANIC Admin Gate
           </h1>
           <p className="text-xs text-[#6F6A65] max-w-sm mx-auto">
-            Authorized internal access for Singapore order management, inventory operations, and customer fulfillment.
+            Internal console for Singapore order tracking, customer fulfillment, and inventory operations.
           </p>
         </div>
 
@@ -84,46 +83,27 @@ export const BusinessLoginPage: React.FC = () => {
             </div>
           )}
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            {/* Email Field */}
-            <div className="space-y-1.5">
-              <label className="block text-xs font-bold text-[#222222] uppercase tracking-wider">
-                Business Email
-              </label>
-              <div className="relative">
-                <Mail className="w-4 h-4 text-[#6F6A65] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
-                <input
-                  type="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="e.g. admin@vetanic.sg"
-                  className="w-full pl-10 pr-4 py-2.5 rounded-xl border border-[#DED7CE] bg-[#FAF7F2] text-xs font-medium text-[#222222] focus:outline-none focus:ring-2 focus:ring-[#9E2328] focus:border-[#9E2328] transition-all"
-                />
-              </div>
-            </div>
-
+          <form onSubmit={handleSubmit} className="space-y-5">
             {/* Password Field */}
             <div className="space-y-1.5">
-              <div className="flex items-center justify-between">
-                <label className="block text-xs font-bold text-[#222222] uppercase tracking-wider">
-                  Password
-                </label>
-              </div>
+              <label className="block text-xs font-bold text-[#222222] uppercase tracking-wider">
+                Admin Password
+              </label>
               <div className="relative">
-                <Lock className="w-4 h-4 text-[#6F6A65] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                <KeyRound className="w-4 h-4 text-[#6F6A65] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                 <input
                   type={showPassword ? 'text' : 'password'}
                   required
+                  autoFocus
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="Enter your password"
-                  className="w-full pl-10 pr-10 py-2.5 rounded-xl border border-[#DED7CE] bg-[#FAF7F2] text-xs font-medium text-[#222222] focus:outline-none focus:ring-2 focus:ring-[#9E2328] focus:border-[#9E2328] transition-all"
+                  placeholder="Enter admin password"
+                  className="w-full pl-10 pr-10 py-3 rounded-xl border border-[#DED7CE] bg-[#FAF7F2] text-sm font-medium text-[#222222] focus:outline-none focus:ring-2 focus:ring-[#9E2328] focus:border-[#9E2328] transition-all"
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#6F6A65] hover:text-[#222222] focus:outline-none"
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#6F6A65] hover:text-[#222222] focus:outline-none cursor-pointer"
                   title={showPassword ? 'Hide password' : 'Show password'}
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -135,14 +115,14 @@ export const BusinessLoginPage: React.FC = () => {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full flex items-center justify-center gap-2 bg-[#9E2328] hover:bg-[#841C21] disabled:opacity-60 text-white font-bold text-xs py-3 px-4 rounded-xl shadow-xs transition-all mt-2 cursor-pointer"
+              className="w-full flex items-center justify-center gap-2 bg-[#9E2328] hover:bg-[#841C21] disabled:opacity-60 text-white font-bold text-xs py-3.5 px-4 rounded-xl shadow-xs transition-all cursor-pointer"
             >
               {isSubmitting ? (
-                <span>Verifying...</span>
+                <span>Verifying Access...</span>
               ) : (
                 <>
                   <ShieldCheck className="w-4 h-4" />
-                  <span>Sign In to Console</span>
+                  <span>Unlock Admin Console</span>
                 </>
               )}
             </button>
@@ -152,7 +132,7 @@ export const BusinessLoginPage: React.FC = () => {
 
       {/* Footer */}
       <div className="text-center text-[11px] text-[#6F6A65]">
-        <span>VETANIC Singapore • Enterprise Protected Console</span>
+        <span>VETANIC Singapore • Protected Internal Management System</span>
       </div>
     </div>
   );

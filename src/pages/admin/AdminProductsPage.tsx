@@ -48,7 +48,7 @@ export const AdminProductsPage: React.FC = () => {
         </div>
 
         <Link
-          to="/business/inventory"
+          to="/business/doridori/inventory"
           className="inline-flex items-center gap-2 bg-[#9E2328] hover:bg-[#841C21] text-white font-bold text-xs px-4 py-2.5 rounded-xl shadow-xs transition-colors cursor-pointer"
         >
           <Boxes className="w-4 h-4" />
@@ -162,7 +162,7 @@ export const AdminProductsPage: React.FC = () => {
               {/* Bottom Quick Links */}
               <div className="p-4 bg-[#FAF7F2] border-t border-[#DED7CE] flex items-center justify-between gap-2">
                 <Link
-                  to={`/business/inventory/${prod.id}`}
+                  to={`/business/doridori/inventory/${prod.id}`}
                   className="flex-1 inline-flex items-center justify-center gap-1.5 bg-white hover:bg-[#E9E0D4]/60 text-[#222222] text-xs font-bold py-2 px-3 rounded-xl border border-[#DED7CE] transition-colors"
                 >
                   <Boxes className="w-3.5 h-3.5 text-[#9E2328]" />

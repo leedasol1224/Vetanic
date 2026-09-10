@@ -50,7 +50,7 @@ export const AdminNotificationBell: React.FC = () => {
     await markNotificationReadInDb(item.id);
     loadNotifications();
     setIsOpen(false);
-    navigate(`/business/orders/${item.orderId}`);
+    navigate(`/business/doridori/orders/${item.orderId}`);
   };
 
   const handleMarkAllRead = (e: React.MouseEvent) => {
@@ -190,9 +190,9 @@ export const AdminNotificationBell: React.FC = () => {
               type="button"
               onClick={() => {
                 setIsOpen(false);
-                navigate('/business/orders');
+                navigate('/business/doridori/orders');
               }}
-              className="text-[11px] font-bold text-[#9E2328] hover:underline"
+              className="text-[11px] font-bold text-[#9E2328] hover:underline cursor-pointer"
             >
               View All Customer Orders →
             </button>

@@ -72,7 +72,7 @@ export const AdminInventoryProductDetailPage: React.FC = () => {
         <h2 className="text-xl font-bold text-charcoal">Product Not Found</h2>
         <p className="text-xs text-charcoal-muted">The specified product inventory profile does not exist.</p>
         <Link
-          to="/business/inventory"
+          to="/business/doridori/inventory"
           className="inline-flex items-center gap-2 bg-brand-600 text-white font-bold text-xs px-5 py-2.5 rounded-xl"
         >
           <ArrowLeft className="w-4 h-4" />
@@ -113,7 +113,7 @@ export const AdminInventoryProductDetailPage: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <Link
-            to="/business/inventory"
+            to="/business/doridori/inventory"
             className="p-2 rounded-xl bg-white border border-[#DED7CE] text-charcoal hover:bg-[#FAF7F2]"
             title="Back to Inventory Overview"
           >
@@ -287,7 +287,7 @@ export const AdminInventoryProductDetailPage: React.FC = () => {
                   >
                     <div>
                       <Link
-                        to={`/business/orders/${ord.id}`}
+                        to={`/business/doridori/orders/${ord.id}`}
                         className="font-mono font-bold text-brand-600 hover:underline"
                       >
                         {ord.orderReference}

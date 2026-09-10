@@ -80,7 +80,7 @@ export const AdminOrderDetailPage: React.FC = () => {
         <h2 className="text-xl font-bold text-[#222222]">Order Request Not Found</h2>
         <p className="text-xs text-[#6F6A65]">The requested order reference could not be located.</p>
         <Link
-          to="/business/orders"
+          to="/business/doridori/orders"
           className="inline-flex items-center gap-2 bg-[#9E2328] text-white font-bold text-xs px-5 py-2.5 rounded-xl"
         >
           <ArrowLeft className="w-4 h-4" />
@@ -118,7 +118,7 @@ export const AdminOrderDetailPage: React.FC = () => {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div className="flex items-center gap-3">
           <Link
-            to="/business/orders"
+            to="/business/doridori/orders"
             className="p-2 rounded-xl bg-white border border-[#DED7CE] text-[#222222] hover:bg-[#FAF7F2] transition-colors"
             title="Back to Orders"
           >

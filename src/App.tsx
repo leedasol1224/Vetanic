@@ -89,19 +89,19 @@ function App() {
               <Route path="*" element={<HomePage />} />
             </Route>
 
-            {/* Public Business Login Page */}
-            <Route path="/business/login" element={<BusinessLoginPage />} />
+            {/* Admin Password Gate Screen */}
+            <Route path="/business/doridori" element={<BusinessLoginPage />} />
 
             {/* Protected Internal Business Console (Authentication Required) */}
             <Route
-              path="/business"
+              path="/business/doridori"
               element={
                 <BusinessAuthGuard>
                   <AdminLayout />
                 </BusinessAuthGuard>
               }
             >
-              <Route index element={<Navigate to="/business/dashboard" replace />} />
+              <Route index element={<Navigate to="/business/doridori/dashboard" replace />} />
               <Route path="dashboard" element={<AdminDashboard />} />
               <Route path="orders" element={<AdminOrdersPage />} />
               <Route path="orders/:id" element={<AdminOrderDetailPage />} />
@@ -112,9 +112,12 @@ function App() {
               <Route path="products" element={<AdminProductsPage />} />
             </Route>
 
-            {/* Legacy Admin URLs Auto-Redirect to Business Console */}
-            <Route path="/admin/*" element={<Navigate to="/business/dashboard" replace />} />
-            <Route path="/admin" element={<Navigate to="/business/dashboard" replace />} />
+            {/* Legacy Admin & Business URLs Auto-Redirect to /business/doridori */}
+            <Route path="/business/login" element={<Navigate to="/business/doridori" replace />} />
+            <Route path="/business/*" element={<Navigate to="/business/doridori" replace />} />
+            <Route path="/business" element={<Navigate to="/business/doridori" replace />} />
+            <Route path="/admin/*" element={<Navigate to="/business/doridori" replace />} />
+            <Route path="/admin" element={<Navigate to="/business/doridori" replace />} />
           </Routes>
         </Router>
       </OrderProvider>

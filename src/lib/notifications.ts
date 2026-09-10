@@ -88,7 +88,7 @@ export function createOrderNotification(order: OrderRecord): AdminNotification {
 export async function sendBusinessEmailNotification(order: OrderRecord): Promise<{ success: boolean; error?: string }> {
   const businessEmail = import.meta.env.VITE_BUSINESS_NOTIFICATION_EMAIL || 'vetanicsg@gmail.com';
   const appBaseUrl = typeof window !== 'undefined' ? window.location.origin : 'https://vetanic.vercel.app';
-  const orderAdminLink = `${appBaseUrl}/business/orders/${order.id}`;
+  const orderAdminLink = `${appBaseUrl}/business/doridori/orders/${order.id}`;
 
   const subject = `New VETANIC Order — ${order.orderReference}`;
   const itemsText = order.items.map((i) => `• ${i.productName} × ${i.quantity} (SGD ${(i.unitPrice * i.quantity).toFixed(2)})`).join('\n');

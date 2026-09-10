@@ -14,14 +14,14 @@ export const BusinessAuthGuard: React.FC<{ children: React.ReactNode }> = ({ chi
           <Loader2 className="w-6 h-6 text-brand-600 animate-spin" />
         </div>
         <p className="mt-4 text-xs font-semibold text-charcoal-muted tracking-wider uppercase">
-          Verifying Business Credentials...
+          Verifying Admin Access...
         </p>
       </div>
     );
   }
 
   if (!isAuthenticated) {
-    return <Navigate to="/business/login" state={{ from: location }} replace />;
+    return <Navigate to="/business/doridori" state={{ from: location }} replace />;
   }
 
   return <>{children}</>;
