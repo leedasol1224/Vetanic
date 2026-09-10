@@ -22,7 +22,6 @@ import { ReturnsPolicyPage } from './pages/ReturnsPolicyPage';
 import { TermsPolicyPage } from './pages/TermsPolicyPage';
 import { PrivacyPolicyPage } from './pages/PrivacyPolicyPage';
 
-import { BusinessLoginPage } from './pages/admin/BusinessLoginPage';
 import { BusinessAuthGuard } from './components/admin/BusinessAuthGuard';
 import { AdminLayout } from './pages/admin/AdminLayout';
 import { AdminDashboard } from './pages/admin/AdminDashboard';
@@ -89,10 +88,7 @@ function App() {
               <Route path="*" element={<HomePage />} />
             </Route>
 
-            {/* Admin Password Gate Screen */}
-            <Route path="/business/doridori" element={<BusinessLoginPage />} />
-
-            {/* Protected Internal Business Console (Authentication Required) */}
+            {/* Protected Internal Admin Hub (Protected by BusinessAuthGuard) */}
             <Route
               path="/business/doridori"
               element={
@@ -101,7 +97,7 @@ function App() {
                 </BusinessAuthGuard>
               }
             >
-              <Route index element={<Navigate to="/business/doridori/dashboard" replace />} />
+              <Route index element={<AdminDashboard />} />
               <Route path="dashboard" element={<AdminDashboard />} />
               <Route path="orders" element={<AdminOrdersPage />} />
               <Route path="orders/:id" element={<AdminOrderDetailPage />} />

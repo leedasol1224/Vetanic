@@ -1,27 +1,15 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation, Link } from 'react-router-dom';
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { Lock, KeyRound, ShieldCheck, ArrowLeft, Eye, EyeOff, AlertCircle } from 'lucide-react';
 
 export const BusinessLoginPage: React.FC = () => {
-  const { login, isAuthenticated } = useAuth();
-  const navigate = useNavigate();
-  const location = useLocation();
+  const { login } = useAuth();
 
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  // Determine redirect destination
-  const fromLocation = (location.state as { from?: { pathname: string } })?.from?.pathname || '/business/doridori/dashboard';
-
-  // If already authenticated, redirect immediately
-  useEffect(() => {
-    if (isAuthenticated) {
-      navigate(fromLocation, { replace: true });
-    }
-  }, [isAuthenticated, navigate, fromLocation]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,9 +24,7 @@ export const BusinessLoginPage: React.FC = () => {
     const result = await login(password);
     setIsSubmitting(false);
 
-    if (result.success) {
-      navigate(fromLocation, { replace: true });
-    } else {
+    if (!result.success) {
       setErrorMsg(result.error || 'Incorrect password. Access denied.');
     }
   };
@@ -68,7 +54,7 @@ export const BusinessLoginPage: React.FC = () => {
             <Lock className="w-6 h-6" />
           </div>
           <h1 className="font-serif text-3xl font-bold text-[#222222] tracking-tight">
-            VETANIC Admin Gate
+            VETANIC Admin
           </h1>
           <p className="text-xs text-[#6F6A65] max-w-sm mx-auto">
             Internal console for Singapore order tracking, customer fulfillment, and inventory operations.
