@@ -8,17 +8,17 @@ import { createOrderNotification } from './notifications';
 import { deductOrderStockOnPayment, restoreOrderStockOnCancellation } from './inventory';
 
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || '';
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY || '';
+const supabasePublishableKey = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY || import.meta.env.VITE_SUPABASE_ANON_KEY || '';
 
 export const isSupabaseConfigured = Boolean(
   supabaseUrl && 
-  supabaseAnonKey && 
+  supabasePublishableKey && 
   supabaseUrl.startsWith('http') && 
   !supabaseUrl.includes('placeholder')
 );
 
 export const supabase: SupabaseClient | null = isSupabaseConfigured
-  ? createClient(supabaseUrl, supabaseAnonKey)
+  ? createClient(supabaseUrl, supabasePublishableKey)
   : null;
 
 interface DbOrderRow {
@@ -547,4 +547,68 @@ export async function submitContactEnquiry(enquiry: Omit<ContactEnquiry, 'id' | 
 
   return saveLocalEnquiry(enquiry);
 }
+
+/**
+ * Fetch inventory movements from Supabase
+ */
+export async function fetchInventoryMovementsFromDb(): Promise<import('../types/inventory').InventoryMovement[]> {
+  if (isSupabaseConfigured && supabase) {
+    try {
+      const { data, error } = await supabase
+        .from('inventory_movements')
+        .select('*')
+        .order('created_at', { ascending: false });
+
+      if (!error && data) {
+        return data.map((d) => ({
+          id: d.id,
+          productId: d.product_id,
+          productName: d.product_name,
+          sku: d.sku,
+          createdAt: d.created_at,
+          movementType: d.movement_type,
+          quantityChange: d.quantity_change,
+          stockBefore: d.stock_before,
+          stockAfter: d.stock_after,
+          orderId: d.order_id,
+          orderReference: d.order_reference,
+          reason: d.reason,
+          internalNote: d.internal_note,
+          adminUser: d.admin_user
+        }));
+      }
+    } catch (err) {
+      console.error('Failed to fetch inventory movements from Supabase:', err);
+    }
+  }
+
+  return [];
+}
+
+/**
+ * Save inventory movement to Supabase
+ */
+export async function saveInventoryMovementToDb(movement: import('../types/inventory').InventoryMovement): Promise<void> {
+  if (isSupabaseConfigured && supabase) {
+    try {
+      await supabase.from('inventory_movements').insert({
+        product_id: movement.productId,
+        product_name: movement.productName,
+        sku: movement.sku,
+        movement_type: movement.movementType,
+        quantity_change: movement.quantityChange,
+        stock_before: movement.stockBefore,
+        stock_after: movement.stockAfter,
+        order_id: movement.orderId || null,
+        order_reference: movement.orderReference || null,
+        reason: movement.reason,
+        internal_note: movement.internalNote || null,
+        admin_user: movement.adminUser || 'VETANIC Admin'
+      });
+    } catch (err) {
+      console.error('Failed to save inventory movement to Supabase:', err);
+    }
+  }
+}
+
 
