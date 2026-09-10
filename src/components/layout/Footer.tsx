@@ -53,6 +53,21 @@ export const Footer: React.FC = () => {
           </a>
         </div>
 
+        {/* Subtle Policy Links */}
+        <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 text-xs text-[#8C847C] pt-2">
+          <Link to="/returns" className="hover:text-[#DED7CE] transition-colors">
+            Returns & Exchanges
+          </Link>
+          <span className="opacity-40">·</span>
+          <Link to="/terms" className="hover:text-[#DED7CE] transition-colors">
+            Terms & Conditions
+          </Link>
+          <span className="opacity-40">·</span>
+          <Link to="/privacy" className="hover:text-[#DED7CE] transition-colors">
+            Privacy Policy
+          </Link>
+        </div>
+
         {/* Subtle Brand Lineage Note & Copyright */}
         <div className="pt-8 border-t border-[#333333] flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-[#8C847C]">
           <span>© 2026 VETANIC. All rights reserved.</span>

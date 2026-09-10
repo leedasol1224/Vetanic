@@ -18,6 +18,9 @@ import { OrderPage } from './pages/OrderPage';
 import { OrderSuccessPage } from './pages/OrderSuccessPage';
 import { MyOrdersPage } from './pages/MyOrdersPage';
 import { ContactPage } from './pages/ContactPage';
+import { ReturnsPolicyPage } from './pages/ReturnsPolicyPage';
+import { TermsPolicyPage } from './pages/TermsPolicyPage';
+import { PrivacyPolicyPage } from './pages/PrivacyPolicyPage';
 
 import { BusinessLoginPage } from './pages/admin/BusinessLoginPage';
 import { BusinessAuthGuard } from './components/admin/BusinessAuthGuard';
@@ -79,6 +82,9 @@ function App() {
               <Route path="/order/success/:reference" element={<OrderSuccessPage />} />
               <Route path="/my-orders" element={<MyOrdersPage />} />
               <Route path="/my-orders/:reference" element={<MyOrdersPage />} />
+              <Route path="/returns" element={<ReturnsPolicyPage />} />
+              <Route path="/terms" element={<TermsPolicyPage />} />
+              <Route path="/privacy" element={<PrivacyPolicyPage />} />
               <Route path="/contact" element={<ContactPage />} />
               <Route path="*" element={<HomePage />} />
             </Route>

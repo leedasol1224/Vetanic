@@ -59,6 +59,7 @@ export const OrderPage: React.FC = () => {
   const [ackStock, setAckStock] = useState(false);
   const [ackAllergy, setAckAllergy] = useState(false);
   const [ackWellness, setAckWellness] = useState(false);
+  const [consentTerms, setConsentTerms] = useState(false);
 
   // Marketing Source
   const [referralSource, setReferralSource] = useState<ReferralSource>('Instagram');
@@ -139,6 +140,11 @@ export const OrderPage: React.FC = () => {
 
     if (!ackStock || !ackAllergy || !ackWellness) {
       setErrorMessage('Please check all three acknowledgements before submitting.');
+      return;
+    }
+
+    if (!consentTerms) {
+      setErrorMessage('Please agree to the Terms & Conditions and Privacy Policy before submitting.');
       return;
     }
 
@@ -768,7 +774,7 @@ export const OrderPage: React.FC = () => {
               </div>
 
               <div className="flex justify-between items-center">
-                <span>Delivery ({deliveryMethod === 'self_collection' ? 'Self-collection' : deliveryMethod === 'same_day' ? 'Same-day' : 'Standard Delivery'}):</span>
+                <span>Delivery ({deliveryMethod === 'express' ? 'Express Delivery' : 'Standard Delivery'}):</span>
                 <span className="font-semibold text-white">
                   {pricingSummary.deliveryFee === 0 ? (
                     <span className="text-[#A8B89A] font-bold">FREE</span>
@@ -786,7 +792,43 @@ export const OrderPage: React.FC = () => {
               </div>
             </div>
 
-            {/* Primary CTA Button (Deep Red #9E2328 / Hover #841C21) */}
+            {/* Required Customer Policy Consent */}
+            <div className="pt-1">
+              <label className="flex items-start gap-3 p-3.5 rounded-2xl bg-[#2D2D2D] border border-[#3D3D3D] cursor-pointer hover:border-brand-500 transition-colors">
+                <input
+                  type="checkbox"
+                  required
+                  checked={consentTerms}
+                  onChange={(e) => setConsentTerms(e.target.checked)}
+                  className="mt-0.5 rounded text-brand-600 focus:ring-brand-600 w-4 h-4 bg-[#1A1A1A] border-[#4D4D4D]"
+                />
+                <span className="text-xs text-[#DED7CE] leading-relaxed select-none">
+                  I have read and agree to the{' '}
+                  <Link
+                    to="/terms"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-white font-bold underline underline-offset-2 hover:text-brand-400"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    Terms & Conditions
+                  </Link>{' '}
+                  and acknowledge the{' '}
+                  <Link
+                    to="/privacy"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-white font-bold underline underline-offset-2 hover:text-brand-400"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    Privacy Policy
+                  </Link>
+                  .
+                </span>
+              </label>
+            </div>
+
+            {/* Primary CTA Button */}
             <button
               type="submit"
               disabled={isSubmitting}
