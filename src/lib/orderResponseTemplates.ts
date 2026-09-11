@@ -24,7 +24,7 @@ export function formatDetailedItemBreakdown(order: OrderRecord): string {
 export function formatPaymentInstructions(order: OrderRecord): string {
   if (order.paymentPreference === 'paynow') {
     return `PayNow Instructions:
-• UEN: 202612345K (VETANIC PTE. LTD.)
+• Mobile Number: 8882 8621
 • Reference: ${order.orderReference}
 • Amount: S$${(order.pricing?.estimatedTotal || 0).toFixed(2)}`;
   }

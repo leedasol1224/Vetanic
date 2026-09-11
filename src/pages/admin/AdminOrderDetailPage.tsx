@@ -311,7 +311,7 @@ export const AdminOrderDetailPage: React.FC = () => {
                   Payment Preference
                 </span>
                 <span className="font-bold text-[#222222] text-sm uppercase">
-                  {order.paymentPreference === 'paynow' ? 'PayNow (UEN / QR)' : 'Bank Transfer'}
+                  {order.paymentPreference === 'paynow' ? 'PayNow (Mobile)' : 'Bank Transfer'}
                 </span>
               </div>
 

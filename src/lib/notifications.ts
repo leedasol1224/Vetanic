@@ -114,7 +114,7 @@ Delivery:
 ${deliveryText}
 
 Payment Method:
-${order.paymentPreference === 'paynow' ? 'PayNow (UEN / QR)' : 'Bank Transfer'}
+${order.paymentPreference === 'paynow' ? 'PayNow (Mobile)' : 'Bank Transfer'}
 
 View Order in Business Hub:
 ${orderAdminLink}

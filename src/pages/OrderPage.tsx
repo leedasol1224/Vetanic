@@ -694,9 +694,9 @@ export const OrderPage: React.FC = () => {
                   className="text-brand-600 focus:ring-brand-600"
                 />
                 <div>
-                  <div className="font-bold text-sm">PayNow (UEN / Mobile)</div>
+                  <div className="font-bold text-sm">PayNow (Mobile)</div>
                   <div className="text-[11px] text-charcoal-muted font-normal">
-                    Instant SG bank QR or UEN transfer
+                    PayNow transfer via mobile number
                   </div>
                 </div>
               </label>
@@ -959,7 +959,7 @@ export const OrderPage: React.FC = () => {
                 * Payment is not collected at this step. We will confirm product availability, your final total and delivery arrangements before sending payment instructions.
               </p>
               <p className="text-[#DED7CE] font-medium">
-                Accepted Payment: PayNow (UEN/QR) · Bank Transfer
+                Accepted Payment: PayNow (Mobile) · Bank Transfer
               </p>
             </div>
           </div>
