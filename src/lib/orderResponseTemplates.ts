@@ -49,35 +49,52 @@ export function generateOrderResponse(type: TemplateType, params: TemplateParams
   const customerName = order.customer.fullName.trim();
   const orderRef = order.orderReference;
   const productTotal = (order.pricing?.productTotal || 0).toFixed(2);
-  const deliveryFee = (order.pricing?.deliveryFee || 0) === 0 ? '0.00 (FREE)' : (order.pricing?.deliveryFee || 0).toFixed(2);
   const finalTotal = (order.pricing?.estimatedTotal || 0).toFixed(2);
-  const paymentMethodLabel = order.paymentPreference === 'paynow' ? 'PayNow' : 'Bank Transfer';
 
   switch (type) {
     case 'order_confirmed': {
+      const availableItems = availableItemIds && availableItemIds.length > 0
+        ? order.items.filter((i) => availableItemIds.includes(i.productId))
+        : order.items;
+
+      const availableItemsList = availableItems
+        .map((item) => `${item.productName} × ${item.quantity}`)
+        .join('\n');
+
+      const itemsBreakdown = order.items
+        .map((item) => `• ${item.productName} (${item.packageSize}) × ${item.quantity} — S$${(item.unitPrice * item.quantity).toFixed(2)}`)
+        .join('\n');
+
+      const deliveryFeeFormatted = (order.pricing?.deliveryFee || 0) === 0
+        ? 'S$0.00 (FREE)'
+        : `S$${(order.pricing?.deliveryFee || 0).toFixed(2)}`;
+
       return `Hi ${customerName}! Thank you for your VETANIC order 🐾
 
 We're happy to confirm that the following items are available:
 
-${formatOrderItemsList(order)}
+${availableItemsList}
 
 Order Summary:
-${formatDetailedItemBreakdown(order)}
+${itemsBreakdown}
 
 Product Total: S$${productTotal}
-Delivery: S$${deliveryFee}
+Delivery: ${deliveryFeeFormatted}
 Total: S$${finalTotal}
 
 Your order reference is:
 ${orderRef}
 
-You may proceed with payment via ${paymentMethodLabel}.
+You may proceed with payment via PayNow:
 
-${formatPaymentInstructions(order)}
+PayNow to Mobile Number
+• Mobile Number: 8882 8621
+• Reference: ${orderRef}
+• Amount: S$${finalTotal}
 
 Once payment has been made, please send us the payment confirmation screenshot and we'll proceed with your order.
 
-Thank you for supporting VETANIC! ❤️`;
+Thank you for supporting VETANIC! ☺️`;
     }
 
     case 'partially_available': {

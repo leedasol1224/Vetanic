@@ -1,4 +1,90 @@
-import { OrderStatus } from '../types/order';
+export type CanonicalOrderStatus =
+  | 'pending_confirmation'
+  | 'confirmed'
+  | 'awaiting_payment'
+  | 'paid'
+  | 'preparing'
+  | 'out_for_delivery'
+  | 'completed'
+  | 'cancelled';
+
+export type DisplayOrderStatus =
+  | 'Pending Confirmation'
+  | 'Confirmed'
+  | 'Awaiting Payment'
+  | 'Paid'
+  | 'Preparing'
+  | 'Out for Delivery'
+  | 'Completed'
+  | 'Cancelled';
+
+export const CANONICAL_ORDER_STATUSES: CanonicalOrderStatus[] = [
+  'pending_confirmation',
+  'confirmed',
+  'awaiting_payment',
+  'paid',
+  'preparing',
+  'out_for_delivery',
+  'completed',
+  'cancelled'
+];
+
+export const DISPLAY_ORDER_STATUSES: DisplayOrderStatus[] = [
+  'Pending Confirmation',
+  'Confirmed',
+  'Awaiting Payment',
+  'Paid',
+  'Preparing',
+  'Out for Delivery',
+  'Completed',
+  'Cancelled'
+];
+
+export const STATUS_CANONICAL_TO_DISPLAY: Record<CanonicalOrderStatus, DisplayOrderStatus> = {
+  pending_confirmation: 'Pending Confirmation',
+  confirmed: 'Confirmed',
+  awaiting_payment: 'Awaiting Payment',
+  paid: 'Paid',
+  preparing: 'Preparing',
+  out_for_delivery: 'Out for Delivery',
+  completed: 'Completed',
+  cancelled: 'Cancelled'
+};
+
+export const STATUS_DISPLAY_TO_CANONICAL: Record<string, CanonicalOrderStatus> = {
+  'Pending Confirmation': 'pending_confirmation',
+  'Confirmed': 'confirmed',
+  'Awaiting Payment': 'awaiting_payment',
+  'Paid': 'paid',
+  'Preparing': 'preparing',
+  'Out for Delivery': 'out_for_delivery',
+  'Completed': 'completed',
+  'Cancelled': 'cancelled',
+  // Canonical passthroughs
+  'pending_confirmation': 'pending_confirmation',
+  'confirmed': 'confirmed',
+  'awaiting_payment': 'awaiting_payment',
+  'paid': 'paid',
+  'preparing': 'preparing',
+  'out_for_delivery': 'out_for_delivery',
+  'completed': 'completed',
+  'cancelled': 'cancelled'
+};
+
+export function toCanonicalStatus(status: string): CanonicalOrderStatus {
+  if (!status) return 'pending_confirmation';
+  const clean = status.trim();
+  if (STATUS_DISPLAY_TO_CANONICAL[clean]) {
+    return STATUS_DISPLAY_TO_CANONICAL[clean];
+  }
+  const snake = clean.toLowerCase().replace(/[\s-]+/g, '_') as CanonicalOrderStatus;
+  return CANONICAL_ORDER_STATUSES.includes(snake) ? snake : 'pending_confirmation';
+}
+
+export function toDisplayStatus(status: string): DisplayOrderStatus {
+  const canonical = toCanonicalStatus(status);
+  return STATUS_CANONICAL_TO_DISPLAY[canonical] || 'Pending Confirmation';
+}
 
 export type CustomerOrderStatus =
   | 'Order Submitted'
@@ -28,9 +114,11 @@ export const CUSTOMER_STATUS_STAGES: Array<{
   { key: 'Delivered', label: 'Delivered', korean: '배송 완료', step: 4 }
 ];
 
-export function mapToCustomerStatus(internalStatus: OrderStatus | string): CustomerStatusInfo {
-  switch (internalStatus) {
-    case 'Pending Confirmation':
+export function mapToCustomerStatus(internalStatus: string): CustomerStatusInfo {
+  const canonical = toCanonicalStatus(internalStatus);
+
+  switch (canonical) {
+    case 'pending_confirmation':
       return {
         customerStatus: 'Order Submitted',
         koreanMeaning: '주문 요청 완료',
@@ -40,8 +128,8 @@ export function mapToCustomerStatus(internalStatus: OrderStatus | string): Custo
         whatsNext: "We're checking product availability. Once confirmed, we'll send you the final order amount and payment instructions."
       };
 
-    case 'Confirmed':
-    case 'Awaiting Payment':
+    case 'confirmed':
+    case 'awaiting_payment':
       return {
         customerStatus: 'Order Confirmed',
         koreanMeaning: '주문 접수',
@@ -51,9 +139,9 @@ export function mapToCustomerStatus(internalStatus: OrderStatus | string): Custo
         whatsNext: "Your order has been confirmed. We'll send you the payment instructions through your selected contact method."
       };
 
-    case 'Paid':
-    case 'Preparing':
-    case 'Out for Delivery':
+    case 'paid':
+    case 'preparing':
+    case 'out_for_delivery':
       return {
         customerStatus: 'Preparing for Delivery',
         koreanMeaning: '배송 준비중',
@@ -63,7 +151,7 @@ export function mapToCustomerStatus(internalStatus: OrderStatus | string): Custo
         whatsNext: 'Your VETANIC order is being prepared. We will notify you once courier dispatch is underway.'
       };
 
-    case 'Completed':
+    case 'completed':
       return {
         customerStatus: 'Delivered',
         koreanMeaning: '배송 완료',
@@ -73,7 +161,7 @@ export function mapToCustomerStatus(internalStatus: OrderStatus | string): Custo
         whatsNext: 'Your order has been delivered. Thank you for choosing VETANIC! ❤️'
       };
 
-    case 'Cancelled':
+    case 'cancelled':
       return {
         customerStatus: 'Cancelled',
         koreanMeaning: '주문 취소',

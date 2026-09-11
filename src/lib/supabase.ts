@@ -1,5 +1,6 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 import { OrderSubmission, OrderRecord, OrderStatus, DeliveryMethod, ContactMethod, CustomerType, PaymentMethod, ReferralSource } from '../types/order';
+import { toCanonicalStatus, toDisplayStatus } from './orderStatus';
 import { ContactEnquiry } from '../types/enquiry';
 import { AdminNotification } from '../types/notification';
 import { CommunicationLog } from '../types/communication';
@@ -103,7 +104,7 @@ export function mapDbRowToOrderRecord(row: DbOrderRow): OrderRecord {
     },
     items,
     pricing: row.pricing || undefined,
-    status: (row.status as OrderStatus) || 'Pending Confirmation',
+    status: toDisplayStatus(row.status),
     totalItemCount: totalCount,
     internalNotes: row.internal_notes || '',
     inventoryDeducted: row.inventory_deducted || false,
@@ -249,16 +250,19 @@ export async function fetchOrderByIdFromDb(idOrRef: string): Promise<OrderRecord
 /**
  * Update order status via secure Serverless Admin API.
  */
-export async function updateOrderStatusInDb(idOrRef: string, newStatus: OrderStatus): Promise<boolean> {
+export async function updateOrderStatusInDb(idOrRef: string, newStatus: OrderStatus | string): Promise<boolean> {
   const order = await fetchOrderByIdFromDb(idOrRef);
-  if (!order) return false;
+  if (!order) throw new Error('Order not found');
+
+  const canonicalStatus = toCanonicalStatus(newStatus);
+  const displayStatus = toDisplayStatus(newStatus);
 
   const updates: Record<string, unknown> = {
-    status: newStatus
+    status: canonicalStatus
   };
 
-  // Stock deduction tracking
-  if (newStatus === 'Paid' && !order.inventoryDeducted) {
+  // Stock deduction tracking: entering 'paid' deducts stock only once
+  if (canonicalStatus === 'paid' && !order.inventoryDeducted) {
     deductOrderStockOnPayment(order);
     updates.inventory_deducted = true;
     updates.inventory_deducted_at = new Date().toISOString();
@@ -266,7 +270,8 @@ export async function updateOrderStatusInDb(idOrRef: string, newStatus: OrderSta
     order.inventoryDeductedAt = updates.inventory_deducted_at as string;
   }
 
-  if (newStatus === 'Cancelled' && order.inventoryDeducted && !order.inventoryRestored) {
+  // Stock restoration tracking: cancelling a deducted order restores stock only once
+  if (canonicalStatus === 'cancelled' && order.inventoryDeducted && !order.inventoryRestored) {
     restoreOrderStockOnCancellation(order);
     updates.inventory_restored = true;
     updates.inventory_restored_at = new Date().toISOString();
@@ -274,31 +279,37 @@ export async function updateOrderStatusInDb(idOrRef: string, newStatus: OrderSta
     order.inventoryRestoredAt = updates.inventory_restored_at as string;
   }
 
-  try {
-    await fetch('/api/admin-orders', {
-      method: 'POST',
-      credentials: 'include',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        action: 'update_status',
-        id: order.id,
-        orderReference: order.orderReference,
-        status: newStatus,
-        updates
-      })
-    });
-  } catch (err) {
-    console.warn('Admin API update status notice:', err);
+  const res = await fetch('/api/admin-orders', {
+    method: 'POST',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      action: 'update_status',
+      id: order.id,
+      orderReference: order.orderReference,
+      status: canonicalStatus,
+      updates
+    })
+  });
+
+  if (!res.ok) {
+    const errData = await res.json().catch(() => ({}));
+    throw new Error(errData.error || `Server responded with HTTP ${res.status}`);
   }
 
-  // Update local cache
+  const json = await res.json();
+  if (!json.success) {
+    throw new Error(json.error || 'Failed to update order status');
+  }
+
+  // Confirmed database write -> update local cache
   try {
     const orders = getOrders();
     const idx = orders.findIndex((o) => o.id === order.id || o.orderReference === order.orderReference);
     if (idx > -1) {
-      orders[idx].status = newStatus;
+      orders[idx].status = displayStatus;
       if (updates.inventory_deducted !== undefined) {
         orders[idx].inventoryDeducted = updates.inventory_deducted as boolean;
         orders[idx].inventoryDeductedAt = updates.inventory_deducted_at as string;
@@ -314,6 +325,56 @@ export async function updateOrderStatusInDb(idOrRef: string, newStatus: OrderSta
   }
 
   return true;
+}
+
+/**
+ * Bulk delete orders via secure Serverless Admin API.
+ */
+export async function deleteOrdersFromDb(
+  orderIds: string[], 
+  restoreInventory: boolean = true
+): Promise<{ success: boolean; deletedCount: number; restoredCount?: number }> {
+  if (!orderIds || orderIds.length === 0) {
+    return { success: true, deletedCount: 0 };
+  }
+
+  const res = await fetch('/api/admin-orders', {
+    method: 'POST',
+    credentials: 'include',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      action: 'bulk_delete',
+      orderIds,
+      restoreInventory
+    })
+  });
+
+  if (!res.ok) {
+    const errData = await res.json().catch(() => ({}));
+    throw new Error(errData.error || `Failed to delete orders (HTTP ${res.status})`);
+  }
+
+  const json = await res.json();
+  if (!json.success) {
+    throw new Error(json.error || 'Failed to delete orders from database');
+  }
+
+  // Prune local storage cache
+  try {
+    const orders = getOrders();
+    const remaining = orders.filter((o) => !orderIds.includes(o.id) && !orderIds.includes(o.orderReference));
+    saveOrdersToStorage(remaining);
+  } catch (e) {
+    console.error('Failed to prune local cache after deletion', e);
+  }
+
+  return {
+    success: true,
+    deletedCount: json.deletedCount || orderIds.length,
+    restoredCount: json.restoredCount || 0
+  };
 }
 
 /**

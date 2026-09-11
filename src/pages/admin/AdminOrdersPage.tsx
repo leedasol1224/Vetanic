@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
-import { Search, Eye, Filter, RefreshCw } from 'lucide-react';
-import { fetchOrdersFromDb } from '../../lib/supabase';
+import { Search, Eye, Filter, RefreshCw, Trash2, AlertCircle, CheckCircle2, Loader2 } from 'lucide-react';
+import { fetchOrdersFromDb, deleteOrdersFromDb } from '../../lib/supabase';
 import { getOrders } from '../../lib/storage';
 import { OrderRecord, OrderStatus } from '../../types/order';
 
@@ -22,6 +22,15 @@ export const AdminOrdersPage: React.FC = () => {
   const [orders, setOrders] = useState<OrderRecord[]>(() => getOrders());
   const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+
+  // Checkbox selection state
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
+
+  // Bulk Delete Modal State
+  const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const activeStatusFilter = (searchParams.get('status') || 'All') as 'All' | OrderStatus;
 
@@ -99,6 +108,68 @@ export const AdminOrdersPage: React.FC = () => {
     });
   }, [orders, activeStatusFilter, searchQuery]);
 
+  // Checkbox selection logic
+  const visibleIds = useMemo(() => filteredOrders.map((o) => o.id), [filteredOrders]);
+  const isAllSelected = visibleIds.length > 0 && visibleIds.every((id) => selectedIds.has(id));
+  const isSomeSelected = visibleIds.some((id) => selectedIds.has(id)) && !isAllSelected;
+
+  const handleToggleSelectAll = () => {
+    if (isAllSelected) {
+      const next = new Set(selectedIds);
+      visibleIds.forEach((id) => next.delete(id));
+      setSelectedIds(next);
+    } else {
+      const next = new Set(selectedIds);
+      visibleIds.forEach((id) => next.add(id));
+      setSelectedIds(next);
+    }
+  };
+
+  const handleToggleRow = (id: string) => {
+    const next = new Set(selectedIds);
+    if (next.has(id)) {
+      next.delete(id);
+    } else {
+      next.add(id);
+    }
+    setSelectedIds(next);
+  };
+
+  // Check for deducted orders within current selection
+  const selectedOrdersList = useMemo(() => {
+    return orders.filter((o) => selectedIds.has(o.id));
+  }, [orders, selectedIds]);
+
+  const deductedCount = useMemo(() => {
+    return selectedOrdersList.filter((o) => o.inventoryDeducted && !o.inventoryRestored).length;
+  }, [selectedOrdersList]);
+
+  // Bulk Delete Execution
+  const handleConfirmDelete = async () => {
+    if (selectedIds.size === 0 || isDeleting) return;
+    setIsDeleting(true);
+    setDeleteError(null);
+
+    try {
+      const idsToDelete = Array.from(selectedIds);
+      const result = await deleteOrdersFromDb(idsToDelete, true);
+
+      // Immediately update local state
+      setOrders((prev) => prev.filter((o) => !selectedIds.has(o.id)));
+      setSelectedIds(new Set());
+      setIsDeleteModalOpen(false);
+
+      const count = result.deletedCount || idsToDelete.length;
+      setSuccessMessage(`${count} ${count === 1 ? 'order' : 'orders'} deleted successfully.`);
+      setTimeout(() => setSuccessMessage(null), 4500);
+    } catch (err: unknown) {
+      console.error('Failed to delete selected orders:', err);
+      setDeleteError((err as Error)?.message || 'Failed to delete selected orders');
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   // Counts per status
   const statusCounts = useMemo(() => {
     const counts: { [key: string]: number } = { All: orders.length };
@@ -133,6 +204,22 @@ export const AdminOrdersPage: React.FC = () => {
           <span>{isLoading ? 'Refreshing...' : 'Refresh Orders'}</span>
         </button>
       </div>
+
+      {/* Success Notification Banner */}
+      {successMessage && (
+        <div className="p-4 bg-emerald-50 border border-emerald-200 rounded-2xl flex items-center justify-between gap-3 text-xs font-semibold text-emerald-900 shadow-xs animate-soft-in">
+          <div className="flex items-center gap-2">
+            <CheckCircle2 className="w-4 h-4 text-emerald-600 flex-shrink-0" />
+            <span>{successMessage}</span>
+          </div>
+          <button
+            onClick={() => setSuccessMessage(null)}
+            className="text-emerald-700 hover:text-emerald-900 font-bold px-2 py-0.5 rounded-lg hover:bg-emerald-100"
+          >
+            ✕
+          </button>
+        </div>
+      )}
 
       {/* Search & Status Filter Tabs Bar */}
       <div className="bg-white rounded-3xl p-5 border border-[#DED7CE] shadow-soft space-y-4">
@@ -184,20 +271,47 @@ export const AdminOrdersPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Orders Table */}
+      {/* Orders Table Container */}
       <div className="bg-white rounded-3xl border border-[#DED7CE] shadow-soft overflow-hidden">
-        <div className="p-4 border-b border-[#DED7CE] bg-[#FAF7F2]/50 flex items-center justify-between text-xs text-charcoal-muted">
+        {/* Table Top Info & Bulk Action Toolbar */}
+        <div className="p-4 border-b border-[#DED7CE] bg-[#FAF7F2]/50 flex flex-wrap items-center justify-between gap-3 text-xs text-charcoal-muted">
           <div>
             Showing <strong>{filteredOrders.length}</strong> of {orders.length} orders
           </div>
-          {searchQuery && (
-            <button
-              onClick={() => setSearchQuery('')}
-              className="text-brand-600 underline font-semibold"
-            >
-              Clear search
-            </button>
-          )}
+
+          <div className="flex items-center gap-3">
+            {selectedIds.size > 0 && (
+              <div className="flex items-center gap-2 animate-soft-in">
+                <span className="font-bold text-charcoal">
+                  {selectedIds.size} selected
+                </span>
+                <button
+                  type="button"
+                  onClick={() => setSelectedIds(new Set())}
+                  className="text-xs font-semibold text-charcoal-muted hover:text-charcoal px-2.5 py-1 rounded-lg border border-[#DED7CE] bg-white transition-colors"
+                >
+                  Deselect
+                </button>
+                <button
+                  type="button"
+                  onClick={() => { setDeleteError(null); setIsDeleteModalOpen(true); }}
+                  className="inline-flex items-center gap-1.5 bg-red-600 hover:bg-red-700 text-white font-bold text-xs px-3 py-1 rounded-xl shadow-xs transition-colors cursor-pointer"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                  <span>Delete Selected ({selectedIds.size})</span>
+                </button>
+              </div>
+            )}
+
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery('')}
+                className="text-brand-600 underline font-semibold"
+              >
+                Clear search
+              </button>
+            )}
+          </div>
         </div>
 
         {filteredOrders.length === 0 ? (
@@ -212,6 +326,19 @@ export const AdminOrdersPage: React.FC = () => {
             <table className="w-full text-left border-collapse text-xs">
               <thead>
                 <tr className="bg-[#FAF7F2] border-b border-[#DED7CE] text-charcoal-muted font-bold uppercase tracking-wider text-[10px]">
+                  {/* Master Checkbox */}
+                  <th className="py-3.5 px-4 w-10 text-center">
+                    <input
+                      type="checkbox"
+                      checked={isAllSelected}
+                      ref={(el) => {
+                        if (el) el.indeterminate = isSomeSelected;
+                      }}
+                      onChange={handleToggleSelectAll}
+                      className="w-4 h-4 rounded text-brand-600 focus:ring-brand-600 cursor-pointer border-[#DED7CE]"
+                      title="Select/Deselect all visible orders"
+                    />
+                  </th>
                   <th className="py-3.5 px-4">Order Ref</th>
                   <th className="py-3.5 px-4">Date</th>
                   <th className="py-3.5 px-4">Customer</th>
@@ -225,96 +352,187 @@ export const AdminOrdersPage: React.FC = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#DED7CE]/70 text-charcoal">
-                {filteredOrders.map((order) => (
-                  <tr key={order.id} className="hover:bg-[#FAF7F2]/60 transition-colors">
-                    {/* Order Reference */}
-                    <td className="py-4 px-4 font-mono font-bold text-brand-600 whitespace-nowrap">
-                      <Link to={`/business/doridori/orders/${order.id}`} className="hover:underline">
-                        {order.orderReference}
-                      </Link>
-                    </td>
+                {filteredOrders.map((order) => {
+                  const isSelected = selectedIds.has(order.id);
+                  return (
+                    <tr
+                      key={order.id}
+                      className={`transition-colors ${
+                        isSelected ? 'bg-brand-50/50' : 'hover:bg-[#FAF7F2]/60'
+                      }`}
+                    >
+                      {/* Row Checkbox */}
+                      <td className="py-4 px-4 w-10 text-center">
+                        <input
+                          type="checkbox"
+                          checked={isSelected}
+                          onChange={() => handleToggleRow(order.id)}
+                          className="w-4 h-4 rounded text-brand-600 focus:ring-brand-600 cursor-pointer border-[#DED7CE]"
+                          aria-label={`Select order ${order.orderReference}`}
+                        />
+                      </td>
 
-                    {/* Date */}
-                    <td className="py-4 px-4 text-charcoal-muted whitespace-nowrap">
-                      {new Date(order.createdAt).toLocaleDateString('en-SG', {
-                        month: 'short',
-                        day: 'numeric',
-                        hour: '2-digit',
-                        minute: '2-digit'
-                      })}
-                    </td>
+                      {/* Order Reference */}
+                      <td className="py-4 px-4 font-mono font-bold text-brand-600 whitespace-nowrap">
+                        <Link to={`/business/doridori/orders/${order.id}`} className="hover:underline">
+                          {order.orderReference}
+                        </Link>
+                      </td>
 
-                    {/* Customer */}
-                    <td className="py-4 px-4 font-semibold text-charcoal whitespace-nowrap">
-                      {order.customer.fullName}
-                      <span className="block text-[10px] text-charcoal-muted font-normal">
-                        {order.customer.customerType === 'new' ? 'New Customer' : 'Existing Customer'}
-                      </span>
-                    </td>
+                      {/* Date */}
+                      <td className="py-4 px-4 text-charcoal-muted whitespace-nowrap">
+                        {new Date(order.createdAt).toLocaleDateString('en-SG', {
+                          month: 'short',
+                          day: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit'
+                        })}
+                      </td>
 
-                    {/* Contact */}
-                    <td className="py-4 px-4 whitespace-nowrap">
-                      <div className="text-charcoal font-medium">{order.customer.contactNumber}</div>
-                      <div className="text-[10px] text-brand-600 font-semibold">
-                        {order.customer.preferredContact}
-                      </div>
-                    </td>
+                      {/* Customer */}
+                      <td className="py-4 px-4 font-semibold text-charcoal whitespace-nowrap">
+                        {order.customer.fullName}
+                        <span className="block text-[10px] text-charcoal-muted font-normal">
+                          {order.customer.customerType === 'new' ? 'New Customer' : 'Existing Customer'}
+                        </span>
+                      </td>
 
-                    {/* Products */}
-                    <td className="py-4 px-4 min-w-[12rem]">
-                      <div className="font-semibold text-charcoal">{order.totalItemCount} units total</div>
-                      <div className="text-[11px] text-charcoal-muted line-clamp-1">
-                        {order.items.map((i) => `${i.productName} (×${i.quantity})`).join(', ')}
-                      </div>
-                    </td>
+                      {/* Contact */}
+                      <td className="py-4 px-4 whitespace-nowrap">
+                        <div className="text-charcoal font-medium">{order.customer.contactNumber}</div>
+                        <div className="text-[10px] text-brand-600 font-semibold">
+                          {order.customer.preferredContact}
+                        </div>
+                      </td>
 
-                    {/* Order Amount */}
-                    <td className="py-4 px-4 font-serif font-bold text-charcoal whitespace-nowrap">
-                      SGD {order.pricing?.estimatedTotal ? order.pricing.estimatedTotal.toFixed(2) : '—'}
-                    </td>
+                      {/* Products */}
+                      <td className="py-4 px-4 min-w-[12rem]">
+                        <div className="font-semibold text-charcoal">{order.totalItemCount} units total</div>
+                        <div className="text-[11px] text-charcoal-muted line-clamp-1">
+                          {order.items.map((i) => `${i.productName} (×${i.quantity})`).join(', ')}
+                        </div>
+                      </td>
 
-                    {/* Delivery Method */}
-                    <td className="py-4 px-4 whitespace-nowrap text-[11px]">
-                      {order.delivery.deliveryMethod === 'express' ? (
-                        <span className="text-orange-700 font-semibold">Express Delivery</span>
-                      ) : (
-                        <span className="text-charcoal font-medium">Standard Delivery</span>
-                      )}
-                    </td>
+                      {/* Order Amount */}
+                      <td className="py-4 px-4 font-serif font-bold text-charcoal whitespace-nowrap">
+                        SGD {order.pricing?.estimatedTotal ? order.pricing.estimatedTotal.toFixed(2) : '—'}
+                      </td>
 
-                    {/* Payment Method */}
-                    <td className="py-4 px-4 whitespace-nowrap text-[11px] uppercase font-semibold text-charcoal-muted">
-                      {order.paymentPreference === 'paynow' ? 'PayNow' : 'Bank Transfer'}
-                    </td>
+                      {/* Delivery Method */}
+                      <td className="py-4 px-4 whitespace-nowrap text-[11px]">
+                        {order.delivery.deliveryMethod === 'express' ? (
+                          <span className="text-orange-700 font-semibold">Express Delivery</span>
+                        ) : (
+                          <span className="text-charcoal font-medium">Standard Delivery</span>
+                        )}
+                      </td>
 
-                    {/* Order Status */}
-                    <td className="py-4 px-4 whitespace-nowrap">
-                      <span
-                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${getStatusBadge(
-                          order.status
-                        )}`}
-                      >
-                        {order.status}
-                      </span>
-                    </td>
+                      {/* Payment Method */}
+                      <td className="py-4 px-4 whitespace-nowrap text-[11px] uppercase font-semibold text-charcoal-muted">
+                        {order.paymentPreference === 'paynow' ? 'PayNow' : 'Bank Transfer'}
+                      </td>
 
-                    {/* Actions */}
-                    <td className="py-4 px-4 text-right whitespace-nowrap">
-                      <Link
-                        to={`/business/doridori/orders/${order.id}`}
-                        className="inline-flex items-center gap-1 bg-[#FAF7F2] hover:bg-[#F4EFE7] text-charcoal font-semibold text-xs px-3 py-1.5 rounded-lg border border-[#DED7CE] transition-colors"
-                      >
-                        <Eye className="w-3.5 h-3.5 text-charcoal-muted" />
-                        <span>Manage</span>
-                      </Link>
-                    </td>
-                  </tr>
-                ))}
+                      {/* Order Status */}
+                      <td className="py-4 px-4 whitespace-nowrap">
+                        <span
+                          className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold border ${getStatusBadge(
+                            order.status
+                          )}`}
+                        >
+                          {order.status}
+                        </span>
+                      </td>
+
+                      {/* Actions */}
+                      <td className="py-4 px-4 text-right whitespace-nowrap">
+                        <Link
+                          to={`/business/doridori/orders/${order.id}`}
+                          className="inline-flex items-center gap-1 bg-[#FAF7F2] hover:bg-[#F4EFE7] text-charcoal font-semibold text-xs px-3 py-1.5 rounded-lg border border-[#DED7CE] transition-colors"
+                        >
+                          <Eye className="w-3.5 h-3.5 text-charcoal-muted" />
+                          <span>Manage</span>
+                        </Link>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
         )}
       </div>
+
+      {/* Deletion Confirmation Modal */}
+      {isDeleteModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-charcoal/60 backdrop-blur-xs animate-soft-in">
+          <div className="bg-white rounded-3xl max-w-md w-full p-6 sm:p-7 border border-[#DED7CE] shadow-2xl space-y-5">
+            <div className="flex items-start gap-3.5">
+              <div className="w-10 h-10 rounded-2xl bg-red-100 text-red-600 flex items-center justify-center flex-shrink-0">
+                <Trash2 className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="text-base font-serif font-bold text-charcoal">
+                  Delete {selectedIds.size} Selected {selectedIds.size === 1 ? 'Order' : 'Orders'}?
+                </h3>
+                <p className="text-xs text-charcoal-muted mt-1 leading-relaxed">
+                  This action cannot be undone. Associated order items, notifications, and communication logs will be permanently removed.
+                </p>
+              </div>
+            </div>
+
+            {deductedCount > 0 && (
+              <div className="p-3.5 rounded-2xl bg-amber-50 border border-amber-200 text-xs text-amber-900 space-y-1">
+                <div className="font-bold flex items-center gap-1.5">
+                  <AlertCircle className="w-4 h-4 text-amber-700 flex-shrink-0" />
+                  <span>Inventory Deduction Notice</span>
+                </div>
+                <p className="text-[11px] text-amber-800 leading-relaxed">
+                  {deductedCount} of the selected orders have deducted inventory. Their stock will be automatically restored to the inventory ledger before deletion.
+                </p>
+              </div>
+            )}
+
+            {deleteError && (
+              <div className="p-3.5 rounded-2xl bg-red-50 border border-red-200 text-xs font-semibold text-red-800">
+                ⚠️ {deleteError}
+              </div>
+            )}
+
+            <div className="flex items-center justify-end gap-3 pt-2">
+              <button
+                type="button"
+                disabled={isDeleting}
+                onClick={() => {
+                  setIsDeleteModalOpen(false);
+                  setDeleteError(null);
+                }}
+                className="px-4 py-2.5 rounded-xl border border-[#DED7CE] bg-[#FAF7F2] hover:bg-[#E9E0D4] text-xs font-semibold text-charcoal transition-colors disabled:opacity-60 cursor-pointer"
+              >
+                Cancel
+              </button>
+              <button
+                type="button"
+                disabled={isDeleting}
+                onClick={handleConfirmDelete}
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-red-600 hover:bg-red-700 text-white text-xs font-bold shadow-xs transition-colors disabled:opacity-60 cursor-pointer"
+              >
+                {isDeleting ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    <span>Deleting...</span>
+                  </>
+                ) : (
+                  <>
+                    <Trash2 className="w-4 h-4" />
+                    <span>Delete Orders</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
+
