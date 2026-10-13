@@ -1,5 +1,5 @@
 import { Product, CategoryInfo } from '../types/product';
-import { SEPTEMBER_2026_LAUNCH_PROMOTION } from '../config/promotions';
+import { ACTIVE_LAUNCH_PROMOTION } from '../config/promotions';
 
 export const CATEGORIES: CategoryInfo[] = [
   {
@@ -96,8 +96,8 @@ export const PRODUCTS: Product[] = [
     initialStock: 40,
     lowStockThreshold: 5,
     trackInventory: true,
-    regularPrice: SEPTEMBER_2026_LAUNCH_PROMOTION.everydayCare.regularPrice,
-    launchPrice: SEPTEMBER_2026_LAUNCH_PROMOTION.everydayCare.launchPrice,
+    regularPrice: ACTIVE_LAUNCH_PROMOTION.everydayCare.regularPrice,
+    launchPrice: ACTIVE_LAUNCH_PROMOTION.everydayCare.launchPrice,
     bundleOfferText: 'Mix & Match available in Everyday Care',
     details: {
       keyBenefits: [
@@ -162,8 +162,8 @@ export const PRODUCTS: Product[] = [
     initialStock: 0,
     lowStockThreshold: 5,
     trackInventory: true,
-    regularPrice: SEPTEMBER_2026_LAUNCH_PROMOTION.everydayCare.regularPrice,
-    launchPrice: SEPTEMBER_2026_LAUNCH_PROMOTION.everydayCare.launchPrice,
+    regularPrice: ACTIVE_LAUNCH_PROMOTION.everydayCare.regularPrice,
+    launchPrice: ACTIVE_LAUNCH_PROMOTION.everydayCare.launchPrice,
     bundleOfferText: 'Mix & Match available in Everyday Care',
     details: {
       keyBenefits: [
@@ -228,8 +228,8 @@ export const PRODUCTS: Product[] = [
     initialStock: 28,
     lowStockThreshold: 5,
     trackInventory: true,
-    regularPrice: SEPTEMBER_2026_LAUNCH_PROMOTION.everydayCare.regularPrice,
-    launchPrice: SEPTEMBER_2026_LAUNCH_PROMOTION.everydayCare.launchPrice,
+    regularPrice: ACTIVE_LAUNCH_PROMOTION.everydayCare.regularPrice,
+    launchPrice: ACTIVE_LAUNCH_PROMOTION.everydayCare.launchPrice,
     bundleOfferText: 'Mix & Match available in Everyday Care',
     details: {
       keyBenefits: [
@@ -291,8 +291,8 @@ export const PRODUCTS: Product[] = [
     initialStock: 45,
     lowStockThreshold: 5,
     trackInventory: true,
-    regularPrice: SEPTEMBER_2026_LAUNCH_PROMOTION.wellnessSupport.regularPrice,
-    launchPrice: SEPTEMBER_2026_LAUNCH_PROMOTION.wellnessSupport.launchPrice,
+    regularPrice: ACTIVE_LAUNCH_PROMOTION.wellnessSupport.regularPrice,
+    launchPrice: ACTIVE_LAUNCH_PROMOTION.wellnessSupport.launchPrice,
     bundleOfferText: 'Mix & Match available in Wellness Support',
     details: {
       keyBenefits: [
@@ -350,8 +350,8 @@ export const PRODUCTS: Product[] = [
     initialStock: 25,
     lowStockThreshold: 5,
     trackInventory: true,
-    regularPrice: SEPTEMBER_2026_LAUNCH_PROMOTION.wellnessSupport.regularPrice,
-    launchPrice: SEPTEMBER_2026_LAUNCH_PROMOTION.wellnessSupport.launchPrice,
+    regularPrice: ACTIVE_LAUNCH_PROMOTION.wellnessSupport.regularPrice,
+    launchPrice: ACTIVE_LAUNCH_PROMOTION.wellnessSupport.launchPrice,
     bundleOfferText: 'Mix & Match available in Wellness Support',
     details: {
       keyBenefits: [
@@ -410,8 +410,8 @@ export const PRODUCTS: Product[] = [
     initialStock: 20,
     lowStockThreshold: 5,
     trackInventory: true,
-    regularPrice: SEPTEMBER_2026_LAUNCH_PROMOTION.wellnessSupport.regularPrice,
-    launchPrice: SEPTEMBER_2026_LAUNCH_PROMOTION.wellnessSupport.launchPrice,
+    regularPrice: ACTIVE_LAUNCH_PROMOTION.wellnessSupport.regularPrice,
+    launchPrice: ACTIVE_LAUNCH_PROMOTION.wellnessSupport.launchPrice,
     bundleOfferText: 'Mix & Match available in Wellness Support',
     details: {
       keyBenefits: [
@@ -467,8 +467,8 @@ export const PRODUCTS: Product[] = [
     initialStock: 30,
     lowStockThreshold: 5,
     trackInventory: true,
-    regularPrice: SEPTEMBER_2026_LAUNCH_PROMOTION.wellnessSupport.regularPrice,
-    launchPrice: SEPTEMBER_2026_LAUNCH_PROMOTION.wellnessSupport.launchPrice,
+    regularPrice: ACTIVE_LAUNCH_PROMOTION.wellnessSupport.regularPrice,
+    launchPrice: ACTIVE_LAUNCH_PROMOTION.wellnessSupport.launchPrice,
     bundleOfferText: 'Mix & Match available in Wellness Support',
     details: {
       keyBenefits: [
@@ -523,8 +523,8 @@ export const PRODUCTS: Product[] = [
     initialStock: 35,
     lowStockThreshold: 5,
     trackInventory: true,
-    regularPrice: SEPTEMBER_2026_LAUNCH_PROMOTION.wellnessSupport.regularPrice,
-    launchPrice: SEPTEMBER_2026_LAUNCH_PROMOTION.wellnessSupport.launchPrice,
+    regularPrice: ACTIVE_LAUNCH_PROMOTION.wellnessSupport.regularPrice,
+    launchPrice: ACTIVE_LAUNCH_PROMOTION.wellnessSupport.launchPrice,
     bundleOfferText: 'Mix & Match available in Wellness Support',
     details: {
       keyBenefits: [
@@ -587,8 +587,8 @@ export const PRODUCTS: Product[] = [
     initialStock: 50,
     lowStockThreshold: 5,
     trackInventory: true,
-    regularPrice: SEPTEMBER_2026_LAUNCH_PROMOTION.treats['sweet-potato-pumpkin-treats'].regularPrice,
-    launchPrice: SEPTEMBER_2026_LAUNCH_PROMOTION.treats['sweet-potato-pumpkin-treats'].launchPrice,
+    regularPrice: ACTIVE_LAUNCH_PROMOTION.treats['sweet-potato-pumpkin-treats'].regularPrice,
+    launchPrice: ACTIVE_LAUNCH_PROMOTION.treats['sweet-potato-pumpkin-treats'].launchPrice,
     bundleOfferText: 'Bundle discount: 2 for SGD 22.00 · 3 for SGD 31.50',
     details: {
       keyBenefits: [
@@ -646,8 +646,8 @@ export const PRODUCTS: Product[] = [
     initialStock: 40,
     lowStockThreshold: 5,
     trackInventory: true,
-    regularPrice: SEPTEMBER_2026_LAUNCH_PROMOTION.treats['freeze-dried-vegetables'].regularPrice,
-    launchPrice: SEPTEMBER_2026_LAUNCH_PROMOTION.treats['freeze-dried-vegetables'].launchPrice,
+    regularPrice: ACTIVE_LAUNCH_PROMOTION.treats['freeze-dried-vegetables'].regularPrice,
+    launchPrice: ACTIVE_LAUNCH_PROMOTION.treats['freeze-dried-vegetables'].launchPrice,
     bundleOfferText: 'Bundle discount: 2 for SGD 32.00 · 3 for SGD 45.00',
     details: {
       keyBenefits: [

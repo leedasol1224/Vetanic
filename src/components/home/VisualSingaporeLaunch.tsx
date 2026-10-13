@@ -26,7 +26,7 @@ export const VisualSingaporeLaunch: React.FC = () => {
             </div>
 
             <h2 className="text-3xl sm:text-4xl font-heading font-bold text-charcoal tracking-tight leading-tight">
-              Launch prices available this September.
+              Launch prices available this October.
             </h2>
 
             <div className="pt-2">

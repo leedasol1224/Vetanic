@@ -4,6 +4,7 @@ import { X, Plus, Minus, Check, Package, MapPin, ShieldAlert, Sparkles, Tag, Ext
 import { useOrder } from '../../context/OrderContext';
 import { PetBadge } from '../common/Badge';
 import { getProductPricing } from '../../lib/pricing';
+import { ACTIVE_LAUNCH_PROMOTION } from '../../config/promotions';
 
 export const ProductDetailModal: React.FC = () => {
   const { activeProductModal, closeProductModal, addToOrder, isItemInOrder, getItemQuantity } = useOrder();
@@ -127,7 +128,7 @@ export const ProductDetailModal: React.FC = () => {
                   )}
                   {pricing.isPromo && (
                     <span className="text-[10px] font-bold text-brand-600 bg-brand-50 px-2 py-0.5 rounded-md border border-brand-200">
-                      September Launch Price
+                      {ACTIVE_LAUNCH_PROMOTION.badgeText}
                     </span>
                   )}
                 </div>

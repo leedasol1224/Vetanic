@@ -50,13 +50,13 @@ export interface PromotionConfig {
   };
 }
 
-export const SEPTEMBER_2026_LAUNCH_PROMOTION: PromotionConfig = {
-  id: 'sept-2026-launch',
-  name: 'September 2026 Singapore Launch',
-  badgeText: 'Singapore Launch Price',
-  announcementText: 'VETANIC Singapore Launch Special — Special prices & Mix & Match bundles throughout September',
-  startDate: '2026-09-01T00:00:00+08:00',
-  endDate: '2026-09-30T23:59:59+08:00',
+export const OCTOBER_2026_LAUNCH_PROMOTION: PromotionConfig = {
+  id: 'oct-2026-launch',
+  name: 'October 2026 Singapore Launch',
+  badgeText: 'October Launch Price',
+  announcementText: 'VETANIC Singapore Launch Special — Special prices & Mix & Match bundles throughout October (1–31 October 2026)',
+  startDate: '2026-10-01T00:00:00+08:00',
+  endDate: '2026-10-31T23:59:59+08:00',
   freeDeliveryThreshold: 50.00,
   standardDeliveryFee: 4.50,
   sameDayDeliveryFee: 15.00,
@@ -99,11 +99,22 @@ export const SEPTEMBER_2026_LAUNCH_PROMOTION: PromotionConfig = {
 };
 
 /**
- * Checks if the promotion is currently active.
+ * Active Promotion in effect
+ */
+export const ACTIVE_LAUNCH_PROMOTION: PromotionConfig = OCTOBER_2026_LAUNCH_PROMOTION;
+
+// Aliases for convenience and backward compatibility
+export const LAUNCH_PROMOTION = ACTIVE_LAUNCH_PROMOTION;
+export const SEPTEMBER_2026_LAUNCH_PROMOTION = ACTIVE_LAUNCH_PROMOTION;
+
+/**
+ * Checks if the launch promotion is currently active.
+ * Active throughout 1–31 October 2026 Singapore time.
+ * Automatically falls back to regular prices from 1 November 2026.
  */
 export function isLaunchPromoActive(currentDate: Date = new Date()): boolean {
-  const start = new Date(SEPTEMBER_2026_LAUNCH_PROMOTION.startDate).getTime();
-  const end = new Date(SEPTEMBER_2026_LAUNCH_PROMOTION.endDate).getTime();
+  const start = new Date(ACTIVE_LAUNCH_PROMOTION.startDate).getTime();
+  const end = new Date(ACTIVE_LAUNCH_PROMOTION.endDate).getTime();
   const now = currentDate.getTime();
 
   return now >= start && now <= end;

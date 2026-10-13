@@ -20,7 +20,7 @@ export const LaunchPromoSection: React.FC = () => {
           </h2>
 
           <p className="text-base sm:text-lg text-charcoal-muted leading-relaxed max-w-2xl mx-auto font-normal">
-            To celebrate our Singapore launch, enjoy special September prices and Mix & Match savings on selected VETANIC products.
+            To celebrate our Singapore launch, enjoy special October prices and Mix & Match savings on selected VETANIC products.
           </p>
 
           <div className="pt-2">

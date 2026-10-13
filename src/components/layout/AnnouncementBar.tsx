@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Sparkles, ArrowRight } from 'lucide-react';
-import { SEPTEMBER_2026_LAUNCH_PROMOTION, isLaunchPromoActive } from '../../config/promotions';
+import { ACTIVE_LAUNCH_PROMOTION, isLaunchPromoActive } from '../../config/promotions';
 
 export const AnnouncementBar: React.FC = () => {
   if (!isLaunchPromoActive()) return null;
@@ -15,7 +15,7 @@ export const AnnouncementBar: React.FC = () => {
         </span>
         <span className="text-[#6F6A65] hidden sm:inline">•</span>
         <span className="text-charcoal font-normal">
-          {SEPTEMBER_2026_LAUNCH_PROMOTION.announcementText}
+          {ACTIVE_LAUNCH_PROMOTION.announcementText}
         </span>
         <Link
           to="/products"

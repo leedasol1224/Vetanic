@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Sparkles, Heart, Shield } from 'lucide-react';
-import { SEPTEMBER_2026_LAUNCH_PROMOTION } from '../../config/promotions';
+import { ACTIVE_LAUNCH_PROMOTION } from '../../config/promotions';
 
 export const MixMatchSection: React.FC = () => {
   return (
@@ -55,7 +55,7 @@ export const MixMatchSection: React.FC = () => {
                     <span className="text-xs font-bold text-charcoal">1 item</span>
                   </div>
                   <span className="text-sm font-bold text-charcoal font-serif">
-                    SGD {SEPTEMBER_2026_LAUNCH_PROMOTION.everydayCare.launchPrice.toFixed(2)}
+                    SGD {ACTIVE_LAUNCH_PROMOTION.everydayCare.launchPrice.toFixed(2)}
                   </span>
                 </div>
 
@@ -70,7 +70,7 @@ export const MixMatchSection: React.FC = () => {
                     </div>
                   </div>
                   <span className="text-base font-bold text-charcoal font-serif">
-                    SGD {SEPTEMBER_2026_LAUNCH_PROMOTION.everydayCare.bundle2Price.toFixed(2)}
+                    SGD {ACTIVE_LAUNCH_PROMOTION.everydayCare.bundle2Price.toFixed(2)}
                   </span>
                 </div>
 
@@ -85,7 +85,7 @@ export const MixMatchSection: React.FC = () => {
                     </div>
                   </div>
                   <span className="text-lg font-bold text-brand-600 font-serif">
-                    SGD {SEPTEMBER_2026_LAUNCH_PROMOTION.everydayCare.bundle3Price.toFixed(2)}
+                    SGD {ACTIVE_LAUNCH_PROMOTION.everydayCare.bundle3Price.toFixed(2)}
                   </span>
                 </div>
               </div>
@@ -133,7 +133,7 @@ export const MixMatchSection: React.FC = () => {
                     <span className="text-xs font-bold text-charcoal">1 item</span>
                   </div>
                   <span className="text-sm font-bold text-charcoal font-serif">
-                    SGD {SEPTEMBER_2026_LAUNCH_PROMOTION.wellnessSupport.launchPrice.toFixed(2)}
+                    SGD {ACTIVE_LAUNCH_PROMOTION.wellnessSupport.launchPrice.toFixed(2)}
                   </span>
                 </div>
 
@@ -148,7 +148,7 @@ export const MixMatchSection: React.FC = () => {
                     </div>
                   </div>
                   <span className="text-base font-bold text-charcoal font-serif">
-                    SGD {SEPTEMBER_2026_LAUNCH_PROMOTION.wellnessSupport.bundle2Price.toFixed(2)}
+                    SGD {ACTIVE_LAUNCH_PROMOTION.wellnessSupport.bundle2Price.toFixed(2)}
                   </span>
                 </div>
 
@@ -163,7 +163,7 @@ export const MixMatchSection: React.FC = () => {
                     </div>
                   </div>
                   <span className="text-lg font-bold text-brand-600 font-serif">
-                    SGD {SEPTEMBER_2026_LAUNCH_PROMOTION.wellnessSupport.bundle3Price.toFixed(2)}
+                    SGD {ACTIVE_LAUNCH_PROMOTION.wellnessSupport.bundle3Price.toFixed(2)}
                   </span>
                 </div>
               </div>

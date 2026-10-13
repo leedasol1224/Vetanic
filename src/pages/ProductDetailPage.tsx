@@ -21,6 +21,7 @@ import { PRODUCTS } from '../data/products';
 import { PetBadge } from '../components/common/Badge';
 import { useOrder } from '../context/OrderContext';
 import { getProductPricing } from '../lib/pricing';
+import { ACTIVE_LAUNCH_PROMOTION } from '../config/promotions';
 import { ProductCard } from '../components/products/ProductCard';
 import { GeneralFaqSection } from '../components/products/GeneralFaqSection';
 import { getProductStock } from '../lib/inventory';
@@ -205,7 +206,7 @@ export const ProductDetailPage: React.FC = () => {
                   {pricing.isPromo && (
                     <span className="inline-flex items-center gap-1 text-[11px] font-bold text-brand-600 bg-brand-50 px-2.5 py-0.5 rounded-full border border-brand-200">
                       <Sparkles className="w-3 h-3 text-brand-600" />
-                      <span>September Launch Price</span>
+                      <span>{ACTIVE_LAUNCH_PROMOTION.badgeText}</span>
                     </span>
                   )}
                 </div>

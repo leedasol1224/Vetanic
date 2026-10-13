@@ -1,6 +1,6 @@
 import { OrderItem, DeliveryMethod, PricingSummary } from '../types/order';
 import { Product } from '../types/product';
-import { SEPTEMBER_2026_LAUNCH_PROMOTION, isLaunchPromoActive } from '../config/promotions';
+import { ACTIVE_LAUNCH_PROMOTION, isLaunchPromoActive } from '../config/promotions';
 import { DELIVERY_CONFIG } from './delivery';
 
 export interface ProductPriceInfo {
@@ -34,7 +34,7 @@ export function getProductPricing(product: Product, date: Date = new Date()): Pr
  */
 function calculateEverydayCareCost(count: number, isPromo: boolean): number {
   if (count <= 0) return 0;
-  const { regularPrice, launchPrice, bundle2Price, bundle3Price } = SEPTEMBER_2026_LAUNCH_PROMOTION.everydayCare;
+  const { regularPrice, launchPrice, bundle2Price, bundle3Price } = ACTIVE_LAUNCH_PROMOTION.everydayCare;
 
   if (!isPromo) {
     return count * regularPrice;
@@ -58,7 +58,7 @@ function calculateEverydayCareCost(count: number, isPromo: boolean): number {
  */
 function calculateWellnessSupportCost(count: number, isPromo: boolean): number {
   if (count <= 0) return 0;
-  const { regularPrice, launchPrice, bundle2Price, bundle3Price } = SEPTEMBER_2026_LAUNCH_PROMOTION.wellnessSupport;
+  const { regularPrice, launchPrice, bundle2Price, bundle3Price } = ACTIVE_LAUNCH_PROMOTION.wellnessSupport;
 
   if (!isPromo) {
     return count * regularPrice;
@@ -83,8 +83,8 @@ function calculateWellnessSupportCost(count: number, isPromo: boolean): number {
 function calculateTreatCost(slug: string, count: number, isPromo: boolean): number {
   if (count <= 0) return 0;
   const treatConfig =
-    SEPTEMBER_2026_LAUNCH_PROMOTION.treats[
-      slug as keyof typeof SEPTEMBER_2026_LAUNCH_PROMOTION.treats
+    ACTIVE_LAUNCH_PROMOTION.treats[
+      slug as keyof typeof ACTIVE_LAUNCH_PROMOTION.treats
     ];
 
   if (!treatConfig) {

@@ -19,7 +19,7 @@ export const BRAND_CONTENT = {
   launch: {
     label: 'HELLO, SINGAPORE',
     title: 'Celebrate our Singapore launch',
-    body: 'VETANIC is now available in Singapore. Enjoy special launch prices throughout September, with extra savings when you mix and match selected products.',
+    body: 'VETANIC is now available in Singapore. Enjoy special launch prices throughout October, with extra savings when you mix and match selected products.',
     cta: 'Shop Launch Offers',
   },
 
