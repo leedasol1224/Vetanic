@@ -57,7 +57,7 @@ export const OrderProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   }, [items, deliveryMethod]);
 
   const addToOrder = (product: Product, quantity: number = 1) => {
-    if (quantity <= 0 || !product.isAvailable || !isProductInStock(product.id)) return;
+    if (quantity <= 0 || !product.isAvailable || product.salesChannel === 'veterinary_only' || !isProductInStock(product.id)) return;
 
     setItems((prevItems) => {
       const existingIndex = prevItems.findIndex((item) => item.product.id === product.id);

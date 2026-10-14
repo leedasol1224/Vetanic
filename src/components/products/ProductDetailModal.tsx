@@ -27,6 +27,7 @@ export const ProductDetailModal: React.FC = () => {
   if (!activeProductModal) return null;
 
   const product = activeProductModal;
+  const isVeterinaryOnly = product.salesChannel === 'veterinary_only';
   const inOrder = isItemInOrder(product.id);
   const currentInOrderQty = getItemQuantity(product.id);
   const pricing = getProductPricing(product);
@@ -35,7 +36,7 @@ export const ProductDetailModal: React.FC = () => {
   const handleDecrement = () => setQuantity((prev) => (prev > 1 ? prev - 1 : 1));
 
   const handleAdd = () => {
-    if (!product.isAvailable) return;
+    if (!product.isAvailable || isVeterinaryOnly) return;
     addToOrder(product, quantity);
     closeProductModal();
   };
@@ -116,30 +117,46 @@ export const ProductDetailModal: React.FC = () => {
               </p>
 
               {/* Pricing Callout */}
-              <div className="p-3.5 bg-[#FAF7F2] rounded-2xl border border-[#DED7CE] mb-3 space-y-1.5">
-                <div className="flex items-baseline gap-2 flex-wrap">
-                  <span className="text-2xl font-heading font-bold text-charcoal">
-                    SGD {pricing.activePrice.toFixed(2)}
-                  </span>
-                  {pricing.isPromo && (
-                    <span className="text-xs text-charcoal-muted line-through">
-                      SGD {pricing.regularPrice.toFixed(2)}
+              {isVeterinaryOnly ? (
+                <div className="p-3.5 bg-red-50/50 rounded-2xl border border-red-200/80 mb-3 space-y-1">
+                  <div className="flex items-center gap-2">
+                    <span className="text-lg font-heading font-bold text-charcoal">
+                      Veterinary Clinic Exclusive
                     </span>
-                  )}
-                  {pricing.isPromo && (
-                    <span className="text-[10px] font-bold text-brand-600 bg-brand-50 px-2 py-0.5 rounded-md border border-brand-200">
-                      {ACTIVE_LAUNCH_PROMOTION.badgeText}
+                    <span className="text-[10px] font-bold text-[#BE3A34] bg-white px-2 py-0.5 rounded-md border border-red-200 shadow-xs">
+                      Clinics Only
                     </span>
+                  </div>
+                  <p className="text-xs text-charcoal-muted">
+                    Prescribed and dispensed exclusively via licensed veterinary clinics.
+                  </p>
+                </div>
+              ) : (
+                <div className="p-3.5 bg-[#FAF7F2] rounded-2xl border border-[#DED7CE] mb-3 space-y-1.5">
+                  <div className="flex items-baseline gap-2 flex-wrap">
+                    <span className="text-2xl font-heading font-bold text-charcoal">
+                      SGD {pricing.activePrice.toFixed(2)}
+                    </span>
+                    {pricing.isPromo && (
+                      <span className="text-xs text-charcoal-muted line-through">
+                        SGD {pricing.regularPrice.toFixed(2)}
+                      </span>
+                    )}
+                    {pricing.isPromo && (
+                      <span className="text-[10px] font-bold text-brand-600 bg-brand-50 px-2 py-0.5 rounded-md border border-brand-200">
+                        {ACTIVE_LAUNCH_PROMOTION.badgeText}
+                      </span>
+                    )}
+                  </div>
+
+                  {product.bundleOfferText && (
+                    <div className="text-xs font-medium text-charcoal flex items-center gap-1.5 pt-1.5 border-t border-[#DED7CE]/60">
+                      <Tag className="w-3.5 h-3.5 text-brand-600 flex-shrink-0" />
+                      <span>{product.bundleOfferText}</span>
+                    </div>
                   )}
                 </div>
-
-                {product.bundleOfferText && (
-                  <div className="text-xs font-medium text-charcoal flex items-center gap-1.5 pt-1.5 border-t border-[#DED7CE]/60">
-                    <Tag className="w-3.5 h-3.5 text-brand-600 flex-shrink-0" />
-                    <span>{product.bundleOfferText}</span>
-                  </div>
-                )}
-              </div>
+              )}
 
               <div className="p-3 bg-[#FAF7F2]/80 rounded-xl border border-[#DED7CE]/70 mb-4 space-y-1">
                 <div className="flex items-center gap-2 text-xs font-medium text-charcoal">
@@ -160,7 +177,20 @@ export const ProductDetailModal: React.FC = () => {
 
               {/* Quantity Selector & Add Button */}
               <div className="pt-1">
-                {!product.isAvailable ? (
+                {isVeterinaryOnly ? (
+                  <div className="p-3.5 bg-[#FAF7F2] rounded-2xl border border-[#DED7CE] space-y-2">
+                    <p className="text-xs text-charcoal-muted leading-relaxed">
+                      Complete V is available through veterinary practices and animal clinics across Singapore.
+                    </p>
+                    <Link
+                      to={`/products/${product.id}`}
+                      onClick={closeProductModal}
+                      className="w-full inline-flex items-center justify-center gap-1.5 py-2.5 px-4 text-xs font-bold rounded-xl bg-[#BE3A34] hover:bg-[#9E2328] text-white transition-all shadow-xs"
+                    >
+                      <span>View Full Specifications & Clinic Enquiries</span>
+                    </Link>
+                  </div>
+                ) : !product.isAvailable ? (
                   <div className="p-3.5 bg-[#FAF7F2] rounded-2xl border border-[#DED7CE] text-center space-y-1">
                     <span className="text-xs font-bold text-charcoal block">Currently Sold Out</span>
                     <p className="text-[11px] text-charcoal-muted font-normal">
@@ -327,7 +357,15 @@ export const ProductDetailModal: React.FC = () => {
             <ExternalLink className="w-3 h-3" />
           </Link>
 
-          {!product.isAvailable ? (
+          {isVeterinaryOnly ? (
+            <Link
+              to={`/products/${product.id}`}
+              onClick={closeProductModal}
+              className="inline-flex items-center gap-2 bg-[#BE3A34] hover:bg-[#9E2328] text-white text-xs font-bold px-4 py-2.5 rounded-full transition-all shadow-sm"
+            >
+              <span>Veterinary Clinic Exclusive · Details</span>
+            </Link>
+          ) : !product.isAvailable ? (
             <button
               disabled
               className="inline-flex items-center gap-2 bg-gray-200 text-gray-400 text-xs font-bold px-4 py-2.5 rounded-xl cursor-not-allowed border border-gray-300"

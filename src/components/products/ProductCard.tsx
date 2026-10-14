@@ -19,17 +19,19 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   const currentQuantity = getItemQuantity(product.id);
   const pricing = getProductPricing(product);
 
+  const isVeterinaryOnly = product.salesChannel === 'veterinary_only';
+
   const handleAddInitial = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (!inStock) return;
+    if (!inStock || isVeterinaryOnly) return;
     addToOrder(product, 1);
   };
 
   const handleIncrement = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (!inStock) return;
+    if (!inStock || isVeterinaryOnly) return;
     updateQuantity(product.id, currentQuantity + 1);
   };
 
@@ -60,8 +62,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             <PetBadge type={product.petType} size="sm" />
           </div>
 
-          {/* Sold Out Badge or In-Order Pill */}
-          {!inStock ? (
+          {/* Veterinary Only Badge, Sold Out Badge, or In-Order Pill */}
+          {isVeterinaryOnly ? (
+            <div className="absolute top-3.5 right-3.5 bg-[#BE3A34] text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider shadow-sm flex items-center gap-1">
+              <span>Veterinary Clinics Only</span>
+            </div>
+          ) : !inStock ? (
             <div className="absolute top-3.5 right-3.5 bg-charcoal/80 text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider shadow-sm">
               Sold Out
             </div>
@@ -93,30 +99,52 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
 
           {/* Pricing & Subtle Mix & Match tag */}
           <div className="mt-auto pt-2 border-t border-[#DED7CE]/40">
-            <div className="flex items-baseline gap-2 flex-wrap">
-              <span className="text-base font-bold text-charcoal font-serif">
-                SGD {pricing.activePrice.toFixed(2)}
-              </span>
-
-              {pricing.isPromo && (
-                <span className="text-xs text-charcoal-muted line-through">
-                  SGD {pricing.regularPrice.toFixed(2)}
+            {isVeterinaryOnly ? (
+              <div>
+                <span className="text-sm font-bold text-charcoal">
+                  Veterinary Clinic Exclusive
                 </span>
-              )}
-            </div>
+                <div className="mt-1 flex items-center gap-2">
+                  <span className="text-[11px] text-charcoal-muted font-medium">
+                    Available via licensed veterinary clinics
+                  </span>
+                </div>
+              </div>
+            ) : (
+              <>
+                <div className="flex items-baseline gap-2 flex-wrap">
+                  <span className="text-base font-bold text-charcoal font-serif">
+                    SGD {pricing.activePrice.toFixed(2)}
+                  </span>
 
-            <div className="mt-1 flex items-center gap-2">
-              <span className="text-[11px] text-brand-600 font-medium">
-                {product.bundleOfferText || 'Mix & Match available'}
-              </span>
-            </div>
+                  {pricing.isPromo && (
+                    <span className="text-xs text-charcoal-muted line-through">
+                      SGD {pricing.regularPrice.toFixed(2)}
+                    </span>
+                  )}
+                </div>
+
+                <div className="mt-1 flex items-center gap-2">
+                  <span className="text-[11px] text-brand-600 font-medium">
+                    {product.bundleOfferText || 'Mix & Match available'}
+                  </span>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </Link>
 
       {/* Dynamic Action Button Bar */}
       <div className="p-5 pt-0 mt-auto">
-        {!inStock ? (
+        {isVeterinaryOnly ? (
+          <Link
+            to={`/products/${product.id}`}
+            className="w-full inline-flex items-center justify-center gap-1.5 py-2.5 px-4 text-xs font-bold rounded-xl bg-[#FAF7F2] hover:bg-[#F4EFE7] text-charcoal border border-[#DED7CE] hover:border-brand-300 transition-all shadow-xs"
+          >
+            <span>Clinic Exclusive · View Details</span>
+          </Link>
+        ) : !inStock ? (
           <button
             type="button"
             disabled

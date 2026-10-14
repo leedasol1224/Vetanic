@@ -8,7 +8,8 @@ export type ProductCategory =
   | 'hairball'
   | 'dental'
   | 'treats'
-  | 'joint-care';
+  | 'joint-care'
+  | 'vitality';
 
 export type MerchandisingCollection = 'everyday-care' | 'wellness-support' | 'treats' | 'standard';
 
@@ -52,6 +53,7 @@ export interface Product {
   categoryName: string;
   collection: MerchandisingCollection;
   collectionName: 'Everyday Care' | 'Wellness Support' | 'Treats';
+  salesChannel?: 'consumer' | 'veterinary_only';
   shortDescription: string;
   packageSize: string;
   imageUrl: string;

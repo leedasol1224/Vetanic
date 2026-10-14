@@ -18,6 +18,7 @@ const CATEGORY_OPTIONS: Array<{ id: 'all' | ProductCategory; label: string }> = 
   { id: 'kidney-urinary', label: 'Kidney & Urinary' },
   { id: 'hairball', label: 'Hairball Care' },
   { id: 'dental', label: 'Dental Care' },
+  { id: 'vitality', label: 'Vitality' },
   { id: 'treats', label: 'Healthy Treats' },
 ];
 

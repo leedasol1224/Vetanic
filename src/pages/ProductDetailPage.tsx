@@ -86,13 +86,15 @@ export const ProductDetailPage: React.FC = () => {
     (p) => p.id !== product.id && (p.collection === product.collection || p.petType === product.petType)
   ).slice(0, 3);
 
+  const isVeterinaryOnly = product.salesChannel === 'veterinary_only';
+
   const handleAddInitial = () => {
-    if (!inStock) return;
+    if (!inStock || isVeterinaryOnly) return;
     addToOrder(product, 1);
   };
 
   const handleIncrement = () => {
-    if (!inStock) return;
+    if (!inStock || isVeterinaryOnly) return;
     updateQuantity(product.id, currentQuantity + 1);
   };
 
@@ -193,36 +195,81 @@ export const ProductDetailPage: React.FC = () => {
               </div>
 
               {/* Pricing Box */}
-              <div className="p-5 bg-[#FAF7F2] rounded-2xl border border-[#DED7CE] space-y-2.5">
-                <div className="flex items-baseline gap-3 flex-wrap">
-                  <span className="text-3xl font-heading font-bold text-charcoal">
-                    SGD {pricing.activePrice.toFixed(2)}
-                  </span>
-                  {pricing.isPromo && (
-                    <span className="text-sm text-charcoal-muted line-through font-medium">
-                      SGD {pricing.regularPrice.toFixed(2)}
+              {isVeterinaryOnly ? (
+                <div className="p-5 bg-red-50/50 rounded-2xl border border-red-200/80 space-y-2">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <span className="text-2xl font-heading font-bold text-charcoal">
+                      Veterinary Clinic Exclusive
                     </span>
-                  )}
-                  {pricing.isPromo && (
-                    <span className="inline-flex items-center gap-1 text-[11px] font-bold text-brand-600 bg-brand-50 px-2.5 py-0.5 rounded-full border border-brand-200">
-                      <Sparkles className="w-3 h-3 text-brand-600" />
-                      <span>{ACTIVE_LAUNCH_PROMOTION.badgeText}</span>
+                    <span className="inline-flex items-center gap-1 text-[11px] font-bold text-[#BE3A34] bg-white px-2.5 py-0.5 rounded-full border border-red-200 shadow-xs">
+                      <Sparkles className="w-3 h-3 text-[#BE3A34]" />
+                      <span>Veterinary Clinics Only</span>
                     </span>
+                  </div>
+                  <p className="text-xs text-charcoal-muted leading-relaxed">
+                    Prescribed and dispensed exclusively through licensed veterinary clinics and companion animal hospitals. Not available for direct consumer checkout.
+                  </p>
+                </div>
+              ) : (
+                <div className="p-5 bg-[#FAF7F2] rounded-2xl border border-[#DED7CE] space-y-2.5">
+                  <div className="flex items-baseline gap-3 flex-wrap">
+                    <span className="text-3xl font-heading font-bold text-charcoal">
+                      SGD {pricing.activePrice.toFixed(2)}
+                    </span>
+                    {pricing.isPromo && (
+                      <span className="text-sm text-charcoal-muted line-through font-medium">
+                        SGD {pricing.regularPrice.toFixed(2)}
+                      </span>
+                    )}
+                    {pricing.isPromo && (
+                      <span className="inline-flex items-center gap-1 text-[11px] font-bold text-brand-600 bg-brand-50 px-2.5 py-0.5 rounded-full border border-brand-200">
+                        <Sparkles className="w-3 h-3 text-brand-600" />
+                        <span>{ACTIVE_LAUNCH_PROMOTION.badgeText}</span>
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Small Mix & Match note where applicable */}
+                  {product.bundleOfferText && (
+                    <div className="pt-2 border-t border-[#DED7CE]/70 flex items-center gap-2 text-xs font-semibold text-charcoal">
+                      <Tag className="w-3.5 h-3.5 text-brand-600 flex-shrink-0" />
+                      <span>{product.bundleOfferText}</span>
+                    </div>
                   )}
                 </div>
-
-                {/* Small Mix & Match note where applicable */}
-                {product.bundleOfferText && (
-                  <div className="pt-2 border-t border-[#DED7CE]/70 flex items-center gap-2 text-xs font-semibold text-charcoal">
-                    <Tag className="w-3.5 h-3.5 text-brand-600 flex-shrink-0" />
-                    <span>{product.bundleOfferText}</span>
-                  </div>
-                )}
-              </div>
+              )}
 
               {/* Quantity Selector & Order Interaction */}
               <div className="pt-2">
-                {!inStock ? (
+                {isVeterinaryOnly ? (
+                  <div className="p-5 bg-white rounded-2xl border border-[#DED7CE] shadow-xs space-y-3">
+                    <div className="flex items-start gap-3">
+                      <div className="w-9 h-9 rounded-xl bg-red-50 flex items-center justify-center text-[#BE3A34] flex-shrink-0">
+                        <ShieldCheck className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <h4 className="text-sm font-bold text-charcoal">How to obtain Complete V</h4>
+                        <p className="text-xs text-charcoal-muted mt-1 leading-relaxed">
+                          Complete V is an exclusive veterinary clinical formula. Please consult your licensed veterinarian or contact our Singapore team for clinic stockist and supply enquiries.
+                        </p>
+                      </div>
+                    </div>
+                    <div className="pt-2 flex flex-wrap items-center gap-3">
+                      <Link
+                        to="/contact"
+                        className="inline-flex items-center justify-center gap-2 bg-[#BE3A34] hover:bg-[#9E2328] text-white font-bold text-xs px-6 py-3 rounded-full transition-all shadow-sm"
+                      >
+                        <span>Clinic & Supply Enquiries</span>
+                      </Link>
+                      <a
+                        href="mailto:vetanicsg@gmail.com?subject=Enquiry%20regarding%20Complete%20V%20Veterinary%20Supply"
+                        className="inline-flex items-center justify-center gap-2 bg-[#FAF7F2] hover:bg-[#F4EFE7] text-charcoal font-bold text-xs px-5 py-3 rounded-full border border-[#DED7CE] transition-all"
+                      >
+                        <span>vetanicsg@gmail.com</span>
+                      </a>
+                    </div>
+                  </div>
+                ) : !inStock ? (
                   <div className="p-4 bg-[#FAF7F2] rounded-2xl border border-[#DED7CE] text-center space-y-1">
                     <span className="text-sm font-bold text-charcoal block">Currently Sold Out</span>
                     <p className="text-xs text-charcoal-muted">
@@ -284,7 +331,7 @@ export const ProductDetailPage: React.FC = () => {
               <div className="pt-4 border-t border-[#DED7CE]/70 flex flex-col sm:flex-row gap-4 text-xs text-charcoal-muted">
                 <div className="flex items-center gap-2">
                   <Truck className="w-4 h-4 text-brand-600 flex-shrink-0" />
-                  <span>Free SG delivery for orders SGD 50+</span>
+                  <span>{isVeterinaryOnly ? 'Dispensed via authorized SG veterinary clinics' : 'Free SG delivery for orders SGD 50+'}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <ShieldCheck className="w-4 h-4 text-sage-600 flex-shrink-0" />

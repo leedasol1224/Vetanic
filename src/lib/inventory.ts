@@ -184,30 +184,39 @@ export function isProductInStock(productId: string): boolean {
 }
 
 /**
- * Sort products dynamically: in-stock first, sold-out at the bottom.
+ * Sort products dynamically: in-stock consumer products first, 
+ * veterinary clinic exclusive products cleanly positioned (not marked sold-out),
+ * and sold-out consumer items moved to the bottom.
  * Preserves natural display order within each group.
  */
-export function sortProductsByStockAvailability<T extends { id: string; displayOrder?: number; isAvailable?: boolean }>(
+export function sortProductsByStockAvailability<T extends { id: string; displayOrder?: number; isAvailable?: boolean; salesChannel?: 'consumer' | 'veterinary_only' }>(
   products: T[]
 ): T[] {
   const inStockList: T[] = [];
+  const veterinaryList: T[] = [];
   const outOfStockList: T[] = [];
 
   for (const product of products) {
-    const stock = getProductStock(product.id);
-    const inStock = stock > 0 && product.isAvailable !== false;
-    if (inStock) {
-      inStockList.push(product);
+    if (product.salesChannel === 'veterinary_only') {
+      // Veterinary-only products are clinic-exclusive and must NOT be treated as sold out
+      veterinaryList.push(product);
     } else {
-      outOfStockList.push(product);
+      const stock = getProductStock(product.id);
+      const inStock = stock > 0 && product.isAvailable !== false;
+      if (inStock) {
+        inStockList.push(product);
+      } else {
+        outOfStockList.push(product);
+      }
     }
   }
 
   // Preserve existing displayOrder within each group
   inStockList.sort((a, b) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0));
+  veterinaryList.sort((a, b) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0));
   outOfStockList.sort((a, b) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0));
 
-  return [...inStockList, ...outOfStockList];
+  return [...inStockList, ...veterinaryList, ...outOfStockList];
 }
 
 /**
@@ -464,6 +473,7 @@ function seedInitialInventoryMovements(): InventoryMovement[] {
   const baseTime = Date.now() - 1000 * 60 * 60 * 24 * 7; // 7 days ago
 
   PRODUCTS.forEach((p, idx) => {
+    if (p.salesChannel === 'veterinary_only') return;
     const initQty = p.initialStock ?? 30;
     movements.push({
       id: `mvt-init-${p.id}`,

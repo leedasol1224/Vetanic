@@ -129,10 +129,10 @@ export const AdminProductsPage: React.FC = () => {
                 <div className="grid grid-cols-2 gap-2 pt-2 border-t border-[#DED7CE]/70 text-xs">
                   <div className="p-2.5 rounded-xl bg-[#FAF7F2] border border-[#DED7CE]">
                     <span className="text-[10px] text-[#6F6A65] uppercase font-bold block">
-                      Launch Price
+                      {prod.salesChannel === 'veterinary_only' ? 'Sales Channel' : 'Launch Price'}
                     </span>
                     <span className="font-serif font-bold text-[#9E2328] text-sm">
-                      SGD {prod.launchPrice.toFixed(2)}
+                      {prod.salesChannel === 'veterinary_only' ? 'Clinics Only' : `SGD ${prod.launchPrice.toFixed(2)}`}
                     </span>
                   </div>
 
@@ -141,7 +141,11 @@ export const AdminProductsPage: React.FC = () => {
                       Stock Level
                     </span>
                     <div className="flex items-center gap-1 font-bold text-xs mt-0.5">
-                      {isSoldOut ? (
+                      {prod.salesChannel === 'veterinary_only' ? (
+                        <span className="text-[#9E2328] flex items-center gap-1">
+                          <CheckCircle2 className="w-3 h-3" /> Clinic Supply
+                        </span>
+                      ) : isSoldOut ? (
                         <span className="text-red-700 flex items-center gap-1">
                           <XCircle className="w-3 h-3" /> Sold Out
                         </span>
