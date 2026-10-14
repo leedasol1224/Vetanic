@@ -56,7 +56,38 @@ export function getInventoryMovements(): InventoryMovement[] {
     if (!raw || JSON.parse(raw).length === 0) {
       return seedInitialInventoryMovements();
     }
-    return JSON.parse(raw);
+    const movements: InventoryMovement[] = JSON.parse(raw);
+
+    // Ensure all active consumer products with initial stock are present in movements
+    let updated = false;
+    const baseTime = Date.now() - 1000 * 60 * 60 * 24 * 7;
+    PRODUCTS.forEach((p, idx) => {
+      if (p.salesChannel === 'veterinary_only') return;
+      const hasMovement = movements.some((m) => m.productId === p.id);
+      if (!hasMovement && (p.initialStock ?? 0) > 0) {
+        const initQty = p.initialStock ?? 30;
+        movements.push({
+          id: `mvt-init-${p.id}`,
+          productId: p.id,
+          productName: p.name,
+          sku: p.sku,
+          createdAt: new Date(baseTime + idx * 1000 * 60).toISOString(),
+          movementType: 'Initial Stock',
+          quantityChange: initQty,
+          stockBefore: 0,
+          stockAfter: initQty,
+          reason: 'Initial stock intake for Singapore launch',
+          internalNote: 'Singapore Pet Festival & launch batch inventory'
+        });
+        updated = true;
+      }
+    });
+
+    if (updated) {
+      saveInventoryMovements(movements);
+    }
+
+    return movements;
   } catch (e) {
     console.error('Failed to load inventory movements', e);
     return seedInitialInventoryMovements();

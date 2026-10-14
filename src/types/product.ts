@@ -11,7 +11,7 @@ export type ProductCategory =
   | 'joint-care'
   | 'vitality';
 
-export type MerchandisingCollection = 'everyday-care' | 'wellness-support' | 'treats' | 'standard';
+export type MerchandisingCollection = 'everyday-care' | 'wellness-support' | 'treats' | 'standard' | 'vitality';
 
 export interface ProductFaqItem {
   question: string;
@@ -52,7 +52,7 @@ export interface Product {
   category: ProductCategory;
   categoryName: string;
   collection: MerchandisingCollection;
-  collectionName: 'Everyday Care' | 'Wellness Support' | 'Treats';
+  collectionName: 'Everyday Care' | 'Wellness Support' | 'Treats' | 'Vitality Support';
   salesChannel?: 'consumer' | 'veterinary_only';
   shortDescription: string;
   packageSize: string;

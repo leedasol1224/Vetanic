@@ -64,7 +64,7 @@ export const CATEGORIES: CategoryInfo[] = [
     tagline: 'Multi-vital nutritional recovery & vitality',
     iconName: 'Sparkles',
     relevantProductIds: ['complete-v'],
-    description: 'Comprehensive veterinary nutritional stick formulated with 9 essential actives for feline vitality.'
+    description: 'Comprehensive vitality nutritional stick formulated with real chicken breast and 9 essential actives for feline vitality.'
   },
   {
     id: 'treats',
@@ -687,7 +687,7 @@ export const PRODUCTS: Product[] = [
     }
   },
   // =========================================================================
-  // VETERINARY CLINICS EXCLUSIVE
+  // COMPLETE V (VITALITY SUPPORT - DEDICATED QUANTITY PRICING)
   // =========================================================================
   {
     id: 'complete-v',
@@ -698,10 +698,10 @@ export const PRODUCTS: Product[] = [
     petTypeLabel: 'CATS ONLY',
     category: 'vitality',
     categoryName: 'Vitality Support',
-    collection: 'wellness-support',
-    collectionName: 'Wellness Support',
-    salesChannel: 'veterinary_only',
-    shortDescription: 'Comprehensive veterinary vital supplement for cats formulated with chicken breast and 9 essential actives in a palatable puree stick.',
+    collection: 'vitality',
+    collectionName: 'Vitality Support',
+    salesChannel: 'consumer',
+    shortDescription: 'Comprehensive vital nutrition supplement for cats formulated with chicken breast and 9 essential actives in a smooth lickable puree stick.',
     packageSize: '48 g (12 g × 4 sticks)',
     imageUrl: '/images/products/complete-vital/pack.png',
     galleryImages: [
@@ -710,24 +710,25 @@ export const PRODUCTS: Product[] = [
       '/images/products/complete-vital/cat_lifestyle.jpg'
     ],
     isAvailable: true,
-    displayOrder: 11,
-    featured: false,
-    initialStock: 0,
-    lowStockThreshold: 0,
-    trackInventory: false,
-    regularPrice: 0,
-    launchPrice: 0,
+    displayOrder: 9,
+    featured: true,
+    initialStock: 40,
+    lowStockThreshold: 10,
+    trackInventory: true,
+    regularPrice: ACTIVE_LAUNCH_PROMOTION.completeV.regularPrice,
+    launchPrice: ACTIVE_LAUNCH_PROMOTION.completeV.launchPrice,
+    bundleOfferText: '1 box S$12.90 · 2 boxes S$24.00 · 3 boxes S$34.90',
     details: {
       keyBenefits: [
-        'Veterinary Clinic Only',
+        'Chicken Breast Puree',
         '9 Essential Actives',
-        '12g Puree Sticks',
+        '12g Lickable Sachet Sticks',
         'Feline Vitality Support'
       ],
       recommendedFor: [
-        'Cats requiring comprehensive nutritional and vitality support under veterinary consultation',
-        'Felines needing balanced multi-vitamin and amino acid supplementation',
-        'Cats that prefer smooth, lickable puree sachet treats'
+        'Cats needing comprehensive vitality and daily nutritional maintenance',
+        'Felines benefiting from balanced multi-vitamin and amino acid supplementation',
+        'Cats that enjoy a smooth, savory lickable puree treat format'
       ],
       mainIngredients: [
         'Chicken Breast',
@@ -754,32 +755,32 @@ export const PRODUCTS: Product[] = [
       fullIngredients:
         'Chicken breast, Omega-3, Vitamin B, Psyllium husk dietary fiber, Fructooligosaccharide, L-carnitine, L-theanine, Lactic acid bacteria, Taurine.',
       howToFeed:
-        'Feed directly from the stick, squeeze onto a clean dish, mix with daily wet or dry food, or administer as guided by your licensed veterinarian.',
+        'Feed directly from the stick, squeeze onto a clean dish, or mix into daily kibble or wet food.',
       feedingUsageGuide:
-        'Consult your veterinarian for feeding amounts tailored to your cat\'s health status, body weight, and daily dietary requirements.',
-      recommendedDailyAmount: 'Administer as recommended by your licensed veterinarian.',
+        'Give 1 stick daily as a wholesome nutritional supplement, topper, or hydrating reward.',
+      recommendedDailyAmount: '1 stick (12g) daily for adult cats. Adjust according to your cat\'s dietary requirements.',
       suitablePetType: 'Cats Only',
-      suitableLifeStage: 'Cats under veterinary care (all life stages)',
+      suitableLifeStage: 'All life stages (3+ months)',
       packageSize: '48 g (12 g × 4 sticks)',
       countryOfOrigin: 'Republic of Korea',
       storageInstructions:
         'Store in a cool, dry place away from direct sunlight. Serve immediately once opened.',
       storage: 'Store in a cool, dry place away from direct sunlight.',
       precautions: [
-        'Exclusively distributed through licensed veterinary clinics.',
+        'Store in a cool, dry place away from direct sunlight.',
         'Keep out of reach of children and companion animals.',
-        'Consult your veterinarian before use if your cat is pregnant, nursing, or undergoing medical treatment.'
+        'Consult your veterinarian before use if your cat is undergoing medical treatment or on a specialized diet.'
       ],
       productFaq: [
         {
-          question: 'Why is Complete V marked "Veterinary Clinic Only"?',
+          question: 'What is Complete V formulated for?',
           answer:
-            'Complete V is formulated specifically for clinical veterinary distribution and companion animal recovery. It is provided through licensed veterinary clinics and animal hospitals rather than direct consumer online checkout.'
+            'Complete V is a comprehensive feline nutritional supplement formulated with real chicken breast and 9 essential functional actives—including Omega-3, Vitamin B, taurine, L-theanine, L-carnitine, and probiotics—to support daily vitality, immunity, and digestive comfort in cats.'
         },
         {
           question: 'How should Complete V be fed to my cat?',
           answer:
-            'It comes in a convenient 12g lickable puree stick. You can feed it directly from the sachet, squeeze it over your cat’s regular food, or follow specific administration advice from your veterinarian.'
+            'It comes in a convenient 12g lickable puree stick. You can feed it directly from the sachet, squeeze it over your cat’s regular food, or serve it on a clean dish.'
         }
       ]
     }

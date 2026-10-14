@@ -53,6 +53,7 @@ export interface PricingSummary {
   everydayCareCount: number;
   wellnessSupportCount: number;
   treatsCount: number;
+  completeVCount?: number;
   upsellMessages: string[];
   freeDeliveryMessage: string;
   isFreeDeliveryUnlocked: boolean;

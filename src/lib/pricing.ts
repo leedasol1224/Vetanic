@@ -108,6 +108,30 @@ function calculateTreatCost(slug: string, count: number, isPromo: boolean): numb
 }
 
 /**
+ * Calculates the dedicated quantity bundle cost for Complete V
+ */
+function calculateCompleteVCost(count: number, isPromo: boolean): number {
+  if (count <= 0) return 0;
+  const { regularPrice, launchPrice, bundle2Price, bundle3Price } = ACTIVE_LAUNCH_PROMOTION.completeV;
+
+  if (!isPromo) {
+    return count * regularPrice;
+  }
+
+  const bundlesOf3 = Math.floor(count / 3);
+  const remainder = count % 3;
+
+  if (remainder === 0) {
+    return bundlesOf3 * bundle3Price;
+  } else if (remainder === 1) {
+    return bundlesOf3 * bundle3Price + launchPrice;
+  } else {
+    // remainder === 2
+    return bundlesOf3 * bundle3Price + bundle2Price;
+  }
+}
+
+/**
  * Comprehensive Order Pricing Calculator
  */
 export function calculateOrderPricing(
@@ -122,6 +146,7 @@ export function calculateOrderPricing(
   let everydayCareCount = 0;
   let wellnessSupportCount = 0;
   let treatsCount = 0;
+  let completeVCount = 0;
 
   // Track treat counts by product id/slug
   const treatCounts: Record<string, number> = {};
@@ -131,7 +156,9 @@ export function calculateOrderPricing(
     regularSubtotal += item.product.regularPrice * qty;
     productSubtotal += (isPromo ? item.product.launchPrice : item.product.regularPrice) * qty;
 
-    if (item.product.collection === 'everyday-care') {
+    if (item.product.id === 'complete-v' || item.product.collection === 'vitality') {
+      completeVCount += qty;
+    } else if (item.product.collection === 'everyday-care') {
       everydayCareCount += qty;
     } else if (item.product.collection === 'wellness-support') {
       wellnessSupportCount += qty;
@@ -144,13 +171,14 @@ export function calculateOrderPricing(
   // Calculate optimized product totals
   const everydayCareCost = calculateEverydayCareCost(everydayCareCount, isPromo);
   const wellnessSupportCost = calculateWellnessSupportCost(wellnessSupportCount, isPromo);
+  const completeVCost = calculateCompleteVCost(completeVCount, isPromo);
 
   let treatsCost = 0;
   Object.entries(treatCounts).forEach(([slug, count]) => {
     treatsCost += calculateTreatCost(slug, count, isPromo);
   });
 
-  const productTotal = Number((everydayCareCost + wellnessSupportCost + treatsCost).toFixed(2));
+  const productTotal = Number((everydayCareCost + wellnessSupportCost + treatsCost + completeVCost).toFixed(2));
   const bundleDiscount = Number(Math.max(0, productSubtotal - productTotal).toFixed(2));
   const savingsAmount = Number(Math.max(0, regularSubtotal - productTotal).toFixed(2));
 
@@ -184,6 +212,12 @@ export function calculateOrderPricing(
     } else if (wellnessSupportCount === 2) {
       upsellMessages.push('Mix & Match applied! Add one more and get any 3 for SGD 89.90.');
     }
+
+    if (completeVCount === 1) {
+      upsellMessages.push('Add one more box of Complete V to get 2 boxes for SGD 24.00.');
+    } else if (completeVCount === 2) {
+      upsellMessages.push('Complete V bundle applied! Add one more box to get 3 boxes for SGD 34.90.');
+    }
   }
 
   // Free delivery message
@@ -205,6 +239,7 @@ export function calculateOrderPricing(
     everydayCareCount,
     wellnessSupportCount,
     treatsCount,
+    completeVCount,
     upsellMessages,
     freeDeliveryMessage,
     isFreeDeliveryUnlocked,

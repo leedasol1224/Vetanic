@@ -229,13 +229,37 @@ export const ProductDetailPage: React.FC = () => {
                     )}
                   </div>
 
-                  {/* Small Mix & Match note where applicable */}
-                  {product.bundleOfferText && (
+                  {/* Dedicated Complete V October Launch Offer display */}
+                  {product.id === 'complete-v' ? (
+                    <div className="pt-3 border-t border-[#DED7CE]/70 space-y-2">
+                      <div className="flex items-center gap-2 text-xs font-bold text-brand-700">
+                        <Tag className="w-3.5 h-3.5 text-brand-600 flex-shrink-0" />
+                        <span>October Launch Offer</span>
+                      </div>
+                      <div className="grid grid-cols-3 gap-2 text-center">
+                        <div className="p-2 bg-white rounded-xl border border-[#DED7CE] shadow-xs">
+                          <span className="text-[11px] text-charcoal-muted block font-medium">1 box</span>
+                          <span className="text-xs font-bold text-charcoal">S$12.90</span>
+                        </div>
+                        <div className="p-2 bg-white rounded-xl border border-[#DED7CE] shadow-xs">
+                          <span className="text-[11px] text-charcoal-muted block font-medium">2 boxes</span>
+                          <span className="text-xs font-bold text-charcoal">S$24.00</span>
+                        </div>
+                        <div className="p-2 bg-brand-50/80 rounded-xl border border-brand-200 shadow-xs">
+                          <span className="text-[11px] text-brand-700 block font-bold">3 boxes</span>
+                          <span className="text-xs font-extrabold text-brand-800">S$34.90</span>
+                        </div>
+                      </div>
+                      <p className="text-[11px] text-charcoal-muted">
+                        Discount automatically applied in cart. Combine multiple sets for larger quantities.
+                      </p>
+                    </div>
+                  ) : product.bundleOfferText ? (
                     <div className="pt-2 border-t border-[#DED7CE]/70 flex items-center gap-2 text-xs font-semibold text-charcoal">
                       <Tag className="w-3.5 h-3.5 text-brand-600 flex-shrink-0" />
                       <span>{product.bundleOfferText}</span>
                     </div>
-                  )}
+                  ) : null}
                 </div>
               )}
 
@@ -248,9 +272,9 @@ export const ProductDetailPage: React.FC = () => {
                         <ShieldCheck className="w-5 h-5" />
                       </div>
                       <div>
-                        <h4 className="text-sm font-bold text-charcoal">How to obtain Complete V</h4>
+                        <h4 className="text-sm font-bold text-charcoal">How to obtain clinic-exclusive products</h4>
                         <p className="text-xs text-charcoal-muted mt-1 leading-relaxed">
-                          Complete V is an exclusive veterinary clinical formula. Please consult your licensed veterinarian or contact our Singapore team for clinic stockist and supply enquiries.
+                          This is an exclusive veterinary clinical formula. Please consult your licensed veterinarian or contact our Singapore team for clinic stockist and supply enquiries.
                         </p>
                       </div>
                     </div>
@@ -262,7 +286,7 @@ export const ProductDetailPage: React.FC = () => {
                         <span>Clinic & Supply Enquiries</span>
                       </Link>
                       <a
-                        href="mailto:vetanicsg@gmail.com?subject=Enquiry%20regarding%20Complete%20V%20Veterinary%20Supply"
+                        href="mailto:vetanicsg@gmail.com?subject=Enquiry%20regarding%20Clinic%20Exclusive%20Supply"
                         className="inline-flex items-center justify-center gap-2 bg-[#FAF7F2] hover:bg-[#F4EFE7] text-charcoal font-bold text-xs px-5 py-3 rounded-full border border-[#DED7CE] transition-all"
                       >
                         <span>vetanicsg@gmail.com</span>

@@ -180,7 +180,7 @@ export const ProductDetailModal: React.FC = () => {
                 {isVeterinaryOnly ? (
                   <div className="p-3.5 bg-[#FAF7F2] rounded-2xl border border-[#DED7CE] space-y-2">
                     <p className="text-xs text-charcoal-muted leading-relaxed">
-                      Complete V is available through veterinary practices and animal clinics across Singapore.
+                      This product is available exclusively through licensed veterinary practices and animal clinics across Singapore.
                     </p>
                     <Link
                       to={`/products/${product.id}`}

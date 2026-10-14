@@ -48,6 +48,15 @@ export interface PromotionConfig {
       bundle3Price: number;
     };
   };
+  completeV: {
+    internalId: 'complete_v';
+    displayName: 'Complete V';
+    regularPrice: number;
+    launchPrice: number;
+    bundle2Price: number;
+    bundle3Price: number;
+    bundleDescription: string;
+  };
 }
 
 export const OCTOBER_2026_LAUNCH_PROMOTION: PromotionConfig = {
@@ -95,6 +104,15 @@ export const OCTOBER_2026_LAUNCH_PROMOTION: PromotionConfig = {
       bundle2Price: 32.00,
       bundle3Price: 45.00
     }
+  },
+  completeV: {
+    internalId: 'complete_v',
+    displayName: 'Complete V',
+    regularPrice: 14.90,
+    launchPrice: 12.90,
+    bundle2Price: 24.00,
+    bundle3Price: 34.90,
+    bundleDescription: '1 box S$12.90 · 2 boxes S$24.00 · 3 boxes S$34.90'
   }
 };
 
