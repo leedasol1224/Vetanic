@@ -183,11 +183,21 @@ export async function submitOrderRequest(orderData: OrderSubmission): Promise<Or
       }
 
       if (rpcError) {
-        console.error('submit_customer_order RPC error:', rpcError);
+        console.error('Order submission failed | RPC: submit_customer_order', {
+          code: rpcError.code || 'UNKNOWN_CODE',
+          message: rpcError.message || 'Database rejected order',
+          details: rpcError.details || null,
+          hint: rpcError.hint || null
+        });
         throw new Error(rpcError.message || 'Order submission rejected by database');
       }
-    } catch (rpcEx: unknown) {
-      console.error('RPC execution exception:', rpcEx);
+    } catch (rpcEx: any) {
+      console.error('Order submission failed | RPC: submit_customer_order', {
+        code: rpcEx?.code || rpcEx?.name || 'NETWORK_OR_RPC_ERROR',
+        message: rpcEx?.message || 'Failed to submit order request to database',
+        details: rpcEx?.details || rpcEx?.cause?.message || null,
+        hint: rpcEx?.hint || 'Check database connectivity and network status.'
+      });
       throw rpcEx;
     }
   }
