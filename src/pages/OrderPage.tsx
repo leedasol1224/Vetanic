@@ -261,8 +261,13 @@ export const OrderPage: React.FC = () => {
       const order = await submitOrder(submissionPayload);
       saveGuestSession(order.orderReference);
       navigate(`/order/success/${order.orderReference}`);
-    } catch (err: unknown) {
-      console.error('Order submission error:', err);
+    } catch (err: any) {
+      console.error('[ORDER SUBMISSION FAILED]', {
+        code: err?.code || err?.name || 'UNKNOWN_ERROR',
+        message: err?.message || 'Failed to submit order',
+        details: err?.details || err?.cause?.message || null,
+        hint: err?.hint || null
+      });
       setErrorMessage(
         'We encountered an issue recording your order request. Please try submitting again, or message us directly on Instagram @vetanic_global for immediate assistance.'
       );

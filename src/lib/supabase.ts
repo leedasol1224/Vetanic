@@ -189,7 +189,11 @@ export async function submitOrderRequest(orderData: OrderSubmission): Promise<Or
           details: rpcError.details || null,
           hint: rpcError.hint || null
         });
-        throw new Error(rpcError.message || 'Order submission rejected by database');
+        const customErr: any = new Error(rpcError.message || 'Order submission rejected by database');
+        customErr.code = rpcError.code;
+        customErr.details = rpcError.details;
+        customErr.hint = rpcError.hint;
+        throw customErr;
       }
     } catch (rpcEx: any) {
       console.error('Order submission failed | RPC: submit_customer_order', {
