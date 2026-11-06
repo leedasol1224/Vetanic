@@ -5,11 +5,19 @@ import { PRODUCTS } from '../../data/products';
 import { PetBadge } from '../common/Badge';
 import { useOrder } from '../../context/OrderContext';
 import { getProductPricing } from '../../lib/pricing';
-import { sortProductsByStockAvailability, getProductStock } from '../../lib/inventory';
+import { sortProductsByStockAvailability } from '../../lib/inventory';
 
 export const VisualShopProducts: React.FC = () => {
   const [selectedPetFilter, setSelectedPetFilter] = useState<'all' | 'dog' | 'cat'>('all');
-  const { addToOrder, updateQuantity, getItemQuantity } = useOrder();
+  const { 
+    addToOrder, 
+    updateQuantity, 
+    getItemQuantity, 
+    getProductStock, 
+    isMaxStockReached, 
+    getStockLimitMessage,
+    inventoryVersion
+  } = useOrder();
 
   // Filter 4 featured products based on pet type and sort in-stock first
   const displayProducts = useMemo(() => {
@@ -21,7 +29,7 @@ export const VisualShopProducts: React.FC = () => {
     }
     const sorted = sortProductsByStockAvailability(filtered);
     return sorted.slice(0, 4);
-  }, [selectedPetFilter]);
+  }, [selectedPetFilter, inventoryVersion]);
 
   return (
     <section className="py-16 sm:py-24 bg-[#FAF7F2]">
@@ -82,6 +90,8 @@ export const VisualShopProducts: React.FC = () => {
             const currentQuantity = getItemQuantity(product.id);
             const stock = getProductStock(product.id);
             const inStock = stock > 0 && product.isAvailable !== false;
+            const isMaxReached = isMaxStockReached(product.id);
+            const limitMessage = getStockLimitMessage(product.id);
 
             return (
               <div
@@ -152,7 +162,7 @@ export const VisualShopProducts: React.FC = () => {
                       type="button"
                       onClick={(e) => {
                         e.preventDefault();
-                        if (!inStock) return;
+                        if (!inStock || isMaxReached) return;
                         addToOrder(product, 1);
                       }}
                       className="w-full inline-flex items-center justify-center gap-1.5 py-2.5 px-4 text-xs font-bold rounded-xl bg-brand-600 hover:bg-brand-700 text-white transition-all shadow-sm hover:shadow active:scale-[0.99]"
@@ -180,15 +190,30 @@ export const VisualShopProducts: React.FC = () => {
 
                       <button
                         type="button"
+                        disabled={isMaxReached}
                         onClick={(e) => {
                           e.preventDefault();
+                          if (isMaxReached) return;
                           updateQuantity(product.id, currentQuantity + 1);
                         }}
-                        className="w-8 h-8 flex items-center justify-center bg-brand-600 hover:bg-brand-700 text-white rounded-lg transition-colors shadow-xs"
+                        className={`w-8 h-8 flex items-center justify-center rounded-lg transition-colors shadow-xs ${
+                          isMaxReached
+                            ? 'bg-gray-200 text-gray-400 cursor-not-allowed opacity-60'
+                            : 'bg-brand-600 hover:bg-brand-700 text-white'
+                        }`}
+                        title={isMaxReached ? `Only ${stock} available in stock.` : 'Increase quantity'}
                         aria-label="Increase quantity"
                       >
                         <Plus className="w-3.5 h-3.5" />
                       </button>
+                    </div>
+                  )}
+
+                  {limitMessage && currentQuantity > 0 && (
+                    <div className="mt-2 text-center">
+                      <span className="text-[11px] font-semibold text-amber-800 bg-amber-50 px-2.5 py-0.5 rounded-full border border-amber-200/80 inline-block shadow-xs">
+                        {limitMessage}
+                      </span>
                     </div>
                   )}
                 </div>

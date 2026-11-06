@@ -66,7 +66,7 @@ export const OCTOBER_2026_LAUNCH_PROMOTION: PromotionConfig = {
   announcementText: 'VETANIC Singapore Launch Special — Special prices & Mix & Match bundles throughout October (1–31 October 2026)',
   startDate: '2026-10-01T00:00:00+08:00',
   endDate: '2026-10-31T23:59:59+08:00',
-  freeDeliveryThreshold: 50.00,
+  freeDeliveryThreshold: 70.00,
   standardDeliveryFee: 4.50,
   sameDayDeliveryFee: 15.00,
   everydayCare: {

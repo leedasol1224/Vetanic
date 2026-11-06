@@ -24,15 +24,24 @@ import { getProductPricing } from '../lib/pricing';
 import { ACTIVE_LAUNCH_PROMOTION } from '../config/promotions';
 import { ProductCard } from '../components/products/ProductCard';
 import { GeneralFaqSection } from '../components/products/GeneralFaqSection';
-import { getProductStock } from '../lib/inventory';
 
 export const ProductDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const { addToOrder, updateQuantity, getItemQuantity, openCartDrawer } = useOrder();
+  const { 
+    addToOrder, 
+    updateQuantity, 
+    getItemQuantity, 
+    openCartDrawer,
+    getProductStock,
+    isMaxStockReached,
+    getStockLimitMessage
+  } = useOrder();
 
   const product = PRODUCTS.find((p) => p.id === id || p.slug === id);
   const stock = product ? getProductStock(product.id) : 0;
   const inStock = stock > 0 && product?.isAvailable !== false;
+  const isMaxReached = product ? isMaxStockReached(product.id) : false;
+  const stockLimitMessage = product ? getStockLimitMessage(product.id) : '';
 
   // Selected image thumbnail index
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
@@ -89,12 +98,12 @@ export const ProductDetailPage: React.FC = () => {
   const isVeterinaryOnly = product.salesChannel === 'veterinary_only';
 
   const handleAddInitial = () => {
-    if (!inStock || isVeterinaryOnly) return;
+    if (!inStock || isVeterinaryOnly || isMaxReached) return;
     addToOrder(product, 1);
   };
 
   const handleIncrement = () => {
-    if (!inStock || isVeterinaryOnly) return;
+    if (!inStock || isVeterinaryOnly || isMaxReached) return;
     updateQuantity(product.id, currentQuantity + 1);
   };
 
@@ -229,12 +238,12 @@ export const ProductDetailPage: React.FC = () => {
                     )}
                   </div>
 
-                  {/* Dedicated Complete V October Launch Offer display */}
-                  {product.id === 'complete-v' ? (
+                  {/* Dedicated Complete V Launch Offer display */}
+                  {pricing.isPromo && product.id === 'complete-v' ? (
                     <div className="pt-3 border-t border-[#DED7CE]/70 space-y-2">
                       <div className="flex items-center gap-2 text-xs font-bold text-brand-700">
                         <Tag className="w-3.5 h-3.5 text-brand-600 flex-shrink-0" />
-                        <span>October Launch Offer</span>
+                        <span>Launch Offer</span>
                       </div>
                       <div className="grid grid-cols-3 gap-2 text-center">
                         <div className="p-2 bg-white rounded-xl border border-[#DED7CE] shadow-xs">
@@ -254,10 +263,10 @@ export const ProductDetailPage: React.FC = () => {
                         Discount automatically applied in cart. Combine multiple sets for larger quantities.
                       </p>
                     </div>
-                  ) : product.bundleOfferText ? (
+                  ) : pricing.isPromo && pricing.bundleOfferText ? (
                     <div className="pt-2 border-t border-[#DED7CE]/70 flex items-center gap-2 text-xs font-semibold text-charcoal">
                       <Tag className="w-3.5 h-3.5 text-brand-600 flex-shrink-0" />
-                      <span>{product.bundleOfferText}</span>
+                      <span>{pricing.bundleOfferText}</span>
                     </div>
                   ) : null}
                 </div>
@@ -310,43 +319,55 @@ export const ProductDetailPage: React.FC = () => {
                     <span>Add to Order · SGD {pricing.activePrice.toFixed(2)}</span>
                   </button>
                 ) : (
-                  <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
-                    <div className="flex items-center justify-between border-2 border-brand-600 rounded-full bg-brand-50/60 p-1.5 shadow-xs min-w-[13rem]">
-                      <button
-                        type="button"
-                        onClick={handleDecrement}
-                        className="w-10 h-10 flex items-center justify-center bg-white hover:bg-brand-100 text-brand-700 rounded-full transition-colors border border-brand-200 shadow-xs"
-                        aria-label="Decrease quantity"
-                      >
-                        <Minus className="w-4 h-4" />
-                      </button>
+                  <div>
+                    <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                      <div className="flex items-center justify-between border-2 border-brand-600 rounded-full bg-brand-50/60 p-1.5 shadow-xs min-w-[13rem]">
+                        <button
+                          type="button"
+                          onClick={handleDecrement}
+                          className="w-10 h-10 flex items-center justify-center bg-white hover:bg-brand-100 text-brand-700 rounded-full transition-colors border border-brand-200 shadow-xs"
+                          aria-label="Decrease quantity"
+                        >
+                          <Minus className="w-4 h-4" />
+                        </button>
 
-                      <div className="text-center px-3">
-                        <span className="text-sm font-bold text-charcoal block">
-                          {currentQuantity} in Order
-                        </span>
-                        <span className="text-[10px] text-charcoal-muted font-medium">
-                          SGD {(pricing.activePrice * currentQuantity).toFixed(2)}
-                        </span>
+                        <div className="text-center px-3">
+                          <span className="text-sm font-bold text-charcoal block">
+                            {currentQuantity} in Order
+                          </span>
+                          <span className="text-[10px] text-charcoal-muted font-medium">
+                            SGD {(pricing.activePrice * currentQuantity).toFixed(2)}
+                          </span>
+                        </div>
+
+                        <button
+                          type="button"
+                          onClick={handleIncrement}
+                          disabled={isMaxReached}
+                          className={`w-10 h-10 flex items-center justify-center rounded-full transition-colors shadow-xs ${
+                            isMaxReached
+                              ? 'bg-charcoal/30 text-white cursor-not-allowed opacity-60'
+                              : 'bg-brand-600 hover:bg-brand-700 text-white'
+                          }`}
+                          aria-label="Increase quantity"
+                        >
+                          <Plus className="w-4 h-4" />
+                        </button>
                       </div>
 
                       <button
                         type="button"
-                        onClick={handleIncrement}
-                        className="w-10 h-10 flex items-center justify-center bg-brand-600 hover:bg-brand-700 text-white rounded-full transition-colors shadow-xs"
-                        aria-label="Increase quantity"
+                        onClick={openCartDrawer}
+                        className="inline-flex items-center justify-center gap-2 bg-[#FAF7F2] hover:bg-[#F4EFE7] text-brand-600 font-bold text-xs px-6 py-4 rounded-full border border-brand-600 transition-colors"
                       >
-                        <Plus className="w-4 h-4" />
+                        <span>View Cart Drawer</span>
                       </button>
                     </div>
-
-                    <button
-                      type="button"
-                      onClick={openCartDrawer}
-                      className="inline-flex items-center justify-center gap-2 bg-[#FAF7F2] hover:bg-[#F4EFE7] text-brand-600 font-bold text-xs px-6 py-4 rounded-full border border-brand-600 transition-colors"
-                    >
-                      <span>View Cart Drawer</span>
-                    </button>
+                    {isMaxReached && (
+                      <p className="text-xs text-amber-700 font-semibold mt-2">
+                        {stockLimitMessage || `Only ${stock} available in stock.`}
+                      </p>
+                    )}
                   </div>
                 )}
               </div>
@@ -355,7 +376,7 @@ export const ProductDetailPage: React.FC = () => {
               <div className="pt-4 border-t border-[#DED7CE]/70 flex flex-col sm:flex-row gap-4 text-xs text-charcoal-muted">
                 <div className="flex items-center gap-2">
                   <Truck className="w-4 h-4 text-brand-600 flex-shrink-0" />
-                  <span>{isVeterinaryOnly ? 'Dispensed via authorized SG veterinary clinics' : 'Free SG delivery for orders SGD 50+'}</span>
+                  <span>{isVeterinaryOnly ? 'Dispensed via authorized SG veterinary clinics' : 'FREE Standard Delivery on orders S$70+'}</span>
                 </div>
                 <div className="flex items-center gap-2">
                   <ShieldCheck className="w-4 h-4 text-sage-600 flex-shrink-0" />

@@ -3,6 +3,7 @@ import { Minus, Plus, Trash2 } from 'lucide-react';
 import { OrderItem } from '../../types/order';
 import { PetBadge } from '../common/Badge';
 import { getProductPricing } from '../../lib/pricing';
+import { useOrder } from '../../context/OrderContext';
 
 interface OrderItemRowProps {
   item: OrderItem;
@@ -15,9 +16,12 @@ export const OrderItemRow: React.FC<OrderItemRowProps> = ({
   onUpdateQuantity,
   onRemove,
 }) => {
+  const { getProductStock } = useOrder();
   const { product, quantity } = item;
   const pricing = getProductPricing(product);
   const lineTotal = (pricing.activePrice * quantity).toFixed(2);
+  const stock = getProductStock(product.id);
+  const isMaxReached = quantity >= stock;
 
   return (
     <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 bg-white rounded-2xl border border-[#DED7CE] shadow-sm">
@@ -48,6 +52,11 @@ export const OrderItemRow: React.FC<OrderItemRowProps> = ({
               </span>
             )}
           </div>
+          {isMaxReached && (
+            <p className="text-[11px] text-amber-700 font-semibold mt-1">
+              Only {stock} available in stock.
+            </p>
+          )}
         </div>
       </div>
 
@@ -69,7 +78,8 @@ export const OrderItemRow: React.FC<OrderItemRowProps> = ({
           <button
             type="button"
             onClick={() => onUpdateQuantity(product.id, quantity + 1)}
-            className="p-1.5 text-charcoal hover:bg-white rounded-lg transition-colors"
+            disabled={isMaxReached}
+            className="p-1.5 text-charcoal hover:bg-white rounded-lg transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
             aria-label="Increase quantity"
           >
             <Plus className="w-3.5 h-3.5" />

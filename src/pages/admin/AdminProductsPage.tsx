@@ -4,6 +4,7 @@ import { ExternalLink, Boxes, CheckCircle2, AlertTriangle, XCircle, Search } fro
 import { PRODUCTS } from '../../data/products';
 import { getProductInventoryList } from '../../lib/inventory';
 import { ProductInventory } from '../../types/inventory';
+import { isLaunchPromoActive } from '../../config/promotions';
 
 export const AdminProductsPage: React.FC = () => {
   const [inventoryList, setInventoryList] = useState<ProductInventory[]>([]);
@@ -129,10 +130,12 @@ export const AdminProductsPage: React.FC = () => {
                 <div className="grid grid-cols-2 gap-2 pt-2 border-t border-[#DED7CE]/70 text-xs">
                   <div className="p-2.5 rounded-xl bg-[#FAF7F2] border border-[#DED7CE]">
                     <span className="text-[10px] text-[#6F6A65] uppercase font-bold block">
-                      {prod.salesChannel === 'veterinary_only' ? 'Sales Channel' : 'Launch Price'}
+                      {prod.salesChannel === 'veterinary_only' ? 'Sales Channel' : isLaunchPromoActive() ? 'Launch Price' : 'Regular Price'}
                     </span>
                     <span className="font-serif font-bold text-[#9E2328] text-sm">
-                      {prod.salesChannel === 'veterinary_only' ? 'Clinics Only' : `SGD ${prod.launchPrice.toFixed(2)}`}
+                      {prod.salesChannel === 'veterinary_only'
+                        ? 'Clinics Only'
+                        : `SGD ${(isLaunchPromoActive() ? prod.launchPrice : prod.regularPrice).toFixed(2)}`}
                     </span>
                   </div>
 

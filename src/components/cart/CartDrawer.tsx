@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { X, Plus, Minus, Trash2, ShoppingBag, ArrowRight, Tag, Truck } from 'lucide-react';
 import { useOrder } from '../../context/OrderContext';
 import { getProductPricing } from '../../lib/pricing';
+import { DELIVERY_CONFIG } from '../../lib/delivery';
 
 export const CartDrawer: React.FC = () => {
   const {
@@ -12,7 +13,8 @@ export const CartDrawer: React.FC = () => {
     totalItemCount,
     updateQuantity,
     removeFromOrder,
-    pricingSummary
+    pricingSummary,
+    getProductStock
   } = useOrder();
 
   const navigate = useNavigate();
@@ -41,7 +43,10 @@ export const CartDrawer: React.FC = () => {
     navigate('/order');
   };
 
-  const progressPercent = Math.min(100, Math.round((pricingSummary.productTotal / 50.00) * 100));
+  const progressPercent = Math.min(
+    100,
+    Math.round((pricingSummary.productTotal / DELIVERY_CONFIG.freeThreshold) * 100)
+  );
 
   return (
     <div className="fixed inset-0 z-50 overflow-hidden animate-soft-in">
@@ -86,9 +91,9 @@ export const CartDrawer: React.FC = () => {
                 <span className="flex items-center gap-1.5 text-charcoal">
                   <Truck className="w-3.5 h-3.5 text-brand-600" />
                   {pricingSummary.isFreeDeliveryUnlocked ? (
-                    <strong className="text-brand-600">Free delivery unlocked! (SGD 50+)</strong>
+                    <strong className="text-brand-600">FREE Standard Delivery unlocked! (S$70+)</strong>
                   ) : (
-                    <span>Add <strong>SGD {pricingSummary.freeDeliveryThresholdDelta.toFixed(2)}</strong> for free delivery</span>
+                    <span>Add <strong>SGD {pricingSummary.freeDeliveryThresholdDelta.toFixed(2)}</strong> for FREE Standard Delivery</span>
                   )}
                 </span>
                 <span className="text-[11px] font-bold text-charcoal">{progressPercent}%</span>
@@ -129,73 +134,85 @@ export const CartDrawer: React.FC = () => {
               items.map((item) => {
                 const pricing = getProductPricing(item.product);
                 const lineTotal = (pricing.activePrice * item.quantity).toFixed(2);
+                const stock = getProductStock(item.product.id);
+                const isMaxReached = item.quantity >= stock;
 
                 return (
                   <div
                     key={item.product.id}
-                    className="flex items-center gap-3.5 p-3.5 bg-white rounded-2xl border border-[#DED7CE] shadow-sm"
+                    className="p-3.5 bg-white rounded-2xl border border-[#DED7CE] shadow-sm space-y-2"
                   >
-                    <img
-                      src={item.product.imageUrl}
-                      alt={item.product.name}
-                      className="w-14 h-14 object-contain rounded-xl border border-[#DED7CE] bg-[#FAF7F2] p-1 flex-shrink-0"
-                    />
+                    <div className="flex items-center gap-3.5">
+                      <img
+                        src={item.product.imageUrl}
+                        alt={item.product.name}
+                        className="w-14 h-14 object-contain rounded-xl border border-[#DED7CE] bg-[#FAF7F2] p-1 flex-shrink-0"
+                      />
 
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between gap-1">
-                        <h4 className="text-xs font-bold text-charcoal truncate">
-                          {item.product.name}
-                        </h4>
-                        <button
-                          type="button"
-                          onClick={() => removeFromOrder(item.product.id)}
-                          className="text-gray-400 hover:text-brand-600 p-1 -mr-1 rounded transition-colors"
-                          title="Remove"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
-
-                      <div className="text-[11px] text-charcoal-muted mb-2">
-                        {item.product.packageSize}
-                      </div>
-
-                      <div className="flex items-center justify-between gap-2">
-                        {/* Inline [ - ] qty [ + ] */}
-                        <div className="flex items-center border border-[#DED7CE] rounded-lg bg-[#FAF7F2] p-0.5 shadow-sm">
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center justify-between gap-1">
+                          <h4 className="text-xs font-bold text-charcoal truncate">
+                            {item.product.name}
+                          </h4>
                           <button
                             type="button"
-                            onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
-                            className="p-1 text-charcoal hover:bg-white rounded transition-colors"
-                            aria-label="Decrease quantity"
+                            onClick={() => removeFromOrder(item.product.id)}
+                            className="text-gray-400 hover:text-brand-600 p-1 -mr-1 rounded transition-colors"
+                            title="Remove"
                           >
-                            <Minus className="w-3 h-3" />
-                          </button>
-                          <span className="px-2 text-xs font-bold text-charcoal min-w-[1.5rem] text-center">
-                            {item.quantity}
-                          </span>
-                          <button
-                            type="button"
-                            onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
-                            className="p-1 text-charcoal hover:bg-white rounded transition-colors"
-                            aria-label="Increase quantity"
-                          >
-                            <Plus className="w-3 h-3" />
+                            <Trash2 className="w-3.5 h-3.5" />
                           </button>
                         </div>
 
-                        <div className="text-right">
-                          <span className="text-xs font-bold text-charcoal block font-serif">
-                            SGD {lineTotal}
-                          </span>
-                          {pricing.isPromo && (
-                            <span className="text-[10px] text-charcoal-muted line-through">
-                              SGD {(pricing.regularPrice * item.quantity).toFixed(2)}
+                        <div className="text-[11px] text-charcoal-muted mb-2">
+                          {item.product.packageSize}
+                        </div>
+
+                        <div className="flex items-center justify-between gap-2">
+                          {/* Inline [ - ] qty [ + ] */}
+                          <div className="flex items-center border border-[#DED7CE] rounded-lg bg-[#FAF7F2] p-0.5 shadow-sm">
+                            <button
+                              type="button"
+                              onClick={() => updateQuantity(item.product.id, item.quantity - 1)}
+                              className="p-1 text-charcoal hover:bg-white rounded transition-colors"
+                              aria-label="Decrease quantity"
+                            >
+                              <Minus className="w-3 h-3" />
+                            </button>
+                            <span className="px-2 text-xs font-bold text-charcoal min-w-[1.5rem] text-center">
+                              {item.quantity}
                             </span>
-                          )}
+                            <button
+                              type="button"
+                              onClick={() => updateQuantity(item.product.id, item.quantity + 1)}
+                              disabled={isMaxReached}
+                              className="p-1 text-charcoal hover:bg-white rounded transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                              aria-label="Increase quantity"
+                            >
+                              <Plus className="w-3 h-3" />
+                            </button>
+                          </div>
+
+                          <div className="text-right">
+                            <span className="text-xs font-bold text-charcoal block font-serif">
+                              SGD {lineTotal}
+                            </span>
+                            {pricing.isPromo && (
+                              <span className="text-[10px] text-charcoal-muted line-through">
+                                SGD {(pricing.regularPrice * item.quantity).toFixed(2)}
+                              </span>
+                            )}
+                          </div>
                         </div>
                       </div>
                     </div>
+
+                    {isMaxReached && (
+                      <div className="pt-1.5 border-t border-[#DED7CE]/60 flex items-center justify-between text-[11px] text-amber-700 font-medium">
+                        <span>Only {stock} available in stock.</span>
+                        <span className="text-[10px] text-charcoal-muted">Max quantity reached</span>
+                      </div>
+                    )}
                   </div>
                 );
               })

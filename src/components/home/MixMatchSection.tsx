@@ -1,9 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Sparkles, Heart, Shield } from 'lucide-react';
-import { ACTIVE_LAUNCH_PROMOTION } from '../../config/promotions';
+import { ACTIVE_LAUNCH_PROMOTION, isLaunchPromoActive } from '../../config/promotions';
 
 export const MixMatchSection: React.FC = () => {
+  if (!isLaunchPromoActive()) return null;
+
   return (
     <section className="py-16 md:py-24 bg-white border-b border-[#DED7CE]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

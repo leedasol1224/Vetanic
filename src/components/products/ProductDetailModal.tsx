@@ -7,7 +7,16 @@ import { getProductPricing } from '../../lib/pricing';
 import { ACTIVE_LAUNCH_PROMOTION } from '../../config/promotions';
 
 export const ProductDetailModal: React.FC = () => {
-  const { activeProductModal, closeProductModal, addToOrder, isItemInOrder, getItemQuantity } = useOrder();
+  const { 
+    activeProductModal, 
+    closeProductModal, 
+    addToOrder, 
+    isItemInOrder, 
+    getItemQuantity,
+    getProductStock,
+    isMaxStockReached,
+    getStockLimitMessage
+  } = useOrder();
   const [quantity, setQuantity] = useState(1);
   const [activeTab, setActiveTab] = useState<'details' | 'usage' | 'origin'>('details');
 
@@ -28,16 +37,27 @@ export const ProductDetailModal: React.FC = () => {
 
   const product = activeProductModal;
   const isVeterinaryOnly = product.salesChannel === 'veterinary_only';
+  const stock = getProductStock(product.id);
+  const inStock = stock > 0 && product.isAvailable !== false;
   const inOrder = isItemInOrder(product.id);
   const currentInOrderQty = getItemQuantity(product.id);
+  const remainingStock = Math.max(0, stock - currentInOrderQty);
+  const isMaxReached = isMaxStockReached(product.id);
+  const stockLimitMessage = getStockLimitMessage(product.id);
   const pricing = getProductPricing(product);
 
-  const handleIncrement = () => setQuantity((prev) => prev + 1);
+  const isModalPlusDisabled = quantity + currentInOrderQty >= stock;
+
+  const handleIncrement = () => {
+    if (quantity + currentInOrderQty < stock) {
+      setQuantity((prev) => prev + 1);
+    }
+  };
   const handleDecrement = () => setQuantity((prev) => (prev > 1 ? prev - 1 : 1));
 
   const handleAdd = () => {
-    if (!product.isAvailable || isVeterinaryOnly) return;
-    addToOrder(product, quantity);
+    if (!inStock || isVeterinaryOnly || remainingStock <= 0) return;
+    addToOrder(product, Math.min(quantity, remainingStock));
     closeProductModal();
   };
 
@@ -190,11 +210,18 @@ export const ProductDetailModal: React.FC = () => {
                       <span>View Full Specifications & Clinic Enquiries</span>
                     </Link>
                   </div>
-                ) : !product.isAvailable ? (
+                ) : !inStock ? (
                   <div className="p-3.5 bg-[#FAF7F2] rounded-2xl border border-[#DED7CE] text-center space-y-1">
                     <span className="text-xs font-bold text-charcoal block">Currently Sold Out</span>
                     <p className="text-[11px] text-charcoal-muted font-normal">
                       This item is temporarily unavailable for order requests.
+                    </p>
+                  </div>
+                ) : isMaxReached ? (
+                  <div className="p-3.5 bg-amber-50 rounded-2xl border border-amber-200 text-center space-y-1">
+                    <span className="text-xs font-bold text-amber-900 block">Maximum Quantity Reached</span>
+                    <p className="text-[11px] text-amber-800 font-medium">
+                      {stockLimitMessage || `Only ${stock} available in stock.`}
                     </p>
                   </div>
                 ) : (
@@ -220,7 +247,8 @@ export const ProductDetailModal: React.FC = () => {
                         <button
                           type="button"
                           onClick={handleIncrement}
-                          className="p-2.5 text-charcoal hover:bg-[#FAF7F2] transition-colors"
+                          disabled={isModalPlusDisabled}
+                          className="p-2.5 text-charcoal hover:bg-[#FAF7F2] transition-colors disabled:opacity-40 disabled:cursor-not-allowed"
                           aria-label="Increase quantity"
                         >
                           <Plus className="w-4 h-4" />
@@ -236,6 +264,11 @@ export const ProductDetailModal: React.FC = () => {
                         <span>Add to Order</span>
                       </button>
                     </div>
+                    {isModalPlusDisabled && (
+                      <p className="text-xs text-amber-700 font-semibold mt-2">
+                        {stockLimitMessage || `Only ${stock} available in stock.`}
+                      </p>
+                    )}
                   </>
                 )}
               </div>

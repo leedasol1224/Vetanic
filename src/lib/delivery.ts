@@ -13,14 +13,14 @@ export const DELIVERY_CONFIG: {
   options: Record<DeliveryOptionId, DeliveryConfigOption>;
   freeThreshold: number;
 } = {
-  freeThreshold: 50.00,
+  freeThreshold: 70.00,
   options: {
     standard: {
       id: 'standard',
       name: 'Standard Delivery',
       subtitle: 'Standard local delivery (Singapore)',
       baseFee: 4.50,
-      freeThreshold: 50.00,
+      freeThreshold: 70.00,
       estimatedTime: '2–3 business days'
     },
     express: {

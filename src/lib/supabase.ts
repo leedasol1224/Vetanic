@@ -584,6 +584,66 @@ export async function submitContactEnquiry(enquiry: Omit<ContactEnquiry, 'id' | 
 }
 
 /**
+ * Fetch storefront inventory directly backed by Supabase / Serverless API.
+ * Returns a map of productId -> { currentStock: number; expiryDate: string; isAvailable: boolean }
+ */
+export async function fetchStorefrontInventoryFromSupabase(): Promise<Record<string, { currentStock: number; expiryDate: string; isAvailable: boolean }> | null> {
+  // 1. Fetch from serverless API backed by Supabase
+  try {
+    const res = await fetch('/api/inventory', {
+      method: 'GET',
+      headers: {
+        'Accept': 'application/json'
+      }
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      if (data && data.success && data.inventory) {
+        const result: Record<string, { currentStock: number; expiryDate: string; isAvailable: boolean }> = {};
+        Object.entries(data.inventory).forEach(([pid, item]: [string, any]) => {
+          const stock = typeof item.stock === 'number' ? Math.max(0, item.stock) : (item.currentStock ?? 0);
+          result[pid] = {
+            currentStock: stock,
+            expiryDate: item.expiryDate || '—',
+            isAvailable: item.isAvailable !== false && stock > 0
+          };
+        });
+        return result;
+      }
+    }
+  } catch (err) {
+    console.warn('Storefront inventory API fetch notice:', err);
+  }
+
+  // 2. Direct Supabase client query fallback if public products exist
+  if (isSupabaseConfigured && supabase) {
+    try {
+      const { data: prods, error: pError } = await supabase
+        .from('products')
+        .select('*');
+
+      if (!pError && Array.isArray(prods) && prods.length > 0) {
+        const result: Record<string, { currentStock: number; expiryDate: string; isAvailable: boolean }> = {};
+        prods.forEach((p: any) => {
+          const stock = typeof p.current_stock === 'number' ? p.current_stock : (p.stock ?? 0);
+          result[p.id] = {
+            currentStock: Math.max(0, stock),
+            expiryDate: p.expiry_date || '—',
+            isAvailable: p.is_available !== false && stock > 0
+          };
+        });
+        return result;
+      }
+    } catch (err) {
+      console.warn('Direct Supabase storefront inventory query notice:', err);
+    }
+  }
+
+  return null;
+}
+
+/**
  * Fetch inventory movements via secure Serverless Admin API.
  */
 export async function fetchInventoryMovementsFromDb(): Promise<import('../types/inventory').InventoryMovement[]> {

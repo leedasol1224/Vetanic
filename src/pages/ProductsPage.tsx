@@ -6,8 +6,10 @@ import { ProductFilters } from '../components/products/ProductFilters';
 import { PetType, ProductCategory } from '../types/product';
 import { Sparkles, RotateCcw } from 'lucide-react';
 import { sortProductsByStockAvailability } from '../lib/inventory';
+import { useOrder } from '../context/OrderContext';
 
 export const ProductsPage: React.FC = () => {
+  const { inventoryVersion } = useOrder();
   const [searchParams, setSearchParams] = useSearchParams();
   const [selectedPet, setSelectedPet] = useState<'all' | PetType>('all');
   const [selectedCategory, setSelectedCategory] = useState<'all' | ProductCategory>('all');
@@ -76,7 +78,7 @@ export const ProductsPage: React.FC = () => {
     });
 
     return sortProductsByStockAvailability(filtered);
-  }, [selectedPet, selectedCategory]);
+  }, [selectedPet, selectedCategory, inventoryVersion]);
 
   return (
     <main className="flex-1 bg-[#FAF7F2] py-12 md:py-16">

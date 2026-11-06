@@ -6,7 +6,7 @@ export const BRAND_CONTENT = {
   smallBrandRelationship: 'An international brand of Nongshim Banryodaum',
   brandRelationText: 'VETANIC is the international-facing brand of Nongshim Banryodaum, bringing thoughtfully developed Korean pet wellness products to pet families beyond Korea.',
   footerRelationText: 'VETANIC is the international-facing brand of Nongshim Banryodaum.',
-  freeDeliveryHighlight: 'Free standard local delivery on orders SGD 50+',
+  freeDeliveryHighlight: 'FREE Standard Delivery on orders S$70+',
   originCountry: 'Korea',
   initialMarket: 'Singapore',
 
@@ -17,10 +17,10 @@ export const BRAND_CONTENT = {
   },
 
   launch: {
-    label: 'HELLO, SINGAPORE',
-    title: 'Celebrate our Singapore launch',
-    body: 'VETANIC is now available in Singapore. Enjoy special launch prices throughout October, with extra savings when you mix and match selected products.',
-    cta: 'Shop Launch Offers',
+    label: 'SINGAPORE STORE',
+    title: 'Pure clinical nutrition for companion dogs & cats',
+    body: 'Thoughtfully developed in Korea with veterinary clinicians and premium functional ingredients, delivered directly to your doorstep in Singapore.',
+    cta: 'Explore Products',
   },
 
   mixMatch: {

@@ -35,7 +35,7 @@ export const LaunchPromoSection: React.FC = () => {
 
           <div className="pt-6 border-t border-[#DED7CE]/70 flex items-center justify-center gap-2 text-xs text-charcoal-muted">
             <Gift className="w-4 h-4 text-brand-600 flex-shrink-0" />
-            <span>Free standard local delivery on all orders of SGD 50+</span>
+            <span>FREE Standard Delivery on orders S$70+</span>
           </div>
         </div>
       </div>

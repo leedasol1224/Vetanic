@@ -136,7 +136,7 @@ export const AdminDashboard: React.FC = () => {
               <p className="text-xs text-amber-800 mt-0.5">
                 {lowStockItems.length > 0 && (
                   <span>
-                    Low Stock (≤5 units): {lowStockItems.map((i) => `${i.productName} (${i.currentStock} left)`).join(', ')}
+                    Low Stock (1–10 units): {lowStockItems.map((i) => `${i.productName} (${i.currentStock} left)`).join(', ')}
                   </span>
                 )}
                 {lowStockItems.length > 0 && outOfStockItems.length > 0 && ' • '}

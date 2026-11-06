@@ -2,12 +2,16 @@ import React from 'react';
 import { Truck, Sparkles } from 'lucide-react';
 import { useOrder } from '../../context/OrderContext';
 import { Link } from 'react-router-dom';
+import { DELIVERY_CONFIG } from '../../lib/delivery';
 
 export const DeliveryProgressBar: React.FC = () => {
   const { pricingSummary } = useOrder();
 
   const { productTotal, isFreeDeliveryUnlocked, freeDeliveryThresholdDelta, upsellMessages } = pricingSummary;
-  const progressPercent = Math.min(100, Math.round((productTotal / 50.00) * 100));
+  const progressPercent = Math.min(
+    100,
+    Math.round((productTotal / DELIVERY_CONFIG.freeThreshold) * 100)
+  );
 
   return (
     <div className="bg-white rounded-2xl p-4 sm:p-5 border border-[#DED7CE] shadow-sm space-y-3.5 animate-soft-in">
@@ -18,10 +22,10 @@ export const DeliveryProgressBar: React.FC = () => {
             <Truck className="w-4 h-4 text-brand-600" />
             <span>
               {isFreeDeliveryUnlocked ? (
-                <span className="text-brand-600 font-bold">You've unlocked free local delivery!</span>
+                <span className="text-brand-600 font-bold">You've unlocked FREE Standard Delivery! (S$70+)</span>
               ) : (
                 <span>
-                  Add <strong className="text-charcoal font-bold">SGD {freeDeliveryThresholdDelta.toFixed(2)}</strong> more to enjoy free local delivery.
+                  Add <strong className="text-charcoal font-bold">SGD {freeDeliveryThresholdDelta.toFixed(2)}</strong> more to enjoy FREE Standard Delivery (S$70+).
                 </span>
               )}
             </span>

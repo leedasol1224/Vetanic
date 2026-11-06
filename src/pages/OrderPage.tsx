@@ -27,6 +27,7 @@ import {
   CheckCircle2
 } from 'lucide-react';
 import { getProductPricing } from '../lib/pricing';
+import { isLaunchPromoActive } from '../config/promotions';
 import { saveGuestSession } from '../lib/guestOrderLookup';
 
 export const OrderPage: React.FC = () => {
@@ -40,7 +41,8 @@ export const OrderPage: React.FC = () => {
     pricingSummary,
     submitOrder, 
     lastSubmittedOrder, 
-    setLastSubmittedOrder 
+    setLastSubmittedOrder,
+    getProductStock
   } = useOrder();
 
   // Form State
@@ -222,6 +224,19 @@ export const OrderPage: React.FC = () => {
       return;
     }
 
+    // Validate that no item exceeds available inventory
+    for (const item of items) {
+      const stock = getProductStock(item.product.id);
+      if (item.quantity > stock) {
+        setErrorMessage(
+          stock <= 0
+            ? `${item.product.name} is currently sold out. Please remove it from your order.`
+            : `Only ${stock} available in stock for ${item.product.name}. Please adjust your quantity.`
+        );
+        return;
+      }
+    }
+
     const submissionPayload: OrderSubmission = {
       customer: {
         fullName: fullName.trim(),
@@ -253,7 +268,14 @@ export const OrderPage: React.FC = () => {
           quantity: item.quantity,
           unitPrice: pricing.activePrice
         };
-      })
+      }),
+      pricing: {
+        subtotal: pricingSummary.productSubtotal,
+        bundleDiscount: pricingSummary.bundleDiscount,
+        productTotal: pricingSummary.productTotal,
+        deliveryFee: pricingSummary.deliveryFee,
+        estimatedTotal: pricingSummary.estimatedTotal
+      }
     };
 
     try {
@@ -268,9 +290,13 @@ export const OrderPage: React.FC = () => {
         details: err?.details || err?.cause?.message || null,
         hint: err?.hint || null
       });
-      setErrorMessage(
-        'We encountered an issue recording your order request. Please try submitting again, or message us directly on Instagram @vetanic_global for immediate assistance.'
-      );
+      if (err?.message && (err.message.includes('stock') || err.message.includes('available'))) {
+        setErrorMessage(err.message);
+      } else {
+        setErrorMessage(
+          'We encountered an issue recording your order request. Please try submitting again, or message us directly on Instagram @vetanic_global for immediate assistance.'
+        );
+      }
     } finally {
       setIsSubmitting(false);
     }
@@ -339,7 +365,7 @@ export const OrderPage: React.FC = () => {
               <div>
                 Total Selected: <strong className="text-charcoal font-bold">{totalQuantity} {totalQuantity === 1 ? 'unit' : 'units'}</strong>
               </div>
-              {pricingSummary.savingsAmount > 0 && (
+              {isLaunchPromoActive() && pricingSummary.savingsAmount > 0 && (
                 <div className="inline-flex items-center gap-1 text-xs font-bold text-brand-600 bg-brand-50 px-3 py-1 rounded-lg border border-brand-200">
                   <Tag className="w-3.5 h-3.5 text-brand-600" />
                   <span>You save SGD {pricingSummary.savingsAmount.toFixed(2)} with launch offers!</span>
@@ -537,9 +563,9 @@ export const OrderPage: React.FC = () => {
                   </div>
                   <span className="text-[11px] text-charcoal-muted ml-5">
                     {pricingSummary.isFreeDeliveryUnlocked ? (
-                      <strong className="text-brand-600 font-bold">FREE (Orders ≥ SGD 50)</strong>
+                      <strong className="text-brand-600 font-bold">FREE (Orders S$70+)</strong>
                     ) : (
-                      'SGD 4.50 (Free over SGD 50)'
+                      'SGD 4.50 (FREE on orders S$70+)'
                     )}
                   </span>
                 </label>

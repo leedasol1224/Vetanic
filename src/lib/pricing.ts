@@ -25,7 +25,7 @@ export function getProductPricing(product: Product, date: Date = new Date()): Pr
     launchPrice,
     activePrice,
     isPromo: promoActive,
-    bundleOfferText: product.bundleOfferText
+    bundleOfferText: promoActive ? product.bundleOfferText : undefined
   };
 }
 
@@ -223,9 +223,9 @@ export function calculateOrderPricing(
   // Free delivery message
   let freeDeliveryMessage = '';
   if (isFreeDeliveryUnlocked) {
-    freeDeliveryMessage = "You've unlocked free standard local delivery!";
+    freeDeliveryMessage = "You've unlocked FREE Standard Delivery!";
   } else if (productTotal > 0) {
-    freeDeliveryMessage = `Add SGD ${freeDeliveryThresholdDelta.toFixed(2)} more to enjoy free standard delivery.`;
+    freeDeliveryMessage = `Add SGD ${freeDeliveryThresholdDelta.toFixed(2)} more to enjoy FREE Standard Delivery on orders S$70+.`;
   }
 
   return {

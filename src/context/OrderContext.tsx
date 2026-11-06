@@ -1,10 +1,14 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode, useMemo } from 'react';
+import React, { createContext, useContext, useState, useEffect, ReactNode, useMemo, useCallback } from 'react';
 import { Product } from '../types/product';
 import { OrderItem, OrderSubmission, OrderRecord, DeliveryMethod, PricingSummary } from '../types/order';
 import { getSavedCart, saveCart, clearCart } from '../lib/storage';
 import { submitOrderRequest } from '../lib/supabase';
 import { calculateOrderPricing } from '../lib/pricing';
-import { isProductInStock } from '../lib/inventory';
+import { 
+  getProductStock as getStockFromInventory, 
+  syncInventoryWithSupabase, 
+  subscribeToInventory 
+} from '../lib/inventory';
 
 interface OrderContextType {
   items: OrderItem[];
@@ -18,6 +22,11 @@ interface OrderContextType {
   clearOrder: () => void;
   isItemInOrder: (productId: string) => boolean;
   getItemQuantity: (productId: string) => number;
+  getProductStock: (productId: string) => number;
+  getRemainingStock: (productId: string) => number;
+  isMaxStockReached: (productId: string) => boolean;
+  getStockLimitMessage: (productId: string) => string | null;
+  inventoryVersion: number;
   lastAddedProduct: { product: Product; quantity: number } | null;
   showAddedToast: boolean;
   dismissToast: () => void;
@@ -42,11 +51,42 @@ export const OrderProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   const [lastSubmittedOrder, setLastSubmittedOrder] = useState<OrderRecord | null>(null);
   const [activeProductModal, setActiveProductModal] = useState<Product | null>(null);
   const [isCartDrawerOpen, setIsCartDrawerOpen] = useState(false);
+  const [inventoryVersion, setInventoryVersion] = useState<number>(0);
 
-  // Sync to local storage
+  // Sync inventory authoritatively with Supabase on mount and listen for real-time inventory updates
+  useEffect(() => {
+    syncInventoryWithSupabase().then(() => {
+      setInventoryVersion((v) => v + 1);
+    });
+
+    const unsubscribe = subscribeToInventory(() => {
+      setInventoryVersion((v) => v + 1);
+    });
+
+    return () => unsubscribe();
+  }, []);
+
+  // Sync items to local storage
   useEffect(() => {
     saveCart(items);
   }, [items]);
+
+  // Reconcile cart items if inventory limits drop below cart quantity
+  useEffect(() => {
+    setItems((prevItems) => {
+      let changed = false;
+      const reconciled = prevItems.map((item) => {
+        const stock = getStockFromInventory(item.product.id);
+        if (item.quantity > stock) {
+          changed = true;
+          return { ...item, quantity: Math.max(0, stock) };
+        }
+        return item;
+      }).filter((item) => item.quantity > 0);
+
+      return changed ? reconciled : prevItems;
+    });
+  }, [inventoryVersion]);
 
   const totalItemCount = useMemo(() => {
     return items.reduce((sum, item) => sum + item.quantity, 0);
@@ -56,24 +96,66 @@ export const OrderProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     return calculateOrderPricing(items, deliveryMethod);
   }, [items, deliveryMethod]);
 
+  const getProductStock = useCallback((productId: string): number => {
+    return getStockFromInventory(productId);
+  }, [inventoryVersion]);
+
+  const getItemQuantity = useCallback((productId: string): number => {
+    const item = items.find((item) => item.product.id === productId);
+    return item ? item.quantity : 0;
+  }, [items]);
+
+  const getRemainingStock = useCallback((productId: string): number => {
+    const stock = getStockFromInventory(productId);
+    const inCart = getItemQuantity(productId);
+    return Math.max(0, stock - inCart);
+  }, [inventoryVersion, getItemQuantity]);
+
+  const isMaxStockReached = useCallback((productId: string): boolean => {
+    const stock = getStockFromInventory(productId);
+    const inCart = getItemQuantity(productId);
+    return inCart >= stock;
+  }, [inventoryVersion, getItemQuantity]);
+
+  const getStockLimitMessage = useCallback((productId: string): string | null => {
+    const stock = getStockFromInventory(productId);
+    const inCart = getItemQuantity(productId);
+    if (stock > 0 && inCart >= stock) {
+      return `Only ${stock} available in stock.`;
+    }
+    return null;
+  }, [inventoryVersion, getItemQuantity]);
+
   const addToOrder = (product: Product, quantity: number = 1) => {
-    if (quantity <= 0 || !product.isAvailable || product.salesChannel === 'veterinary_only' || !isProductInStock(product.id)) return;
+    const stock = getStockFromInventory(product.id);
+    if (quantity <= 0 || !product.isAvailable || product.salesChannel === 'veterinary_only' || stock <= 0) return;
+
+    const currentQty = getItemQuantity(product.id);
+    const remainingAllowed = Math.max(0, stock - currentQty);
+
+    if (remainingAllowed <= 0) {
+      // Reached maximum limit; do not add
+      return;
+    }
+
+    const actualQuantityToAdd = Math.min(quantity, remainingAllowed);
 
     setItems((prevItems) => {
       const existingIndex = prevItems.findIndex((item) => item.product.id === product.id);
       if (existingIndex > -1) {
         const updated = [...prevItems];
+        const newQty = Math.min(stock, updated[existingIndex].quantity + actualQuantityToAdd);
         updated[existingIndex] = {
           ...updated[existingIndex],
-          quantity: updated[existingIndex].quantity + quantity
+          quantity: newQty
         };
         return updated;
       } else {
-        return [...prevItems, { product, quantity }];
+        return [...prevItems, { product, quantity: actualQuantityToAdd }];
       }
     });
 
-    setLastAddedProduct({ product, quantity });
+    setLastAddedProduct({ product, quantity: actualQuantityToAdd });
     setShowAddedToast(true);
   };
 
@@ -83,9 +165,12 @@ export const OrderProvider: React.FC<{ children: ReactNode }> = ({ children }) =
       return;
     }
 
+    const stock = getStockFromInventory(productId);
+    const clampedQuantity = Math.min(quantity, stock);
+
     setItems((prevItems) =>
       prevItems.map((item) =>
-        item.product.id === productId ? { ...item, quantity } : item
+        item.product.id === productId ? { ...item, quantity: clampedQuantity } : item
       )
     );
   };
@@ -103,11 +188,6 @@ export const OrderProvider: React.FC<{ children: ReactNode }> = ({ children }) =
     return items.some((item) => item.product.id === productId);
   };
 
-  const getItemQuantity = (productId: string) => {
-    const item = items.find((item) => item.product.id === productId);
-    return item ? item.quantity : 0;
-  };
-
   const dismissToast = () => {
     setShowAddedToast(false);
   };
@@ -121,6 +201,16 @@ export const OrderProvider: React.FC<{ children: ReactNode }> = ({ children }) =
   };
 
   const submitOrder = async (submission: OrderSubmission): Promise<OrderRecord> => {
+    // Validate that order quantities do not exceed available stock in Supabase
+    for (const item of submission.items) {
+      const available = getStockFromInventory(item.productId);
+      if (item.quantity > available) {
+        throw new Error(
+          `Only ${available} available in stock for ${item.productName}. Please adjust your quantity before submitting.`
+        );
+      }
+    }
+
     const orderRecord = await submitOrderRequest({
       ...submission,
       pricing: {
@@ -158,6 +248,11 @@ export const OrderProvider: React.FC<{ children: ReactNode }> = ({ children }) =
         clearOrder,
         isItemInOrder,
         getItemQuantity,
+        getProductStock,
+        getRemainingStock,
+        isMaxStockReached,
+        getStockLimitMessage,
+        inventoryVersion,
         lastAddedProduct,
         showAddedToast,
         dismissToast,

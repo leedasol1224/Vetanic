@@ -25,6 +25,7 @@ export interface InventoryMovement {
 }
 
 export type StockStatus = 'In Stock' | 'Low Stock' | 'Out of Stock';
+export type ExpiryStatus = 'Normal' | 'Monitor' | 'Short-Dated' | 'Expired';
 
 export interface ProductInventory {
   productId: string;
@@ -40,6 +41,10 @@ export interface ProductInventory {
   currentStock: number;
   lowStockThreshold: number;
   stockStatus: StockStatus;
+  expiryDate: string;
+  expiryStatus: ExpiryStatus | '—';
+  daysToExpiry?: number;
+  lastUpdated?: string;
   regularPrice: number;
   launchPrice: number;
   estimatedRetailValue: number;

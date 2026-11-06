@@ -5,33 +5,41 @@ import { Product } from '../../types/product';
 import { PetBadge } from '../common/Badge';
 import { useOrder } from '../../context/OrderContext';
 import { getProductPricing } from '../../lib/pricing';
-import { getProductStock } from '../../lib/inventory';
 
 interface ProductCardProps {
   product: Product;
 }
 
 export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
-  const { addToOrder, updateQuantity, getItemQuantity } = useOrder();
+  const { 
+    addToOrder, 
+    updateQuantity, 
+    getItemQuantity, 
+    getProductStock, 
+    isMaxStockReached, 
+    getStockLimitMessage 
+  } = useOrder();
 
   const stock = getProductStock(product.id);
   const inStock = stock > 0 && product.isAvailable !== false;
   const currentQuantity = getItemQuantity(product.id);
   const pricing = getProductPricing(product);
+  const isMaxReached = isMaxStockReached(product.id);
+  const limitMessage = getStockLimitMessage(product.id);
 
   const isVeterinaryOnly = product.salesChannel === 'veterinary_only';
 
   const handleAddInitial = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (!inStock || isVeterinaryOnly) return;
+    if (!inStock || isVeterinaryOnly || isMaxReached) return;
     addToOrder(product, 1);
   };
 
   const handleIncrement = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (!inStock || isVeterinaryOnly) return;
+    if (!inStock || isVeterinaryOnly || currentQuantity >= stock) return;
     updateQuantity(product.id, currentQuantity + 1);
   };
 
@@ -124,11 +132,13 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
                   )}
                 </div>
 
-                <div className="mt-1 flex items-center gap-2">
-                  <span className="text-[11px] text-brand-600 font-medium">
-                    {product.bundleOfferText || 'Mix & Match available'}
-                  </span>
-                </div>
+                {pricing.isPromo && pricing.bundleOfferText && (
+                  <div className="mt-1 flex items-center gap-2">
+                    <span className="text-[11px] text-brand-600 font-medium">
+                      {pricing.bundleOfferText}
+                    </span>
+                  </div>
+                )}
               </>
             )}
           </div>
@@ -180,11 +190,25 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             <button
               type="button"
               onClick={handleIncrement}
-              className="w-8 h-8 flex items-center justify-center bg-brand-600 hover:bg-brand-700 text-white rounded-lg transition-colors shadow-xs"
+              disabled={isMaxReached}
+              className={`w-8 h-8 flex items-center justify-center rounded-lg transition-colors shadow-xs ${
+                isMaxReached
+                  ? 'bg-gray-200 text-gray-400 cursor-not-allowed opacity-60'
+                  : 'bg-brand-600 hover:bg-brand-700 text-white'
+              }`}
+              title={isMaxReached ? `Only ${stock} available in stock.` : 'Increase quantity'}
               aria-label="Increase quantity"
             >
               <Plus className="w-3.5 h-3.5" />
             </button>
+          </div>
+        )}
+
+        {limitMessage && currentQuantity > 0 && (
+          <div className="mt-2 text-center">
+            <span className="text-[11px] font-semibold text-amber-800 bg-amber-50 px-2.5 py-0.5 rounded-full border border-amber-200/80 inline-block shadow-xs">
+              {limitMessage}
+            </span>
           </div>
         )}
       </div>

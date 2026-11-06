@@ -5,21 +5,343 @@ import {
   InventoryMovementType, 
   ProductInventory, 
   ProductSalesSummary, 
-  StockStatus 
+  StockStatus,
+  ExpiryStatus
 } from '../types/inventory';
 import { OrderRecord } from '../types/order';
+import { fetchStorefrontInventoryFromSupabase } from './supabase';
 
-const INVENTORY_MOVEMENTS_STORAGE_KEY = 'vetanic_inventory_movements_v3';
+type InventoryListener = () => void;
+const inventoryListeners = new Set<InventoryListener>();
+
+export function subscribeToInventory(listener: InventoryListener): () => void {
+  inventoryListeners.add(listener);
+  return () => {
+    inventoryListeners.delete(listener);
+  };
+}
+
+export function notifyInventoryListeners(): void {
+  inventoryListeners.forEach((fn) => {
+    try {
+      fn();
+    } catch {
+      // Ignore listener error
+    }
+  });
+}
+
+/**
+ * Confirmed stock quantities and expiry dates
+ */
+export const INITIAL_INVENTORY_DATA: Record<string, { currentStock: number; expiryDate: string }> = {
+  'complete-v': { currentStock: 150, expiryDate: '15 Mar 2028' },
+  'urena-clear': { currentStock: 22, expiryDate: '10 Jul 2027' },
+  'hairball-care': { currentStock: 6, expiryDate: '13 Jul 2027' },
+  'probiotics': { currentStock: 8, expiryDate: '23 Mar 2028' },
+  'clear-eyes': { currentStock: 11, expiryDate: '21 Jan 2028' },
+  'sweet-potato-pumpkin-treats': { currentStock: 4, expiryDate: '5 May 2027' },
+  'freeze-dried-vegetables': { currentStock: 26, expiryDate: '14 Dec 2027' },
+  'soft-dental-chew': { currentStock: 30, expiryDate: '12 Nov 2027' },
+  'fresh-omega-3-mini': { currentStock: 101, expiryDate: '2 Jul 2028' },
+  'fresh-omega-3-premium': { currentStock: 34, expiryDate: '26 Feb 2028' },
+  'joint-support': { currentStock: 0, expiryDate: '—' },
+};
+
+const INVENTORY_RECORDS_STORAGE_KEY = 'vetanic_inventory_records_v4';
+const INVENTORY_MOVEMENTS_STORAGE_KEY = 'vetanic_inventory_movements_v4';
 const PRODUCT_THRESHOLDS_STORAGE_KEY = 'vetanic_product_thresholds_v1';
 
-// Purge legacy demo movements if present in browser storage
+// Purge legacy demo movements & old inventory keys if present in browser storage
 if (typeof window !== 'undefined' && window.localStorage) {
   try {
     localStorage.removeItem('vetanic_inventory_movements_v1');
     localStorage.removeItem('vetanic_inventory_movements_v2');
+    localStorage.removeItem('vetanic_inventory_movements_v3');
+    localStorage.removeItem('vetanic_inventory_items_v1');
+    localStorage.removeItem('vetanic_inventory_records_v1');
+    localStorage.removeItem('vetanic_inventory_records_v2');
+    localStorage.removeItem('vetanic_inventory_records_v3');
   } catch {
     // Ignore storage errors
   }
+}
+
+const MONTH_NAMES = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+/**
+ * Robust date parser supporting YYYY-MM-DD, D MMM YYYY, and standard formats
+ */
+export function parseCustomDate(str?: string | null): Date | null {
+  if (!str || str === '—' || str.trim() === '') return null;
+  const trimmed = str.trim();
+  // Check YYYY-MM-DD
+  if (/^\d{4}-\d{2}-\d{2}$/.test(trimmed)) {
+    const [y, m, d] = trimmed.split('-').map(Number);
+    return new Date(y, m - 1, d);
+  }
+  // Check "D MMM YYYY" or "DD MMM YYYY"
+  const m = trimmed.match(/^(\d{1,2})\s+([A-Za-z]{3})\s+(\d{4})$/);
+  if (m) {
+    const day = parseInt(m[1], 10);
+    const monthIdx = MONTH_NAMES.findIndex((mo) => mo.toLowerCase() === m[2].toLowerCase());
+    const year = parseInt(m[3], 10);
+    if (monthIdx >= 0) {
+      return new Date(year, monthIdx, day);
+    }
+  }
+  const fallback = new Date(trimmed);
+  return isNaN(fallback.getTime()) ? null : fallback;
+}
+
+/**
+ * Formats date into readable string, e.g. "15 Mar 2028"
+ */
+export function formatDateDisplay(d: Date | string | undefined | null): string {
+  if (!d) return '—';
+  const dateObj = typeof d === 'string' ? parseCustomDate(d) : d;
+  if (!dateObj || isNaN(dateObj.getTime())) return typeof d === 'string' && d.trim() ? d : '—';
+  return `${dateObj.getDate()} ${MONTH_NAMES[dateObj.getMonth()]} ${dateObj.getFullYear()}`;
+}
+
+/**
+ * Formats date into input date value, e.g. "2028-03-15"
+ */
+export function formatDateInput(d: Date | string | undefined | null): string {
+  if (!d) return '';
+  const dateObj = typeof d === 'string' ? parseCustomDate(d) : d;
+  if (!dateObj || isNaN(dateObj.getTime())) return '';
+  const y = dateObj.getFullYear();
+  const m = String(dateObj.getMonth() + 1).padStart(2, '0');
+  const day = String(dateObj.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+
+/**
+ * Stock Status Logic:
+ * - In Stock — more than 10 units
+ * - Low Stock — 1 to 10 units
+ * - Out of Stock — 0 units
+ */
+export function calculateStockStatus(currentStock: number, isAvailable: boolean = true): StockStatus {
+  if (currentStock <= 0 || !isAvailable) {
+    return 'Out of Stock';
+  }
+  if (currentStock <= 10) {
+    return 'Low Stock';
+  }
+  return 'In Stock';
+}
+
+/**
+ * Expiry Status Logic:
+ * - Normal — more than 6 months remaining
+ * - Monitor — 3 to 6 months remaining
+ * - Short-Dated — less than 3 months remaining
+ * - Expired — expiry date has passed
+ */
+export function calculateExpiryStatus(expiryStr?: string | null, now: Date = new Date()): {
+  status: ExpiryStatus | '—';
+  daysRemaining?: number;
+} {
+  if (!expiryStr || expiryStr === '—' || expiryStr.trim() === '') {
+    return { status: '—' };
+  }
+
+  const expiry = parseCustomDate(expiryStr);
+  if (!expiry) {
+    return { status: '—' };
+  }
+
+  // End of day for expiry, start of day for now
+  const expiryTime = new Date(expiry.getFullYear(), expiry.getMonth(), expiry.getDate(), 23, 59, 59).getTime();
+  const nowTime = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0).getTime();
+
+  if (expiryTime < nowTime) {
+    return { status: 'Expired', daysRemaining: Math.floor((expiryTime - nowTime) / (1000 * 60 * 60 * 24)) };
+  }
+
+  const msRemaining = expiryTime - nowTime;
+  const daysRemaining = Math.ceil(msRemaining / (1000 * 60 * 60 * 24));
+
+  // 3 months and 6 months thresholds based on calendar
+  const threeMonths = new Date(now.getFullYear(), now.getMonth() + 3, now.getDate(), 23, 59, 59).getTime();
+  const sixMonths = new Date(now.getFullYear(), now.getMonth() + 6, now.getDate(), 23, 59, 59).getTime();
+
+  if (expiryTime < threeMonths) {
+    return { status: 'Short-Dated', daysRemaining };
+  } else if (expiryTime <= sixMonths) {
+    return { status: 'Monitor', daysRemaining };
+  } else {
+    return { status: 'Normal', daysRemaining };
+  }
+}
+
+export interface StoredProductInventory {
+  currentStock: number;
+  expiryDate: string;
+  lastUpdated: string;
+}
+
+/**
+ * Get stored product inventory records, initializing with confirmed stock and expiries if needed
+ */
+export function getStoredInventoryRecords(): Record<string, StoredProductInventory> {
+  try {
+    const raw = typeof window !== 'undefined' ? localStorage.getItem(INVENTORY_RECORDS_STORAGE_KEY) : null;
+    let records: Record<string, StoredProductInventory> = raw ? JSON.parse(raw) : {};
+
+    let needsSave = false;
+    Object.entries(INITIAL_INVENTORY_DATA).forEach(([pid, initial]) => {
+      if (!records[pid] || typeof records[pid].currentStock !== 'number') {
+        records[pid] = {
+          currentStock: initial.currentStock,
+          expiryDate: initial.expiryDate,
+          lastUpdated: new Date().toISOString()
+        };
+        needsSave = true;
+      }
+    });
+
+    if (needsSave && typeof window !== 'undefined') {
+      localStorage.setItem(INVENTORY_RECORDS_STORAGE_KEY, JSON.stringify(records));
+    }
+
+    return records;
+  } catch (e) {
+    console.error('Failed to load inventory records', e);
+    const defaults: Record<string, StoredProductInventory> = {};
+    Object.entries(INITIAL_INVENTORY_DATA).forEach(([pid, initial]) => {
+      defaults[pid] = {
+        currentStock: initial.currentStock,
+        expiryDate: initial.expiryDate,
+        lastUpdated: new Date().toISOString()
+      };
+    });
+    return defaults;
+  }
+}
+
+/**
+ * Save inventory records to storage and notify subscribers
+ */
+export function saveStoredInventoryRecords(records: Record<string, StoredProductInventory>): void {
+  try {
+    if (typeof window !== 'undefined') {
+      localStorage.setItem(INVENTORY_RECORDS_STORAGE_KEY, JSON.stringify(records));
+    }
+    notifyInventoryListeners();
+  } catch (e) {
+    console.error('Failed to save inventory records', e);
+  }
+}
+
+let isSyncingWithSupabase = false;
+
+/**
+ * Authoritatively sync inventory with Supabase.
+ * Loads latest stock from Supabase / serverless inventory endpoint and updates records.
+ */
+export async function syncInventoryWithSupabase(): Promise<Record<string, StoredProductInventory>> {
+  if (isSyncingWithSupabase) {
+    return getStoredInventoryRecords();
+  }
+  isSyncingWithSupabase = true;
+
+  try {
+    const remoteData = await fetchStorefrontInventoryFromSupabase();
+    if (remoteData) {
+      const records = getStoredInventoryRecords();
+      let hasChanges = false;
+
+      Object.entries(remoteData).forEach(([pid, item]) => {
+        if (!records[pid] || records[pid].currentStock !== item.currentStock) {
+          records[pid] = {
+            currentStock: item.currentStock,
+            expiryDate: item.expiryDate || records[pid]?.expiryDate || '—',
+            lastUpdated: new Date().toISOString()
+          };
+          hasChanges = true;
+        }
+      });
+
+      if (hasChanges) {
+        saveStoredInventoryRecords(records);
+      }
+      return records;
+    }
+  } catch (err) {
+    console.warn('Inventory sync notice:', err);
+  } finally {
+    isSyncingWithSupabase = false;
+  }
+
+  return getStoredInventoryRecords();
+}
+
+/**
+ * Directly update product current stock and/or expiry date
+ */
+export function updateProductInventory(
+  productId: string,
+  updates: { currentStock?: number; expiryDate?: string; reason?: string }
+): ProductInventory | undefined {
+  const records = getStoredInventoryRecords();
+  const current = records[productId] || {
+    currentStock: INITIAL_INVENTORY_DATA[productId]?.currentStock ?? 0,
+    expiryDate: INITIAL_INVENTORY_DATA[productId]?.expiryDate ?? '—',
+    lastUpdated: new Date().toISOString()
+  };
+
+  const oldStock = current.currentStock;
+  const newStock = updates.currentStock !== undefined ? Math.max(0, updates.currentStock) : oldStock;
+  const newExpiry = updates.expiryDate !== undefined ? formatDateDisplay(updates.expiryDate) : current.expiryDate;
+
+  records[productId] = {
+    currentStock: newStock,
+    expiryDate: newExpiry,
+    lastUpdated: new Date().toISOString()
+  };
+
+  saveStoredInventoryRecords(records);
+
+  // If stock quantity changed, log an audit movement
+  if (updates.currentStock !== undefined && oldStock !== newStock) {
+    const diff = newStock - oldStock;
+    const prod = PRODUCTS.find((p) => p.id === productId);
+    const movement: InventoryMovement = {
+      id: `mvt-${Date.now()}-${Math.random().toString(36).substring(2, 6)}`,
+      productId,
+      productName: prod ? prod.name : productId,
+      sku: prod ? prod.sku : 'VET-SKU',
+      createdAt: new Date().toISOString(),
+      movementType: 'Stock Correction',
+      quantityChange: diff,
+      stockBefore: oldStock,
+      stockAfter: newStock,
+      reason: updates.reason || 'Admin direct stock update',
+      adminUser: 'VETANIC Admin'
+    };
+    const movements = getInventoryMovements();
+    movements.unshift(movement);
+    saveInventoryMovements(movements);
+  }
+
+  return getProductInventory(productId);
+}
+
+/**
+ * Update stock quantity only
+ */
+export function updateProductStock(productId: string, newStock: number, reason?: string): ProductInventory | undefined {
+  return updateProductInventory(productId, { currentStock: newStock, reason });
+}
+
+/**
+ * Update expiry date only
+ */
+export function updateProductExpiryDate(productId: string, newExpiryDate: string): ProductInventory | undefined {
+  return updateProductInventory(productId, { expiryDate: newExpiryDate });
 }
 
 /**
@@ -106,13 +428,25 @@ function saveInventoryMovements(movements: InventoryMovement[]): void {
 }
 
 /**
- * Reconcile and calculate live product inventory from movement ledger
+ * Reconcile and calculate live product inventory from stored records & movement ledger
  */
 export function getProductInventoryList(): ProductInventory[] {
+  const records = getStoredInventoryRecords();
   const movements = getInventoryMovements();
   const thresholds = getProductThresholds();
 
   return PRODUCTS.map((product) => {
+    const stored = records[product.id] || {
+      currentStock: INITIAL_INVENTORY_DATA[product.id]?.currentStock ?? (product.initialStock ?? 0),
+      expiryDate: INITIAL_INVENTORY_DATA[product.id]?.expiryDate ?? '—',
+      lastUpdated: new Date().toISOString()
+    };
+
+    const currentStock = Math.max(0, stored.currentStock);
+    const expiryDate = stored.expiryDate || '—';
+    const expiryInfo = calculateExpiryStatus(expiryDate);
+    const stockStatus = calculateStockStatus(currentStock, product.isAvailable !== false);
+
     const productMovements = movements.filter((m) => m.productId === product.id);
 
     let initialStock = 0;
@@ -152,20 +486,7 @@ export function getProductInventoryList(): ProductInventory[] {
       }
     });
 
-    // Current Stock = Initial Stock + Stock Received + Positive Adjustments - Units Sold - Negative Adjustments
-    const netCalculated = initialStock + stockAdded + positiveAdjustments - unitsSold - negativeAdjustments;
-    // Ensure not negative
-    const currentStock = Math.max(0, netCalculated);
-
-    const threshold = thresholds[product.id] ?? product.lowStockThreshold ?? 5;
-
-    let stockStatus: StockStatus = 'In Stock';
-    if (currentStock === 0 || !product.isAvailable) {
-      stockStatus = 'Out of Stock';
-    } else if (currentStock <= threshold) {
-      stockStatus = 'Low Stock';
-    }
-
+    const threshold = thresholds[product.id] ?? 10;
     const estimatedRetailValue = currentStock * product.regularPrice;
 
     return {
@@ -182,6 +503,10 @@ export function getProductInventoryList(): ProductInventory[] {
       currentStock,
       lowStockThreshold: threshold,
       stockStatus,
+      expiryDate,
+      expiryStatus: expiryInfo.status,
+      daysToExpiry: expiryInfo.daysRemaining,
+      lastUpdated: stored.lastUpdated,
       regularPrice: product.regularPrice,
       launchPrice: product.launchPrice,
       estimatedRetailValue
@@ -291,6 +616,20 @@ export function addStockMovement(data: {
   const movements = getInventoryMovements();
   movements.unshift(newMovement);
   saveInventoryMovements(movements);
+
+  // Sync stored inventory record
+  const records = getStoredInventoryRecords();
+  if (records[data.productId]) {
+    records[data.productId].currentStock = stockAfter;
+    records[data.productId].lastUpdated = new Date().toISOString();
+  } else {
+    records[data.productId] = {
+      currentStock: stockAfter,
+      expiryDate: INITIAL_INVENTORY_DATA[data.productId]?.expiryDate ?? '—',
+      lastUpdated: new Date().toISOString()
+    };
+  }
+  saveStoredInventoryRecords(records);
 
   return newMovement;
 }
@@ -408,17 +747,19 @@ export function exportToExcel(
   if (type === 'summary') {
     const inventory = getProductInventoryList();
     const rows = inventory.map((item) => ({
-      'SKU': item.sku,
       'Product Name': item.productName,
+      'SKU': item.sku,
       'Category': item.categoryName,
+      'Current Stock': item.currentStock,
+      'Expiry Date': item.expiryDate || '—',
+      'Stock Status': item.stockStatus,
+      'Expiry Status': item.expiryStatus || '—',
+      'Last Updated': item.lastUpdated ? new Date(item.lastUpdated).toLocaleString('en-SG') : '—',
       'Initial Stock': item.initialStock,
       'Stock Added': item.stockAdded,
       'Units Sold': item.unitsSold,
       'Positive Adjustments': item.positiveAdjustments,
       'Negative Adjustments': item.negativeAdjustments,
-      'Current Stock': item.currentStock,
-      'Low Stock Threshold': item.lowStockThreshold,
-      'Stock Status': item.stockStatus,
       'Regular Price (SGD)': item.regularPrice,
       'Launch Price (SGD)': item.launchPrice,
       'Estimated Retail Value (SGD)': item.estimatedRetailValue
@@ -426,9 +767,9 @@ export function exportToExcel(
 
     const ws = XLSX.utils.json_to_sheet(rows);
     ws['!cols'] = [
-      { wch: 15 }, { wch: 30 }, { wch: 16 }, { wch: 12 }, { wch: 12 },
-      { wch: 12 }, { wch: 20 }, { wch: 20 }, { wch: 14 }, { wch: 18 },
-      { wch: 14 }, { wch: 18 }, { wch: 18 }, { wch: 26 }
+      { wch: 30 }, { wch: 15 }, { wch: 16 }, { wch: 14 }, { wch: 16 },
+      { wch: 14 }, { wch: 14 }, { wch: 22 }, { wch: 12 }, { wch: 12 },
+      { wch: 12 }, { wch: 18 }, { wch: 18 }, { wch: 18 }, { wch: 18 }, { wch: 26 }
     ];
 
     XLSX.utils.book_append_sheet(wb, ws, 'Inventory Summary');
@@ -505,7 +846,8 @@ function seedInitialInventoryMovements(): InventoryMovement[] {
 
   PRODUCTS.forEach((p, idx) => {
     if (p.salesChannel === 'veterinary_only') return;
-    const initQty = p.initialStock ?? 30;
+    const initial = INITIAL_INVENTORY_DATA[p.id];
+    const initQty = initial ? initial.currentStock : (p.initialStock ?? 0);
     movements.push({
       id: `mvt-init-${p.id}`,
       productId: p.id,

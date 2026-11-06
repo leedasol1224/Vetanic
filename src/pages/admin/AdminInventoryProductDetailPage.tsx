@@ -6,13 +6,19 @@ import {
   Check, 
   X, 
   History, 
-  ShoppingBag
+  ShoppingBag,
+  Clock,
+  AlertTriangle,
+  AlertCircle,
+  Edit2
 } from 'lucide-react';
 import { 
   getProductInventory, 
   getInventoryMovements, 
   addStockMovement, 
-  updateProductThreshold 
+  updateProductExpiryDate,
+  formatDateInput,
+  formatDateDisplay
 } from '../../lib/inventory';
 import { fetchOrdersFromDb } from '../../lib/supabase';
 import { getOrders } from '../../lib/storage';
@@ -36,16 +42,16 @@ export const AdminInventoryProductDetailPage: React.FC = () => {
   const [adjustReason, setAdjustReason] = useState<string>('Stock Received');
   const [adjustNote, setAdjustNote] = useState<string>('');
 
-  // Threshold Edit
-  const [isEditingThreshold, setIsEditingThreshold] = useState(false);
-  const [thresholdVal, setThresholdVal] = useState<number>(5);
+  // Expiry Date Edit
+  const [isEditingExpiry, setIsEditingExpiry] = useState(false);
+  const [expiryInputVal, setExpiryInputVal] = useState<string>('');
 
   const loadData = async () => {
     if (!productId) return;
     const inv = getProductInventory(productId);
     setProductInv(inv);
     if (inv) {
-      setThresholdVal(inv.lowStockThreshold);
+      setExpiryInputVal(inv.expiryDate && inv.expiryDate !== '—' ? formatDateInput(inv.expiryDate) : '');
     }
 
     const allMovements = getInventoryMovements();
@@ -82,9 +88,10 @@ export const AdminInventoryProductDetailPage: React.FC = () => {
     );
   }
 
-  const handleSaveThreshold = () => {
-    updateProductThreshold(productInv.productId, thresholdVal);
-    setIsEditingThreshold(false);
+  const handleSaveExpiry = () => {
+    const formatted = expiryInputVal ? formatDateDisplay(expiryInputVal) : '—';
+    updateProductExpiryDate(productInv.productId, formatted);
+    setIsEditingExpiry(false);
     loadData();
   };
 
@@ -105,6 +112,53 @@ export const AdminInventoryProductDetailPage: React.FC = () => {
 
     setShowAdjustModal(false);
     loadData();
+  };
+
+  const getExpiryBadge = (status: string, daysRemaining?: number) => {
+    switch (status) {
+      case 'Normal':
+        return (
+          <span 
+            className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-emerald-50 text-emerald-800 border border-emerald-200"
+            title={daysRemaining !== undefined ? `${daysRemaining} days remaining (> 6 months)` : undefined}
+          >
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+            <span>Normal</span>
+          </span>
+        );
+      case 'Monitor':
+        return (
+          <span 
+            className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-amber-50 text-amber-800 border border-amber-200"
+            title={daysRemaining !== undefined ? `${daysRemaining} days remaining (3–6 months)` : undefined}
+          >
+            <Clock className="w-3 h-3 text-amber-600 flex-shrink-0" />
+            <span>Monitor</span>
+          </span>
+        );
+      case 'Short-Dated':
+        return (
+          <span 
+            className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-orange-50 text-orange-800 border border-orange-200"
+            title={daysRemaining !== undefined ? `${daysRemaining} days remaining (< 3 months)` : undefined}
+          >
+            <AlertCircle className="w-3 h-3 text-orange-600 flex-shrink-0" />
+            <span>Short-Dated</span>
+          </span>
+        );
+      case 'Expired':
+        return (
+          <span 
+            className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-[10px] font-extrabold bg-rose-100 text-rose-900 border border-rose-300"
+            title="Expired batch"
+          >
+            <AlertTriangle className="w-3 h-3 text-rose-700 flex-shrink-0" />
+            <span>Expired</span>
+          </span>
+        );
+      default:
+        return <span className="text-charcoal-muted text-xs font-mono">—</span>;
+    }
   };
 
   return (
@@ -130,6 +184,7 @@ export const AdminInventoryProductDetailPage: React.FC = () => {
             </div>
             <p className="text-xs text-charcoal-muted mt-0.5">
               Category: {productInv.categoryName} • Regular Price: SGD {productInv.regularPrice.toFixed(2)}
+              {productInv.lastUpdated && ` • Last Updated: ${new Date(productInv.lastUpdated).toLocaleDateString('en-SG', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}`}
             </p>
           </div>
         </div>
@@ -152,6 +207,7 @@ export const AdminInventoryProductDetailPage: React.FC = () => {
 
       {/* Snapshot KPI Cards */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        {/* Current Stock */}
         <div className="bg-white rounded-3xl p-5 border border-[#DED7CE] shadow-soft">
           <span className="text-[10px] font-bold text-charcoal-muted uppercase block mb-1">Current Stock</span>
           <div className="text-3xl font-serif font-bold text-charcoal">{productInv.currentStock}</div>
@@ -168,52 +224,67 @@ export const AdminInventoryProductDetailPage: React.FC = () => {
           </span>
         </div>
 
+        {/* Expiry Date */}
+        <div className="bg-white rounded-3xl p-5 border border-[#DED7CE] shadow-soft">
+          <span className="text-[10px] font-bold text-charcoal-muted uppercase block mb-1">Expiry Date</span>
+          {isEditingExpiry ? (
+            <div className="flex items-center gap-1 mt-1">
+              <input
+                type="date"
+                value={expiryInputVal}
+                onChange={(e) => setExpiryInputVal(e.target.value)}
+                className="py-1 px-1.5 rounded-lg border border-brand-600 text-xs font-bold w-full"
+                autoFocus
+              />
+              <button
+                type="button"
+                onClick={handleSaveExpiry}
+                className="p-1.5 bg-brand-600 text-white rounded-lg hover:bg-brand-700"
+              >
+                <Check className="w-3.5 h-3.5" />
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsEditingExpiry(false)}
+                className="p-1.5 bg-gray-200 text-charcoal rounded-lg hover:bg-gray-300"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            </div>
+          ) : (
+            <div className="flex items-baseline justify-between mt-1">
+              <div className="text-xl sm:text-2xl font-serif font-bold text-charcoal truncate">
+                {productInv.expiryDate || '—'}
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsEditingExpiry(true)}
+                className="text-[10px] font-bold text-brand-600 hover:underline inline-flex items-center gap-0.5"
+              >
+                <Edit2 className="w-3 h-3" />
+                <span>Edit</span>
+              </button>
+            </div>
+          )}
+          <div className="mt-1">
+            {getExpiryBadge(productInv.expiryStatus, productInv.daysToExpiry)}
+          </div>
+        </div>
+
+        {/* Units Sold */}
         <div className="bg-white rounded-3xl p-5 border border-[#DED7CE] shadow-soft">
           <span className="text-[10px] font-bold text-charcoal-muted uppercase block mb-1">Units Sold</span>
           <div className="text-3xl font-serif font-bold text-brand-700">{productInv.unitsSold}</div>
           <span className="text-[10px] text-charcoal-muted mt-1 block">From paid orders</span>
         </div>
 
-        <div className="bg-white rounded-3xl p-5 border border-[#DED7CE] shadow-soft">
-          <span className="text-[10px] font-bold text-charcoal-muted uppercase block mb-1">Low Stock Threshold</span>
-          {isEditingThreshold ? (
-            <div className="flex items-center gap-1 mt-1">
-              <input
-                type="number"
-                min="0"
-                value={thresholdVal}
-                onChange={(e) => setThresholdVal(Number(e.target.value))}
-                className="w-16 py-1 px-1.5 rounded-lg border border-brand-600 text-xs font-bold"
-              />
-              <button
-                type="button"
-                onClick={handleSaveThreshold}
-                className="p-1.5 bg-brand-600 text-white rounded-lg hover:bg-brand-700"
-              >
-                <Check className="w-3.5 h-3.5" />
-              </button>
-            </div>
-          ) : (
-            <div className="flex items-baseline justify-between mt-1">
-              <div className="text-3xl font-serif font-bold text-charcoal">{productInv.lowStockThreshold}</div>
-              <button
-                type="button"
-                onClick={() => setIsEditingThreshold(true)}
-                className="text-[10px] font-bold text-brand-600 hover:underline"
-              >
-                Edit
-              </button>
-            </div>
-          )}
-          <span className="text-[10px] text-charcoal-muted mt-1 block">Triggers low stock alert</span>
-        </div>
-
+        {/* Est. Inventory Value */}
         <div className="bg-white rounded-3xl p-5 border border-[#DED7CE] shadow-soft">
           <span className="text-[10px] font-bold text-charcoal-muted uppercase block mb-1">Est. Inventory Value</span>
           <div className="text-2xl font-serif font-bold text-charcoal truncate">
             SGD {productInv.estimatedRetailValue.toFixed(2)}
           </div>
-          <span className="text-[10px] text-charcoal-muted mt-1 block">At regular retail price</span>
+          <span className="text-[10px] text-charcoal-muted mt-1 block">Current stock × regular price</span>
         </div>
       </div>
 

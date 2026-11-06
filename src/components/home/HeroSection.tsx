@@ -51,7 +51,7 @@ export const HeroSection: React.FC = () => {
             <div className="pt-6 grid grid-cols-1 sm:grid-cols-3 gap-3 border-t border-[#DED7CE] max-w-xl mx-auto lg:mx-0 text-left">
               <div className="flex items-center gap-2 text-xs font-medium text-charcoal">
                 <Truck className="w-4 h-4 text-brand-600 flex-shrink-0" />
-                <span>Free local delivery on SGD 50+</span>
+                <span>FREE Standard Delivery on orders S$70+</span>
               </div>
               <div className="flex items-center gap-2 text-xs font-medium text-charcoal">
                 <ShieldCheck className="w-4 h-4 text-sage-600 flex-shrink-0" />
